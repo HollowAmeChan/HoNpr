@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "unity": "6000.3",
   "hideInEditor": false,
-  "description": "URP-oriented NPR material shader package for Unity 6000.3+. It intentionally does not declare a URP package dependency so projects can bind it to a locally modified URP fork.",
+  "description": "URP-only NPR material shader package for Unity 6000.3+. It intentionally does not declare a URP package dependency so projects can bind it to a locally modified URP fork.",
   "author": {
     "name": "Hollow"
   },
