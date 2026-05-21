@@ -1,30 +1,29 @@
 # HoNpr
 
-HoNpr is Hollow's URP-oriented Unity package for NPR material shaders.
+HoNpr 是 Hollow 用于存放 NPR 材质 shader 的 Unity 包，面向 URP 项目使用。
 
-The package is written for Unity `6000.3+`. It intentionally does not declare
-`com.unity.render-pipelines.universal` in `package.json`, because the target
-workspace uses a locally modified URP package.
+本包面向 Unity `6000.3+`。由于目标工作区使用的是本地魔改版 URP，`package.json`
+里刻意不声明 `com.unity.render-pipelines.universal` 依赖。
 
-## Package Identity
+## 包信息
 
-- Package name: `com.hollow.honpr`
-- Display name: `HoNpr`
-- Author: `Hollow`
-- Unity version: `6000.3+`
-- Render pipeline target: URP-compatible projects
-- Manifest dependencies: none
+- 包名：`com.hollow.honpr`
+- 显示名：`HoNpr`
+- 作者：`Hollow`
+- Unity 版本：`6000.3+`
+- 渲染管线目标：URP 兼容项目
+- Manifest 依赖：无
 
-## Layout
+## 目录结构
 
-- `Shaders/URP/`: reserved for URP NPR material shader entries.
-- `Shaders/ShaderLibrary/`: reserved for shared shader includes.
-- `Editor/`: reserved for material inspectors and shader tooling.
-- `Samples~/Materials/`: reserved for sample materials.
+- `Shaders/URP/`：预留给 URP NPR 材质 shader 入口文件。
+- `Shaders/ShaderLibrary/`：预留给共享 shader include。
+- `Editor/`：预留给材质 Inspector 和 shader 工具。
+- `Samples~/Materials/`：预留给示例材质。
 
-## Installation
+## 安装
 
-Add the package by local path in the Unity project's `Packages/manifest.json`:
+在 Unity 项目的 `Packages/manifest.json` 中通过本地路径添加：
 
 ```json
 {
@@ -34,12 +33,11 @@ Add the package by local path in the Unity project's `Packages/manifest.json`:
 }
 ```
 
-URP must be available in the Unity project, but this package does not force the
-URP dependency through its own package manifest.
+项目中需要有可用的 URP，但本包不会通过自己的 manifest 强制声明 URP 依赖。
 
-## Shader Notes
+## Shader 说明
 
-Shader source is intentionally not included yet.
+当前仓库暂时不包含 shader 源码。
 
-When shader source is added, it can use URP include paths directly while keeping
-the package independent at the manifest level.
+后续添加 shader 时，可以直接使用 URP include 路径；包层面仍然保持不声明 URP
+依赖，方便接入本地魔改版 URP。
