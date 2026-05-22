@@ -1,0 +1,15 @@
+﻿{
+    "id":  "MaterialBlock.HoShadowReceiver",
+    "domain":  "LightingDomain",
+    "stage":  "LightingInput",
+    "requiredInputs":  [
+                           "HoRP shadow contract"
+                       ],
+    "producedFields":  [
+                           "HoLightingContext.hoShadow"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/Lighting/HoNprLightingInput.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

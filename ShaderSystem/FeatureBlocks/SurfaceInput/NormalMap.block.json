@@ -1,16 +1,16 @@
-{
-  "id": "MaterialBlock.NormalMap",
-  "domain": "GeometryDomain",
-  "stage": "SurfaceInput",
-  "requiredInputs": [
-    "VertexNormal"
-  ],
-  "producedFields": [
-    "HoUrpSurfaceData.normalWS",
-    "Geometry.WorldNormal"
-  ],
-  "requiredIncludes": [
-    "HoUrpMaterialSurface.hlsl"
-  ],
-  "variantPolicy": "PresetStatic"
+﻿{
+    "id":  "MaterialBlock.NormalMap",
+    "domain":  "GeometryDomain",
+    "stage":  "SurfaceInput",
+    "requiredInputs":  [
+                           "VertexNormal"
+                       ],
+    "producedFields":  [
+                           "HoUrpSurfaceData.normalWS",
+                           "Geometry.WorldNormal"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
 }

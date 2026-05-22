@@ -26,7 +26,7 @@ The forced regeneration command must:
 5. Import generated shader assets with `ForceUpdate | ForceSynchronousImport`.
 6. Call `AssetDatabase.SaveAssets()` and `AssetDatabase.Refresh()`.
 
-Until a real generator exists, the command may perform validation and forced import only, but it must keep the final menu path stable.
+The first generator stage only emits `Character_DebugLit_SSS_OITReady`. Production presets may be declared before they are generated, but they must still pass template/block reference validation.
 
 ## Prohibited Inputs
 
@@ -45,4 +45,3 @@ Allowed structural inputs:
 - `*.preset.json`.
 - generated manifests.
 - upstream HoRP contract index.
-

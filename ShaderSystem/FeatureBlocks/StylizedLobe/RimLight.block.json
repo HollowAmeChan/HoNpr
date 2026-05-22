@@ -1,0 +1,17 @@
+﻿{
+    "id":  "MaterialBlock.RimLight",
+    "domain":  "ShadingDomain",
+    "stage":  "Lobe",
+    "requiredInputs":  [
+                           "HoUrpSurfaceData.normalWS",
+                           "ViewDirection",
+                           "RimMask"
+                       ],
+    "producedFields":  [
+                           "HoLobeOutput.emission"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

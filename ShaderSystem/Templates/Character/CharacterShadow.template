@@ -1,0 +1,13 @@
+{
+  "id": "MaterialTemplate.CharacterShadow",
+  "displayName": "Character Shadow",
+  "description": "Shadow caster pass skeleton for HoNpr character materials.",
+  "passes": [
+    "ShadowCaster"
+  ],
+  "requiredSlots": [
+    "SurfaceInput",
+    "Transparency"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

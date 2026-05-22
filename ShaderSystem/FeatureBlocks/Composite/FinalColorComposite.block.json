@@ -1,0 +1,19 @@
+﻿{
+    "id":  "MaterialBlock.FinalColorComposite",
+    "domain":  "CompositeDomain",
+    "stage":  "Composite",
+    "requiredInputs":  [
+                           "HoLobeOutput.diffuse",
+                           "HoLobeOutput.specular",
+                           "HoLobeOutput.transmission",
+                           "HoLobeOutput.emission"
+                       ],
+    "producedFields":  [
+                           "FinalColor",
+                           "FinalAlpha"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl"
+                         ],
+    "variantPolicy":  "AlwaysCompiled"
+}

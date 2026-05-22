@@ -1,0 +1,13 @@
+{
+  "id": "MaterialTemplate.CharacterDepth",
+  "displayName": "Character Depth",
+  "description": "Depth pass skeleton for HoNpr character materials.",
+  "passes": [
+    "DepthOnly"
+  ],
+  "requiredSlots": [
+    "SurfaceInput",
+    "Transparency"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

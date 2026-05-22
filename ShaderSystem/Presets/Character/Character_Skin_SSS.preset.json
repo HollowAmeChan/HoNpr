@@ -1,0 +1,48 @@
+{
+  "presetId": "MaterialPreset.Character_Skin_SSS",
+  "displayName": "Character Skin SSS",
+  "template": "MaterialTemplate.CharacterForward",
+  "templates": [
+    "MaterialTemplate.CharacterForward",
+    "MaterialTemplate.CharacterAov",
+    "MaterialTemplate.CharacterDepth",
+    "MaterialTemplate.CharacterShadow"
+  ],
+  "shaderName": "HoNpr/Generated/Character_Skin_SSS",
+  "generatedShader": "Shaders/Generated/Character/Character_Skin_SSS.shader",
+  "featureBlocks": [
+    "MaterialBlock.BaseColorTexture",
+    "MaterialBlock.NormalMap",
+    "MaterialBlock.StyleRampAtlas",
+    "MaterialBlock.UrpMainLightInput",
+    "MaterialBlock.IndirectLightInput",
+    "MaterialBlock.ToonDiffuseRamp",
+    "MaterialBlock.ForwardThinSss",
+    "MaterialBlock.SssSourceProducer",
+    "MaterialBlock.RimLight",
+    "MaterialBlock.MaterialSemanticProducer",
+    "MaterialBlock.AovOutputStandard",
+    "MaterialBlock.FinalColorComposite"
+  ],
+  "passes": [
+    "UniversalForward",
+    "HoUrpAovOutput",
+    "DepthOnly",
+    "ShadowCaster"
+  ],
+  "producedSemantics": [
+    "Material.Class",
+    "Material.SssProfile",
+    "Material.Thickness",
+    "Material.Curvature",
+    "Shading.SssSourceColor",
+    "Shading.SssWeight",
+    "Aov.SssSource"
+  ],
+  "requiredCapabilities": [
+    "ReceivesSss",
+    "ParticipatesSemanticPost"
+  ],
+  "phasePolicy": "Forward",
+  "status": "Planned"
+}

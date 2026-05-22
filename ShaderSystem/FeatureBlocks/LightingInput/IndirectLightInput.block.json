@@ -1,0 +1,17 @@
+﻿{
+    "id":  "MaterialBlock.IndirectLightInput",
+    "domain":  "LightingDomain",
+    "stage":  "LightingInput",
+    "requiredInputs":  [
+                           "BakedGI",
+                           "ReflectionProbe"
+                       ],
+    "producedFields":  [
+                           "HoLightingContext.indirectDiffuse",
+                           "HoLightingContext.indirectSpecular"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/Lighting/HoNprLightingInput.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

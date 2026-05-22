@@ -121,6 +121,7 @@ namespace Hollow.HoNpr.Editor
         private static bool ValidateShaderSystem(string packageRoot, bool logSuccess)
         {
             var missing = new List<string>();
+            var errors = new List<string>();
 
             foreach (string folder in RequiredFolders)
             {
@@ -136,9 +137,17 @@ namespace Hollow.HoNpr.Editor
                     missing.Add(path);
             }
 
+            ValidateDeclarationReferences(packageRoot, errors);
+
             if (missing.Count > 0)
             {
                 Debug.LogWarning("[HoNpr.Generator] Shader system validation failed. Missing:\n" + string.Join("\n", missing));
+                return false;
+            }
+
+            if (errors.Count > 0)
+            {
+                Debug.LogWarning("[HoNpr.Generator] Shader system validation failed. Invalid declarations:\n" + string.Join("\n", errors));
                 return false;
             }
 
@@ -146,6 +155,113 @@ namespace Hollow.HoNpr.Editor
                 Debug.Log("[HoNpr.Generator] Shader system declaration tables are present.");
 
             return true;
+        }
+
+        private static void ValidateDeclarationReferences(string packageRoot, List<string> errors)
+        {
+            var templates = new HashSet<string>();
+            var blocks = new HashSet<string>();
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Templates", "*.template"))
+            {
+                IdDeclaration declaration = LoadJsonAsset<IdDeclaration>(path);
+                if (declaration == null || string.IsNullOrEmpty(declaration.id))
+                    errors.Add($"Template is missing id: {path}");
+                else
+                    templates.Add(declaration.id);
+            }
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.block.json"))
+            {
+                IdDeclaration declaration = LoadJsonAsset<IdDeclaration>(path);
+                if (declaration == null || string.IsNullOrEmpty(declaration.id))
+                    errors.Add($"Feature block is missing id: {path}");
+                else
+                    blocks.Add(declaration.id);
+            }
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Presets", "*.preset.json"))
+            {
+                PrototypePreset preset = LoadJsonAsset<PrototypePreset>(path);
+                if (preset == null || string.IsNullOrEmpty(preset.presetId))
+                {
+                    errors.Add($"Preset is missing presetId: {path}");
+                    continue;
+                }
+
+                var presetTemplates = new HashSet<string>();
+                if (!string.IsNullOrEmpty(preset.template))
+                    presetTemplates.Add(preset.template);
+
+                if (preset.templates != null)
+                {
+                    foreach (string template in preset.templates)
+                    {
+                        if (!string.IsNullOrEmpty(template))
+                            presetTemplates.Add(template);
+                    }
+                }
+
+                foreach (string template in presetTemplates)
+                {
+                    if (!templates.Contains(template))
+                        errors.Add($"{preset.presetId} references missing template {template}.");
+                }
+
+                if (preset.featureBlocks == null || preset.featureBlocks.Length == 0)
+                {
+                    errors.Add($"{preset.presetId} has no feature blocks.");
+                    continue;
+                }
+
+                foreach (string block in preset.featureBlocks)
+                {
+                    if (!blocks.Contains(block))
+                        errors.Add($"{preset.presetId} references missing feature block {block}.");
+                }
+            }
+        }
+
+        private static IEnumerable<string> FindFiles(string packageRoot, string relativeFolder, string searchPattern)
+        {
+            string absoluteFolder = Path.Combine(PackageAssetPathToAbsolutePath(packageRoot), NormalizeRelativePath(relativeFolder));
+            if (!Directory.Exists(absoluteFolder))
+                yield break;
+
+            foreach (string absolutePath in Directory.EnumerateFiles(absoluteFolder, searchPattern, SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(PackageAssetPathToAbsolutePath(packageRoot), absolutePath)
+                    .Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(Path.AltDirectorySeparatorChar, '/');
+                yield return $"{packageRoot}/{relativePath}";
+            }
+        }
+
+        private static IEnumerable<string> FindTextAssets(string root, string filter)
+        {
+            if (!AssetDatabase.IsValidFolder(root))
+                yield break;
+
+            string[] guids = AssetDatabase.FindAssets(filter, new[] { root });
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (!string.IsNullOrEmpty(path))
+                    yield return path;
+            }
+        }
+
+        private static T LoadJsonAsset<T>(string path)
+        {
+            TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            if (asset != null)
+                return JsonUtility.FromJson<T>(asset.text);
+
+            string absolutePath = Path.Combine(Directory.GetCurrentDirectory(), path.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(absolutePath))
+                return default;
+
+            return JsonUtility.FromJson<T>(File.ReadAllText(absolutePath));
         }
 
         private static int RefreshGeneratedShaderAssets(string packageRoot, bool logSkippedFolders)
@@ -505,6 +621,7 @@ Shader ""{preset.shaderName}""
             public string presetId;
             public string displayName;
             public string template;
+            public string[] templates;
             public string shaderName;
             public string generatedShader;
             public string[] featureBlocks;
@@ -513,6 +630,12 @@ Shader ""{preset.shaderName}""
             public string[] requiredCapabilities;
             public string phasePolicy;
             public string status;
+        }
+
+        [System.Serializable]
+        private sealed class IdDeclaration
+        {
+            public string id;
         }
 
         private static string FindPackageRoot()

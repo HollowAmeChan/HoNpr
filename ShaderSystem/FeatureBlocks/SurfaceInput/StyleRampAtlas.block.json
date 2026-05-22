@@ -1,0 +1,19 @@
+﻿{
+    "id":  "MaterialBlock.StyleRampAtlas",
+    "domain":  "ShadingDomain",
+    "stage":  "SurfaceInput",
+    "requiredInputs":  [
+                           "StyleRampAtlas",
+                           "RampRow",
+                           "RampBias",
+                           "RampScale"
+                       ],
+    "producedFields":  [
+                           "HoStylizedSurfaceData.rampColor",
+                           "HoStylizedSurfaceData.rampCoord"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

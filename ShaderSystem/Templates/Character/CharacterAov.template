@@ -1,0 +1,13 @@
+{
+  "id": "MaterialTemplate.CharacterAov",
+  "displayName": "Character AOV",
+  "description": "AOV output pass skeleton for HoNpr character materials.",
+  "passes": [
+    "HoUrpAovOutput"
+  ],
+  "requiredSlots": [
+    "SurfaceInput",
+    "SemanticAov"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

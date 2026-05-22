@@ -1,13 +1,12 @@
 ﻿{
-    "id":  "MaterialBlock.OitAccumulationOutput",
+    "id":  "MaterialBlock.ForwardSkipWhenOit",
     "domain":  "CompositeDomain",
     "stage":  "Transparency",
     "requiredInputs":  [
-                           "HoUrpTransparentOutputData"
+                           "MaterialPhasePolicy"
                        ],
     "producedFields":  [
-                           "OitAccumulationInput",
-                           "OitRevealageInput"
+                           "ForwardPhase.SkipWhenOitAccumulating"
                        ],
     "requiredIncludes":  [
                              "Shaders/ShaderLibrary/Transparency/HoNprTransparency.hlsl"

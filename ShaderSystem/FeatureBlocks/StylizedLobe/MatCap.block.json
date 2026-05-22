@@ -1,0 +1,17 @@
+﻿{
+    "id":  "MaterialBlock.MatCap",
+    "domain":  "ShadingDomain",
+    "stage":  "Lobe",
+    "requiredInputs":  [
+                           "MatCapTexture",
+                           "HoUrpSurfaceData.normalWS",
+                           "ViewDirection"
+                       ],
+    "producedFields":  [
+                           "HoLobeOutput.specular"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

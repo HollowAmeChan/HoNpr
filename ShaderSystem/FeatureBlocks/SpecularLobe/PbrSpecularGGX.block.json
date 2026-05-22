@@ -1,0 +1,16 @@
+﻿{
+    "id":  "MaterialBlock.PbrSpecularGGX",
+    "domain":  "ShadingDomain",
+    "stage":  "Lobe",
+    "requiredInputs":  [
+                           "HoUrpSurfaceData",
+                           "HoLightingContext"
+                       ],
+    "producedFields":  [
+                           "HoLobeOutput.specular"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StandardSurface/HoNprPbrLobes.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

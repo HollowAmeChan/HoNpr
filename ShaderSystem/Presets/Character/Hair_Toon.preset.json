@@ -1,0 +1,44 @@
+{
+  "presetId": "MaterialPreset.Hair_Toon",
+  "displayName": "Hair Toon",
+  "template": "MaterialTemplate.CharacterForward",
+  "templates": [
+    "MaterialTemplate.CharacterForward",
+    "MaterialTemplate.CharacterAov",
+    "MaterialTemplate.CharacterDepth",
+    "MaterialTemplate.CharacterShadow"
+  ],
+  "shaderName": "HoNpr/Generated/Hair_Toon",
+  "generatedShader": "Shaders/Generated/Character/Hair_Toon.shader",
+  "featureBlocks": [
+    "MaterialBlock.BaseColorTexture",
+    "MaterialBlock.NormalMap",
+    "MaterialBlock.StyleRampAtlas",
+    "MaterialBlock.UrpMainLightInput",
+    "MaterialBlock.IndirectLightInput",
+    "MaterialBlock.ToonDiffuseRamp",
+    "MaterialBlock.HairSpecularPrimary",
+    "MaterialBlock.HairSpecularSecondary",
+    "MaterialBlock.RimLight",
+    "MaterialBlock.MatCap",
+    "MaterialBlock.MaterialSemanticProducer",
+    "MaterialBlock.AovOutputStandard",
+    "MaterialBlock.FinalColorComposite"
+  ],
+  "passes": [
+    "UniversalForward",
+    "HoUrpAovOutput",
+    "DepthOnly",
+    "ShadowCaster"
+  ],
+  "producedSemantics": [
+    "Material.Class",
+    "Material.Custom0-3",
+    "Aov.SurfaceData"
+  ],
+  "requiredCapabilities": [
+    "ParticipatesSemanticPost"
+  ],
+  "phasePolicy": "Forward",
+  "status": "Planned"
+}

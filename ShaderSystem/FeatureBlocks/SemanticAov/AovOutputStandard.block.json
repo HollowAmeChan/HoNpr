@@ -1,23 +1,22 @@
-{
-  "id": "MaterialBlock.AovOutputStandard",
-  "domain": "MaterialDomain",
-  "stage": "SemanticProducer",
-  "requiredInputs": [
-    "ObjectSemanticData",
-    "HoUrpMaterialSemanticData"
-  ],
-  "producedFields": [
-    "Aov.MaskId",
-    "Aov.NormalDepth",
-    "Aov.ObjectCustom0_3",
-    "Aov.ObjectCustom4_7",
-    "Aov.SurfaceData",
-    "Aov.MaterialCustom0_3",
-    "Aov.SssSource"
-  ],
-  "requiredIncludes": [
-    "HoUrpObjectSemantic.hlsl",
-    "HoUrpMaterialAov.hlsl"
-  ],
-  "variantPolicy": "PresetStatic"
+﻿{
+    "id":  "MaterialBlock.AovOutputStandard",
+    "domain":  "MaterialDomain",
+    "stage":  "SemanticProducer",
+    "requiredInputs":  [
+                           "ObjectSemanticData",
+                           "HoUrpMaterialSemanticData"
+                       ],
+    "producedFields":  [
+                           "Aov.MaskId",
+                           "Aov.NormalDepth",
+                           "Aov.ObjectCustom0_3",
+                           "Aov.ObjectCustom4_7",
+                           "Aov.SurfaceData",
+                           "Aov.MaterialCustom0_3",
+                           "Aov.SssSource"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/SemanticSurface/HoNprSemanticSurface.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
 }

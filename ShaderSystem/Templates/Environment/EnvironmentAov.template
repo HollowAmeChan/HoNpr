@@ -1,0 +1,13 @@
+{
+  "id": "MaterialTemplate.EnvironmentAov",
+  "displayName": "Environment AOV",
+  "description": "Optional AOV output pass skeleton for HoNpr environment materials.",
+  "passes": [
+    "HoUrpAovOutput"
+  ],
+  "requiredSlots": [
+    "SurfaceInput",
+    "SemanticAov"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

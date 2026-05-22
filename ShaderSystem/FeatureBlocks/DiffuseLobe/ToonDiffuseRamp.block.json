@@ -1,0 +1,17 @@
+﻿{
+    "id":  "MaterialBlock.ToonDiffuseRamp",
+    "domain":  "ShadingDomain",
+    "stage":  "Lobe",
+    "requiredInputs":  [
+                           "HoUrpSurfaceData",
+                           "HoLightingContext",
+                           "StyleRampAtlas"
+                       ],
+    "producedFields":  [
+                           "HoLobeOutput.diffuse"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}

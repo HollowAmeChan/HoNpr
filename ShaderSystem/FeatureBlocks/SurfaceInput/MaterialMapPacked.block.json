@@ -1,13 +1,14 @@
 ﻿{
-    "id":  "MaterialBlock.BaseColorTexture",
+    "id":  "MaterialBlock.MaterialMapPacked",
     "domain":  "MaterialDomain",
     "stage":  "SurfaceInput",
     "requiredInputs":  [
-                           "BaseColorTint"
+                           "MaterialMap"
                        ],
     "producedFields":  [
-                           "HoUrpSurfaceData.baseColor",
-                           "HoUrpSurfaceData.alpha"
+                           "HoUrpSurfaceData.metallic",
+                           "HoUrpSurfaceData.roughness",
+                           "HoUrpSurfaceData.occlusion"
                        ],
     "requiredIncludes":  [
                              "Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl"

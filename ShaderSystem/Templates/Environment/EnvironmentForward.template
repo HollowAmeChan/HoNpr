@@ -1,0 +1,16 @@
+{
+  "id": "MaterialTemplate.EnvironmentForward",
+  "displayName": "Environment Forward",
+  "description": "Forward pass skeleton for HoNpr environment PBR subset.",
+  "passes": [
+    "UniversalForward"
+  ],
+  "requiredSlots": [
+    "SurfaceInput",
+    "LightingInput",
+    "DiffuseLobe",
+    "SpecularLobe",
+    "Composite"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

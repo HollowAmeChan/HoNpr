@@ -1,0 +1,17 @@
+﻿{
+    "id":  "MaterialBlock.ForwardThinSss",
+    "domain":  "ShadingDomain",
+    "stage":  "Lobe",
+    "requiredInputs":  [
+                           "HoUrpSurfaceData",
+                           "HoLightingContext",
+                           "SemanticMap"
+                       ],
+    "producedFields":  [
+                           "HoLobeOutput.transmission"
+                       ],
+    "requiredIncludes":  [
+                             "Shaders/ShaderLibrary/StandardSurface/HoNprSubsurface.hlsl"
+                         ],
+    "variantPolicy":  "PresetStatic"
+}
