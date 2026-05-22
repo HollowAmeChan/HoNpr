@@ -13,6 +13,15 @@ ui MaterialUi.Character_LilToonSourceAlgorithmAssembly for MaterialPreset.Charac
     property _HoNprRampRow in LilToonAssembly label "Ramp 行" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprRampRows in LilToonAssembly label "Ramp 总行数" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
 
+    group Outline "LilToon Source Outline";
+    contractBox HoNpr.LilToonSourceOutline in Outline title "lilToon-source outline pass" severity info message "Object-space normal extrusion derived from lilToon FORWARD_OUTLINE/lil_vert_outline; simplified first slice, no old ABI.";
+    property _HoNprOutlineColor in Outline label "Outline Color" control color default "(0, 0, 0, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprOutlineWidth in Outline label "Outline Width" control slider range 0 0.05 default 0.005 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprOutlineWidthMask in Outline label "Outline Width Mask" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprOutlineFixWidth in Outline label "Outline Fix Width" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprOutlineZBias in Outline label "Outline Z Bias" control slider range 0 0.02 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprOutlineVertexWidthMode in Outline label "Vertex Width Mode" control slider range 0 2 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
     group Specular "高光";
     property _HoNprSpecularThreshold in Specular label "Toon 高光阈值" control slider range 0 1 default 0.72 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprSpecularSoftness in Specular label "Toon 高光柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
@@ -44,5 +53,5 @@ ui MaterialUi.Character_LilToonSourceAlgorithmAssembly for MaterialPreset.Charac
     property _HoUrpSupportsOit in Transparency label "支持 OIT" control toggle default 1 copy Group tools CopyProperty PasteProperty;
     property _HoUrpParticipatesOit in Transparency label "参与 OIT" control toggle default 0 copy Group tools CopyProperty PasteProperty;
 
-    renderState queue "Transparent" blend "SrcAlpha OneMinusSrcAlpha / OIT One One, Zero OneMinusSrcAlpha" depth "Forward ZWrite Off; Depth/Shadow ZWrite On" stencil "None" cull "Back";
+    renderState queue "Transparent" blend "SrcAlpha OneMinusSrcAlpha / OIT One One, Zero OneMinusSrcAlpha" depth "Outline ZWrite On; Forward ZWrite Off; Depth/Shadow ZWrite On" stencil "None" cull "Forward Back; Outline Front";
 }

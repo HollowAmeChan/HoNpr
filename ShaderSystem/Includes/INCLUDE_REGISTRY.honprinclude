@@ -17,6 +17,7 @@ include HoNpr.Subsurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Stan
 include HoNpr.StylizedSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl";
 include HoNpr.ToonLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl";
 include HoNpr.StylizedLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl";
+include HoNpr.Outline = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprOutline.hlsl";
 include HoNpr.LightingInput = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Lighting/HoNprLightingInput.hlsl";
 include HoNpr.SemanticSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/SemanticSurface/HoNprSemanticSurface.hlsl";
 include HoNpr.Transparency = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Transparency/HoNprTransparency.hlsl";
