@@ -1,0 +1,16 @@
+{
+  "id": "MaterialBlock.OitAccumulationOutput",
+  "domain": "CompositeDomain",
+  "stage": "Transparency",
+  "requiredInputs": [
+    "HoUrpTransparentOutputData"
+  ],
+  "producedFields": [
+    "OitAccumulationInput",
+    "OitRevealageInput"
+  ],
+  "requiredIncludes": [
+    "HoUrpMaterialOit.hlsl"
+  ],
+  "variantPolicy": "PresetStatic"
+}

@@ -1,0 +1,37 @@
+{
+  "presetId": "MaterialPreset.Character_DebugLit_SSS_OITReady",
+  "displayName": "Character Debug Lit SSS OIT Ready",
+  "template": "MaterialTemplate.DebugLitMinimal",
+  "shaderName": "HoNpr/Generated/Character_DebugLit_SSS_OITReady",
+  "generatedShader": "Shaders/Generated/Debug/Character_DebugLit_SSS_OITReady.shader",
+  "featureBlocks": [
+    "MaterialBlock.BaseColorTexture",
+    "MaterialBlock.NormalMap",
+    "MaterialBlock.SssSourceProducer",
+    "MaterialBlock.MaterialSemanticProducer",
+    "MaterialBlock.AovOutputStandard",
+    "MaterialBlock.OitAccumulationOutput"
+  ],
+  "passes": [
+    "UniversalForward",
+    "HoUrpAovOutput",
+    "HoUrpOitAccumulation"
+  ],
+  "producedSemantics": [
+    "Material.Class",
+    "Material.SssProfile",
+    "Material.Thickness",
+    "Material.Curvature",
+    "Material.Custom0-3",
+    "Shading.SssSourceColor",
+    "Shading.SssWeight",
+    "OitAccumulationInput",
+    "OitRevealageInput"
+  ],
+  "requiredCapabilities": [
+    "SupportsOit",
+    "ParticipatesOit"
+  ],
+  "phasePolicy": "OitOnly",
+  "status": "Prototype"
+}

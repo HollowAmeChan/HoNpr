@@ -1,0 +1,11 @@
+{
+  "id": "MaterialTemplate.DebugLitMinimal",
+  "displayName": "Debug Lit Minimal",
+  "description": "Prototype HoNpr template matching the current HoURP generated material contract.",
+  "passes": [
+    "UniversalForward",
+    "HoUrpAovOutput",
+    "HoUrpOitAccumulation"
+  ],
+  "shaderNamePattern": "HoNpr/Generated/{PresetName}"
+}

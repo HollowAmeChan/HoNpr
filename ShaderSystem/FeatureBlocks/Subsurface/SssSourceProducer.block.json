@@ -1,0 +1,18 @@
+{
+  "id": "MaterialBlock.SssSourceProducer",
+  "domain": "ShadingDomain",
+  "stage": "SemanticProducer",
+  "requiredInputs": [
+    "SssSourceColor",
+    "SssWeight"
+  ],
+  "producedFields": [
+    "Shading.SssSourceColor",
+    "Shading.SssWeight",
+    "Aov.SssSource"
+  ],
+  "requiredIncludes": [
+    "HoUrpMaterialAov.hlsl"
+  ],
+  "variantPolicy": "PresetStatic"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "MaterialBlock.BaseColorTexture",
+  "domain": "MaterialDomain",
+  "stage": "SurfaceInput",
+  "requiredInputs": [
+    "BaseColorTint"
+  ],
+  "producedFields": [
+    "HoUrpSurfaceData.baseColor",
+    "HoUrpSurfaceData.alpha"
+  ],
+  "requiredIncludes": [
+    "HoUrpMaterialSurface.hlsl"
+  ],
+  "variantPolicy": "PresetStatic"
+}
