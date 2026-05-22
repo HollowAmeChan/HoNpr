@@ -28,6 +28,8 @@
 - 分配 RenderGraph 资源。
 - 建立旧 `lilToon/lilPBR` 长期桥接层。
 - 让材质 UI 决定 shader pass / feature block / keyword 结构。
+- 通过反射 shader 属性自动推导材质 UI 或动态分叉编译。
+- 让材质 UI 直接暴露原始 render state，例如 queue offset、Blend、Stencil、ZWrite、ZTest、Cull。
 
 `HoNpr` 负责：
 
@@ -35,6 +37,7 @@
 - 生产 `UniversalForward`、`HoUrpAovOutput`、`HoUrpOitAccumulation` 等 HoRP pass 所需 shader。
 - 输出 `Material.*`、`Shading.*`、`Aov.*`、`Oit.*` 等上游已登记语义 / 资源所需数据。
 - 维护旧材质能力到新组件的对照表和迁移判定。
+- 为 HoNpr 材质实例提供极简参数 UI 包装，只做参数分组、命名、范围和默认提示，不改变 shader 结构。
 
 ---
 
@@ -78,6 +81,7 @@ HoNpr/
 | 模板目录 | `*.honprtemplate` -> `TEMPLATE_TABLE.md` | 看 pass 骨架、输入输出、生成目标 | 从 DSL 校验模板引用，表格只做派生预览 |
 | Feature Block 目录 | `*.honprblock` -> `FEATURE_BLOCK_TABLE.md` | 看每个 block 的 Domain、输入、输出、变体策略 | 从 DSL 校验 block 引用和 include alias |
 | Preset 目录 | `*.honprpreset` -> `PRESET_TABLE.md` | 看每个 preset 启用哪些 block 和 pass | 从 DSL 生成 shader 和校验组合合法性 |
+| Material UI 目录 | `*.honprui` -> `MATERIAL_UI_TABLE.md` | 看每个 preset 的参数分组、标签、控件和范围 | 校验 UI 只引用已声明参数，不触发结构变化 |
 | Generated 目录 | 生成 shader 头部 provenance | 看生成产物来源和是否可手改 | 不放面向用户的索引文档，产物可删除重生 |
 | Legacy 对照目录 | `LEGACY_MAPPING_TABLE.md` | 看旧符号迁移到哪里 | 防止旧 ABI 偷偷进入新核心 |
 | 资产目录 | `ASSET_TABLE.md` | 看默认贴图/ramp/atlas 用途 | 导入器和校验器读取 |
@@ -267,7 +271,244 @@ Presets/
 
 Preset 只列静态组合。材质实例只能改参数、贴图、ramp、少量 scalar；不能增删 block。
 
-### 3.5 Generator
+### 3.5 Material UI
+
+Material UI 是 HoNpr 材质实例的极简包装层，只解决“参数怎么给人看、怎么编辑、怎么少犯错，以及常用小工具怎么安全操作参数”。它不是生成器输入，也不是 shader 结构来源。
+
+建议结构：
+
+```text
+ShaderSystem/
+  MaterialUi/
+    MATERIAL_UI_TABLE.md
+    Common/
+      StandardSurface.honprui
+      Transparency.honprui
+      SemanticAov.honprui
+    Character/
+      Character_Toon_Core.honprui
+      Character_Skin_SSS.honprui
+      Hair_Toon.honprui
+    Environment/
+      Environment_PBR.honprui
+    Debug/
+      Character_DebugLit_SSS_OITReady.honprui
+```
+
+`*.honprui` 只允许声明：
+
+- 绑定到哪个 preset。
+- 参数分组和折叠状态。
+- 显示名、说明、单位、范围、默认值提示。
+- 控件类型，例如 color、texture、slider、toggle、enum、ramp atlas、vector。
+- 小工具类型，例如复制、粘贴、重置、归一化、从贴图取默认值。
+- 提示和警告，例如 info、warning、error、HoRP contract box。
+- 只读 render state 摘要，例如当前 preset 固定的 queue、blend、depth、stencil 策略。
+- 参数可见条件，但只能基于同一个材质实例的普通参数值做 UI 显隐。
+- 迁移提示，例如旧属性名映射到新属性名。
+
+`*.honprui` 禁止声明：
+
+- pass、template、feature block、include、define、pragma、keyword。
+- 任何会改变 shader variant 或 pass 存在性的逻辑。
+- 通过 shader reflection 自动枚举属性并生成面板。
+- 根据 UI 状态写回 preset 或生成新的 `.honprpreset`。
+- 直接引用旧 `_lil*`、`_HoAov*` 属性作为新 ABI。旧名只能写在迁移提示里。
+- 跨材质复制结构信息，例如 preset、shader、pass、block、keyword、render queue override。
+- 直接编辑原始 render state，例如 `Queue`、`Blend`、`Stencil`、`ZWrite`、`ZTest`、`Cull`、`ColorMask`。
+
+UI 参数来源分三层：
+
+| 层级 | 事实来源 | 用途 |
+| --- | --- | --- |
+| Shader property | 生成 shader 的 `Properties` 与 HoRP property ID | Unity 材质实际存储 |
+| UI descriptor | `*.honprui` | 人类可读的分组、标签、控件、范围 |
+| Material instance | `.mat` 或后续轻量 asset | 保存用户实际参数值 |
+
+第一阶段只做白名单式 UI，不做反射：
+
+- `Base`：base color、base map、alpha。
+- `Normal`：normal map、normal scale。
+- `Style`：ramp atlas、toon ramp index、matcap。
+- `Lighting`：rim、rim shade、specular、hair highlight。
+- `SSS`：sss profile、thickness、curvature、sss weight。
+- `Semantic / AOV`：material class、custom0-3，只显示必要字段。
+- `Transparency`：alpha、coverage、OIT 参与开关，只表达参数，不决定 pass。
+
+`MATERIAL_UI_TABLE.md` 建议字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `PresetId` | 绑定的 preset |
+| `Group` | UI 分组 |
+| `Property` | shader property 或 HoRP property ID |
+| `Label` | 中文显示名 |
+| `Control` | 控件类型 |
+| `Range` | 数值范围或枚举值 |
+| `DefaultHint` | 默认值提示 |
+| `Visibility` | 仅 UI 显隐条件 |
+| `Tools` | 允许绘制的小工具 |
+| `Messages` | 允许绘制的提示 / 警告 |
+| `ContractBox` | HoRP 契约区域，例如 HoAOV、OIT、Semantic |
+| `RenderStateView` | 只读 render state 摘要 |
+| `CopyScope` | 可复制的参数范围 |
+| `MigrationHint` | 旧属性迁移提示 |
+| `StructuralEffect` | 固定为 `None` |
+
+核心规则：
+
+- UI descriptor 可以缺字段，缺了就不显示；不能靠 reflection 补全。
+- UI descriptor 可以把多个底层属性包装成一个“简化表达”，但写入时必须落回明确的 shader property。
+- UI descriptor 的校验只检查属性存在、类型匹配、范围合法、没有结构字段。
+- Inspector 只能显示当前材质 shader 已经固定的 preset，不提供切换到另一个 preset 后自动换 shader 的隐式行为。
+- 如果需要切 preset，必须走显式命令：创建/替换材质 shader，保留可迁移参数，记录迁移日志。
+
+#### 3.5.1 小工具与复制粘贴
+
+UI 小工具是 Material UI 的一部分，但只能操作材质参数值。它们不能参与生成器，也不能成为结构配置来源。
+
+第一阶段允许的小工具：
+
+| 工具 | 作用范围 | 说明 |
+| --- | --- | --- |
+| `CopyGroup` | 当前 UI group | 复制该组内白名单 property 的值 |
+| `PasteGroup` | 当前 UI group | 粘贴同名或映射后的 property 值 |
+| `CopyProperty` | 单个 property | 复制单项参数 |
+| `PasteProperty` | 单个 property | 粘贴单项参数，类型必须匹配 |
+| `ResetGroup` | 当前 UI group | 恢复 descriptor 默认值提示对应的值 |
+| `NormalizeVector` | vector/color | 归一化方向、权重或颜色权重类参数 |
+| `PickTextureDefaults` | texture group | 从贴图导入设置或默认资源填充缺省参数 |
+| `CopyMigrationLog` | 当前材质 | 复制迁移/粘贴日志，方便排查 |
+
+复制粘贴使用显式 payload，不直接依赖 Unity clipboard 里的自由文本作为事实来源：
+
+```text
+HoNprMaterialParameterClipboard
+PresetId: MaterialPreset.Character_Toon_Core
+Group: Style
+Properties:
+  _HoNprRampAtlas: <asset-guid>
+  _HoNprRampIndex: 2
+  _HoNprMatCapStrength: 0.65
+```
+
+payload 规则：
+
+- 必须记录来源 `PresetId`、group、property 名、类型和值。
+- 可以跨材质粘贴，但只粘贴目标 `*.honprui` 明确允许的 property。
+- 同 preset 粘贴走同名 property。
+- 不同 preset 粘贴必须经过 `CopyScope` 或 `MigrationHint` 映射，无法映射的字段跳过并记录日志。
+- 贴图、ramp、atlas 这类对象引用按 GUID / local file id 记录，粘贴前必须确认资源存在。
+- 数值粘贴必须 clamp 到目标 descriptor 的 `Range`。
+- enum 粘贴必须按目标 descriptor 的枚举名匹配，不能只按 int 值硬塞。
+- color / vector 粘贴必须匹配维度，允许显式声明 swizzle，否则跳过。
+- 粘贴不能修改 shader、preset、render queue、keyword、pass、block、material tag。
+
+推荐的复制范围：
+
+| CopyScope | 内容 |
+| --- | --- |
+| `Property` | 单个 property |
+| `Group` | 一个 UI group 内的 property |
+| `PresetCompatibleGroup` | 不同 preset 之间通过映射表允许迁移的 group |
+| `MaterialValuesOnly` | 当前材质所有白名单参数值，不含结构信息 |
+
+Inspector 需要在粘贴前给出简短预览：
+
+- 将写入哪些 property。
+- 哪些字段因目标材质不支持而跳过。
+- 哪些字段被 clamp 或 enum remap。
+- 是否包含对象引用缺失。
+
+#### 3.5.2 警告信息与 HoRP 契约区域
+
+Material UI 可以绘制明显的提示和警告区域，尤其是 HoRP 相关设置。HoAOV、OIT、Semantic、RenderGraph resource 这些概念属于 RP 契约，视觉上必须和普通材质外观参数区分开。
+
+推荐将这类区域命名为 `ContractBox`，第一阶段支持：
+
+| ContractBox | 用途 | 典型内容 |
+| --- | --- | --- |
+| `HoRP.AOV` | HoAOV / semantic output 相关设置 | material class、mask id、normal depth、surface data、sss source |
+| `HoRP.OIT` | OIT 参与和透明输出相关设置 | participates OIT、accumulation input、revealage input、coverage |
+| `HoRP.Semantic` | Material / Shading 语义生产状态 | `Material.*`、`Shading.*` 是否由当前 preset 生产 |
+| `HoRP.Contract` | 上游契约版本和缺失项提示 | HoUrp 契约索引、缺失 property、过期字段 |
+| `Migration` | 旧材质迁移提示 | `_lil*` / `_HoAov*` 到新 property 的映射结果 |
+
+`ContractBox` 绘制规则：
+
+- 使用明显 box，而不是混在普通参数组里。
+- 标题必须写清楚这是 HoRP / RP 契约相关区域。
+- 可以展示当前 preset 会输出到哪些 HoRP pass / semantic。
+- 可以展示 warning / error / info 三种级别。
+- 可以提供“打开契约文档”“复制诊断信息”“复制迁移日志”这类工具。
+- 可以提供“填入推荐默认值”这类参数级修复动作。
+- 不能提供“启用 AOV pass”“关闭 OIT pass”“切换 RenderGraph resource”这类结构动作。
+
+警告来源分三类：
+
+| 来源 | 示例 | 允许动作 |
+| --- | --- | --- |
+| Descriptor 静态规则 | 参数缺失、范围不合法、对象引用缺失 | 显示 warning，允许定位 property |
+| HoRP 契约校验 | 当前 preset 声明输出 AOV，但关键 semantic 参数为空 | 显示 warning/error，允许填默认值或打开文档 |
+| 迁移 / 粘贴结果 | 旧属性无法映射、粘贴字段被跳过 | 显示 info/warning，允许复制日志 |
+
+HoAOV 相关区域要特别显眼：
+
+- 单独使用 `HoRP.AOV` box。
+- 明确列出当前材质会写入的 AOV semantic。
+- 明确列出哪些参数只是 AOV metadata，不是外观参数。
+- 如果 AOV 参数来自对象语义或 RenderGraph 资源，不要伪装成普通材质参数。
+- 如果某个输出由 HoRP 侧决定，UI 只显示只读说明和契约链接。
+
+#### 3.5.3 Render State 暴露策略
+
+队列偏移、混合模式、模板设置、深度写入、深度测试、剔除模式这类设置要按“结构状态”处理，而不是按普通材质参数处理。默认结论：不直接暴露给普通用户编辑。
+
+这些状态的归属：
+
+| 状态 | 归属 | UI 策略 |
+| --- | --- | --- |
+| Render queue / queue offset | template / preset / HoRP phase policy | 默认只读显示，不提供自由 slider |
+| Blend / BlendOp | template / preset | 只读显示；透明策略通过 preset 固定 |
+| Stencil | HoRP pass / feature contract | 只读显示；不允许材质实例编辑 |
+| ZWrite / ZTest | template / pass state | 只读显示；不允许材质实例编辑 |
+| Cull | template / preset | 默认只读；双面需求必须走明确 preset 或受控参数 |
+| ColorMask / MRT layout | HoRP pass / AOV contract | 只读显示；不允许材质实例编辑 |
+| RenderType / LightMode / Tags | template / generated shader | 只读显示；不允许材质实例编辑 |
+
+为什么不开放：
+
+- 这些值改变的是渲染路径、排序、pass 行为或 RP 资源写入，不是材质外观参数。
+- 一旦开放，UI 就会重新变成旧包那种“材质面板决定结构”的入口。
+- `Blend` / `Stencil` / `Queue` 的错误组合会破坏 HoAOV、OIT、Depth、Shadow、SemanticPost 的时序假设。
+- 跨材质复制粘贴如果携带这些值，会把一个材质的结构策略污染到另一个材质。
+
+允许的例外必须满足两个条件：HoRP 或 HoNpr preset 已经显式声明这个策略，并且 UI 只在受控枚举里切换。
+
+第一阶段建议只保留以下受控表达：
+
+| 受控表达 | 可编辑性 | 说明 |
+| --- | --- | --- |
+| `SurfaceKind` | 不建议第一阶段编辑 | Opaque / Cutout / Transparent / OIT 应优先由 preset 固定 |
+| `AlphaClipThreshold` | 可编辑 | 这是材质阈值参数，不是 pass 开关；对应 pass 是否存在仍由 preset 决定 |
+| `TransparentSortBias` | 谨慎，默认隐藏 | 仅在 HoRP 侧明确支持材质排序 bias 时可开放小范围 enum，不开放任意 queue offset |
+| `DoubleSidedNormalMode` | 谨慎 | 双面渲染应优先走 preset；如开放，只能影响 normal 处理参数，不能直接改 `Cull` |
+| `OitParticipation` | 可显示，谨慎编辑 | 只表达材质是否参与 OIT 语义；`HoUrpOitAccumulation` pass 是否存在由 preset 决定 |
+
+UI 可以绘制 `RenderStateView` 只读 box：
+
+- 显示当前 preset 固定的 queue、blend、depth、stencil、cull 摘要。
+- 标出这些状态来自 template / preset，不来自材质实例。
+- 如果材质实际 render queue 被 Unity 用户手动 override，显示 warning。
+- 如果检测到材质 tag / queue 与 generated shader 预期不一致，显示 error，并提供“恢复推荐值”这种参数级或 Unity material setting 级修复；不得生成新 preset。
+
+强制规则：
+
+- `*.honprui` 不能声明 `QueueOffsetSlider`、`BlendModeDropdown`、`StencilPanel` 这类自由 render state 控件。
+- 复制粘贴 payload 不能包含 render queue、shader tag、blend、stencil、depth、cull。
+- 如果确实需要新的透明、遮罩、模板或排序策略，新增 preset / template，而不是在 UI 上加开关。
+
+### 3.6 Generator
 
 建议结构：
 
@@ -321,7 +562,7 @@ Generator menu priority: 1120-1140
 // 不要手动修改生成体。请改 template / block / preset。
 ```
 
-### 3.6 LegacyInterop
+### 3.7 LegacyInterop
 
 建议结构：
 
@@ -454,6 +695,7 @@ Runtime/
   HoNpr.Runtime.asmdef
   Materials/
   Presets/
+  MaterialUi/
   Assets/
   Validation/
 ```
@@ -462,6 +704,7 @@ Runtime/
 | --- | --- |
 | `Materials/` | 材质实例运行时轻量数据，不定义 pass 结构 |
 | `Presets/` | ScriptableObject 形式的 preset asset 类型 |
+| `MaterialUi/` | 参数 UI descriptor 的运行时数据结构，不包含 Editor 绘制代码 |
 | `Assets/` | ramp atlas、材质贴图集、默认资源引用类型 |
 | `Validation/` | 运行时可复用的声明校验逻辑 |
 
@@ -473,6 +716,7 @@ Runtime/
 Editor/
   HoNpr.Editor.asmdef
   Inspectors/
+  MaterialUi/
   Generator/
   Importers/
   Validation/
@@ -482,6 +726,7 @@ Editor/
 | 子目录 | 职责 |
 | --- | --- |
 | `Inspectors/` | 轻量 preset/material 面板 |
+| `MaterialUi/` | `*.honprui` 解析、UI descriptor 校验、材质参数绘制 helper、小工具、警告 box、HoRP contract box 与复制粘贴 helper |
 | `Generator/` | 生成菜单、生成器 editor 入口 |
 | `Importers/` | 贴图/ramp/atlas 导入规则 |
 | `Validation/` | 表格、preset、generated shader 一致性检查 |
@@ -492,10 +737,34 @@ Editor UI 底线：
 - 可以选择 preset。
 - 可以显示 block 列表。
 - 可以显示 validation 结果。
+- 可以绘制 warning / error / info 提示。
+- 可以绘制明显的 HoRP contract box，例如 HoAOV、OIT、Semantic。
+- 可以绘制只读 render state 摘要，说明 queue / blend / stencil / depth / cull 来自 preset 或 template。
 - 可以编辑少量参数、贴图槽、ramp atlas。
+- 可以绘制参数小工具，例如复制、粘贴、重置、归一化、迁移日志。
 - 不能新增/删除 feature block。
 - 不能动态决定 pass 是否存在。
 - 不能扫描 inspector 属性反向生成 keyword。
+- 不能用 shader reflection 自动生成完整 UI。
+- 不能根据 UI 折叠组或 toggle 改写 preset、block、template。
+- 不能通过复制粘贴修改 shader、preset、keyword、render queue、pass 或 block。
+- 不能把 HoRP contract box 里的 warning 修复按钮做成结构开关。
+- 不能把 queue offset、Blend、Stencil、ZWrite、ZTest、Cull 暴露成普通材质参数。
+- 不能通过 warning 修复按钮修改 pass state；只能恢复 Unity material setting 的推荐值或提示换 preset。
+
+Inspector 第一版行为：
+
+- 读取材质当前 shader 头部或固定 property，识别 `SourcePreset`。
+- 按 `SourcePreset` 找到对应 `*.honprui`。
+- 只绘制 `*.honprui` 白名单里的参数。
+- 只绘制 `*.honprui` 白名单里的小工具。
+- 只绘制 `*.honprui` 白名单里的 warning / contract box。
+- 绘制只读 `RenderStateView`，用于解释当前 preset 的 queue / blend / stencil / depth / cull。
+- 缺失参数显示只读 warning，不自动创建隐藏属性。
+- 未声明参数折叠到“高级 / 原始属性”只读区，便于排查但不鼓励编辑。
+- 提供 group/property 级复制粘贴，并在写入前显示预览。
+- 提供“复制迁移日志”按钮，记录旧属性到新属性的手动映射结果、跳过字段和 clamp/remap 结果。
+- HoRP.AOV / HoRP.OIT / HoRP.Semantic 区域用明显 box 绘制，标题写清楚“HoRP 契约”。
 
 ---
 
@@ -554,6 +823,13 @@ Tests/
 | `GeneratedShaderProvenanceTests` | generated shader 头部来源可追踪 |
 | `LegacySymbolGuardTests` | 新生成 shader 不含 `_lil*`、`_HoAov*`、`HoAOV`、`lilToonOIT` |
 | `HoUrpContractReferenceTests` | HoNpr 引用的语义/pass/resource 在 HoUrp 契约中存在 |
+| `MaterialUiDescriptorTests` | `*.honprui` 只引用已存在参数，且 `StructuralEffect` 固定为 `None` |
+| `MaterialUiNoReflectionTests` | Inspector 路径不通过 shader reflection 生成参数列表 |
+| `MaterialUiClipboardTests` | 复制粘贴 payload 只包含白名单参数值，不包含结构字段 |
+| `MaterialUiPasteValidationTests` | 跨材质粘贴会执行类型、范围、enum、资源引用校验 |
+| `MaterialUiContractBoxTests` | HoRP contract box 只显示契约状态和参数级修复，不提供结构开关 |
+| `MaterialUiWarningTests` | warning / error / info 来源可追踪，且不依赖 shader reflection |
+| `MaterialUiRenderStateTests` | `*.honprui` 不能声明自由 render state 控件，只能声明只读 `RenderStateView` 或受控策略 |
 
 ---
 
@@ -564,8 +840,10 @@ Tests/
 3. 建 `ShaderSystem/FeatureBlocks/*.honprblock`，先登记最小原型 blocks。
 4. 建 `ShaderSystem/Presets/*.honprpreset`，先登记 `Character_DebugLit_SSS_OITReady`。
 5. 建 `ShaderSystem/LegacyInterop/LEGACY_MAPPING_TABLE.md`，冻结旧符号迁移判定。
-6. 决定是否移动 HoToon 小模块到 `Modules/HoToon/`。移动前保留 `.meta`，不要破坏 Unity GUID。
-7. 再做生成器和第一份 `Generated` shader。
+6. 建 `ShaderSystem/MaterialUi/*.honprui` 和 `MATERIAL_UI_TABLE.md`，先覆盖 `Character_DebugLit_SSS_OITReady` 的最小参数 UI。
+7. 决定是否移动 HoToon 小模块到 `Modules/HoToon/`。移动前保留 `.meta`，不要破坏 Unity GUID。
+8. 再做生成器和第一份 `Generated` shader。
+9. 最后做极简 Inspector：只读 preset、按 `*.honprui` 绘制白名单参数和小工具，不做反射和结构分叉。
 
 ---
 
@@ -581,6 +859,17 @@ Tests/
 - 能否从 generated shader 追溯到 template / block / preset？
 - 是否没有新增 `_lil*`、`_HoAov*`、`HoAOV`、`HoAOVSSS`、`lilToonOIT`？
 - 是否没有让 UI 决定 pass 或 block？
+- 是否没有让 UI descriptor 声明 keyword、define、include 或 variant？
+- 是否没有通过 shader reflection 自动生成参数 UI？
+- 是否能从 `*.honprui` 看出每个可编辑参数的来源、范围、控件和迁移提示？
+- 是否能从 `*.honprui` 看出每个小工具的作用范围和允许写入的 property？
+- 是否能从 `*.honprui` 看出 HoRP contract box 的来源、级别、文档链接和允许动作？
+- 跨材质复制粘贴是否只传递参数值，不传递 shader / preset / keyword / pass / block？
+- 粘贴前是否能看到写入、跳过、clamp、enum remap 和缺失资源的预览？
+- HoAOV / OIT / Semantic 相关设置是否被明显标成 HoRP 契约区域，而不是普通外观参数？
+- warning 修复按钮是否只改参数或打开文档，不改 pass、block、keyword 或 RenderGraph resource？
+- queue offset、Blend、Stencil、ZWrite、ZTest、Cull 是否只读显示或由 preset/template 固定，而不是普通材质参数？
+- 如果确实需要新的透明、模板或排序策略，是否走新增 preset/template，而不是 UI 开关？
 - 是否仍然对齐 `HoUrp-Extensions` 的正式契约？
 
 一句话底线：`HoNpr` 的目录不是“shader 文件分类”，而是材质系统的显式声明面。任何生成、模板、迁移、调试入口都必须有表格和链接，让人类和 AI 能在不猜代码的情况下理解它的生产、消费和生命周期。
