@@ -1,0 +1,10 @@
+block MaterialBlock.FinalColorComposite : Composite in CompositeDomain
+{
+    consumes HoNprLobeOutput.diffuse HoNprLobeOutput.specular HoNprLobeOutput.transmission HoNprLobeOutput.emission;
+    produces FinalColor FinalAlpha;
+    requires include HoNpr.Composite;
+    requires define HONPR_HAS_FINAL_COLOR_COMPOSITE;
+    entry HoNprCompositeFinalColor;
+    variantPolicy AlwaysCompiled;
+    debug Composite.FinalColor;
+}

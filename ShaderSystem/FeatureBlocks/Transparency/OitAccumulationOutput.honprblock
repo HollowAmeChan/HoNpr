@@ -1,0 +1,10 @@
+block MaterialBlock.OitAccumulationOutput : Transparency in CompositeDomain
+{
+    consumes TransparentColor TransparentAlpha Coverage;
+    produces OitAccumulationInput OitRevealageInput;
+    requires include HoNpr.Transparency;
+    requires define HONPR_HAS_OIT_ACCUMULATION;
+    entry HoNprEncodeOitOutput;
+    variantPolicy PresetStatic;
+    debug OIT.Accumulation;
+}

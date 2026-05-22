@@ -1,0 +1,10 @@
+block MaterialBlock.MaterialMapPacked : SurfaceInput in MaterialDomain
+{
+    consumes MaterialMap;
+    produces HoUrpSurfaceData.metallic HoUrpSurfaceData.roughness HoUrpSurfaceData.occlusion;
+    requires include HoNpr.StandardSurface;
+    requires define HONPR_HAS_MATERIAL_MAP_PACKED;
+    entry HoNprApplyMaterialMapPacked;
+    variantPolicy PresetStatic;
+    debug Surface.MaterialMap;
+}

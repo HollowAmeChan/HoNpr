@@ -1,4 +1,3 @@
-# Composite Blocks
+# Composite 功能块
 
-Composite blocks are the only regular blocks allowed to combine lobe outputs into final color.
-
+Composite 功能块是唯一允许把 lobe 输出合成为最终颜色的常规功能块。

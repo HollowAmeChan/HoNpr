@@ -1,4 +1,3 @@
-# Debug Blocks
+# Debug 功能块
 
-Debug blocks produce explicit debug data and views without becoming hidden rendering behavior.
-
+Debug 功能块负责显式生产 debug 数据和视图，不能变成隐藏渲染行为。

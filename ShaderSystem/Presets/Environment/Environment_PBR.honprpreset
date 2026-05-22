@@ -1,0 +1,14 @@
+preset MaterialPreset.Environment_PBR
+{
+    display "Environment PBR";
+    templates MaterialTemplate.EnvironmentForward MaterialTemplate.EnvironmentAov;
+    shaderName "HoNpr/Generated/Environment_PBR";
+    generatedShader "Shaders/Generated/Environment/Environment_PBR.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.MaterialMapPacked MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.PbrDiffuse MaterialBlock.PbrSpecularGGX MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    passes UniversalForward DepthOnly ShadowCaster HoUrpAovOutput;
+    produces Material.Class;
+    requires capability SceneMaterial ParticipatesSemanticPost;
+    phase Forward;
+    status Planned;
+}

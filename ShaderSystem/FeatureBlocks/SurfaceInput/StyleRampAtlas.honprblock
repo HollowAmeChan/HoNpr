@@ -1,0 +1,10 @@
+block MaterialBlock.StyleRampAtlas : SurfaceInput in ShadingDomain
+{
+    consumes StyleRampAtlas RampUv;
+    produces HoNprStyleRamp;
+    requires include HoNpr.StylizedSurface;
+    requires define HONPR_HAS_STYLE_RAMP_ATLAS;
+    entry HoNprSampleStyleRampAtlas;
+    variantPolicy PresetStatic;
+    debug Style.Ramp;
+}

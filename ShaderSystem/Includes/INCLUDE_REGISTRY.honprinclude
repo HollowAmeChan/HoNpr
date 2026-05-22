@@ -1,0 +1,24 @@
+// HoNpr include aliases are the only include names feature blocks may request.
+// The generator expands aliases to paths after sorting and de-duplicating.
+
+include Unity.Core = "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl";
+include Unity.Lighting = "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl";
+include Unity.Shadows = "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl";
+
+include HoUrp.MaterialSurface = "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialSurface.hlsl";
+include HoUrp.MaterialAov = "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialAov.hlsl";
+include HoUrp.MaterialOit = "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialOit.hlsl";
+include HoUrp.ObjectSemantic = "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpObjectSemantic.hlsl";
+
+include HoNpr.Common = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/HoNprCommon.hlsl";
+include HoNpr.StandardSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl";
+include HoNpr.PbrLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprPbrLobes.hlsl";
+include HoNpr.Subsurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprSubsurface.hlsl";
+include HoNpr.StylizedSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl";
+include HoNpr.ToonLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl";
+include HoNpr.StylizedLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl";
+include HoNpr.LightingInput = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Lighting/HoNprLightingInput.hlsl";
+include HoNpr.SemanticSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/SemanticSurface/HoNprSemanticSurface.hlsl";
+include HoNpr.Transparency = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Transparency/HoNprTransparency.hlsl";
+include HoNpr.Composite = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl";
+include HoNpr.DebugBlocks = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Debug/HoNprDebugBlocks.hlsl";

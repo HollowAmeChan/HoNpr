@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,23 +14,23 @@ namespace Hollow.HoNpr.Editor
         private const string MenuPathAssets = "Assets/HoNpr/Generator/";
         private const string MenuPathForceRegenerate = MenuPathAssets + "[Shader] Force regenerate generated shaders";
         private const string MenuPathRefreshGenerated = MenuPathAssets + "[Shader] Refresh generated shader assets";
-        private const string MenuPathValidateTables = MenuPathAssets + "[Validation] Validate shader system tables";
-        private const string MenuPathRebuildManifests = MenuPathAssets + "[Manifest] Rebuild generated manifests";
+        private const string MenuPathValidateDeclarations = MenuPathAssets + "[Validation] Validate shader system declarations";
+        private const string MenuPathRebuildDeclarationTables = MenuPathAssets + "[Documentation] Rebuild declaration tables";
         private const int MenuPriorityGenerator = 1120;
         private const int MenuPriorityRefresh = MenuPriorityGenerator + 1;
         private const int MenuPriorityValidation = MenuPriorityGenerator + 10;
-        private const int MenuPriorityManifest = MenuPriorityGenerator + 20;
+        private const int MenuPriorityDocumentation = MenuPriorityGenerator + 20;
         private const string ScriptName = "HoNprGeneratorEditorUtils";
 
         private static readonly string[] RequiredFolders =
         {
             "ShaderSystem",
             "ShaderSystem/Contract",
+            "ShaderSystem/Includes",
             "ShaderSystem/Templates",
             "ShaderSystem/FeatureBlocks",
             "ShaderSystem/Presets",
             "ShaderSystem/Generator",
-            "ShaderSystem/GeneratedManifests",
             "ShaderSystem/LegacyInterop",
             "Shaders/Generated"
         };
@@ -35,15 +39,11 @@ namespace Hollow.HoNpr.Editor
         {
             "ShaderSystem/README.md",
             "ShaderSystem/Contract/HORP_CONTRACT_INDEX.md",
-            "ShaderSystem/Templates/TEMPLATE_TABLE.md",
-            "ShaderSystem/FeatureBlocks/FEATURE_BLOCK_TABLE.md",
-            "ShaderSystem/Presets/PRESET_TABLE.md",
+            "ShaderSystem/Includes/INCLUDE_REGISTRY.honprinclude",
             "ShaderSystem/Generator/GENERATOR_RULES.md",
             "ShaderSystem/Generator/SourceMapping.md",
             "ShaderSystem/Generator/ValidationRules.md",
-            "ShaderSystem/GeneratedManifests/GENERATED_TABLE.md",
             "ShaderSystem/LegacyInterop/LEGACY_MAPPING_TABLE.md",
-            "Shaders/Generated/GENERATED_TABLE.md"
         };
 
         [MenuItem(MenuPathForceRegenerate, false, MenuPriorityGenerator)]
@@ -56,9 +56,9 @@ namespace Hollow.HoNpr.Editor
                 return;
             }
 
+            RebuildDeclarationTables(packageRoot, false);
             bool valid = ValidateShaderSystem(packageRoot, false);
             int generatedCount = GeneratePrototypeShaders(packageRoot);
-            RebuildGeneratedManifests(packageRoot, false);
             int importedCount = RefreshGeneratedShaderAssets(packageRoot, false);
 
             AssetDatabase.SaveAssets();
@@ -90,8 +90,8 @@ namespace Hollow.HoNpr.Editor
             Debug.Log($"[HoNpr.Generator] Refreshed {importedCount} generated shader assets.");
         }
 
-        [MenuItem(MenuPathValidateTables, false, MenuPriorityValidation)]
-        private static void ValidateShaderSystemTables()
+        [MenuItem(MenuPathValidateDeclarations, false, MenuPriorityValidation)]
+        private static void ValidateShaderSystemDeclarations()
         {
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
@@ -103,8 +103,8 @@ namespace Hollow.HoNpr.Editor
             ValidateShaderSystem(packageRoot, true);
         }
 
-        [MenuItem(MenuPathRebuildManifests, false, MenuPriorityManifest)]
-        private static void RebuildGeneratedManifests()
+        [MenuItem(MenuPathRebuildDeclarationTables, false, MenuPriorityDocumentation)]
+        private static void RebuildDeclarationTables()
         {
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
@@ -113,7 +113,7 @@ namespace Hollow.HoNpr.Editor
                 return;
             }
 
-            RebuildGeneratedManifests(packageRoot, true);
+            RebuildDeclarationTables(packageRoot, true);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
@@ -133,7 +133,7 @@ namespace Hollow.HoNpr.Editor
             foreach (string file in RequiredFiles)
             {
                 string path = $"{packageRoot}/{file}";
-                if (AssetDatabase.LoadAssetAtPath<TextAsset>(path) == null)
+                if (!AssetExists(path))
                     missing.Add(path);
             }
 
@@ -152,43 +152,23 @@ namespace Hollow.HoNpr.Editor
             }
 
             if (logSuccess)
-                Debug.Log("[HoNpr.Generator] Shader system declaration tables are present.");
+            Debug.Log("[HoNpr.Generator] Shader system declarations are valid.");
 
             return true;
         }
 
         private static void ValidateDeclarationReferences(string packageRoot, List<string> errors)
         {
-            var templates = new HashSet<string>();
-            var blocks = new HashSet<string>();
+            var includeRegistry = LoadIncludeRegistry(packageRoot, errors);
+            var declarations = LoadShaderSystemDeclarations(packageRoot, includeRegistry, errors);
+            var templates = new HashSet<string>(declarations.templates.Select(template => template.id));
+            var blocks = new HashSet<string>(declarations.blocks.Select(block => block.id));
 
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Templates", "*.template"))
+            foreach (FeatureBlockDeclaration block in declarations.blocks)
+                ValidateIncludeAliases(block.requiredIncludes, includeRegistry, block.id, errors);
+
+            foreach (PrototypePreset preset in declarations.presets)
             {
-                IdDeclaration declaration = LoadJsonAsset<IdDeclaration>(path);
-                if (declaration == null || string.IsNullOrEmpty(declaration.id))
-                    errors.Add($"Template is missing id: {path}");
-                else
-                    templates.Add(declaration.id);
-            }
-
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.block.json"))
-            {
-                IdDeclaration declaration = LoadJsonAsset<IdDeclaration>(path);
-                if (declaration == null || string.IsNullOrEmpty(declaration.id))
-                    errors.Add($"Feature block is missing id: {path}");
-                else
-                    blocks.Add(declaration.id);
-            }
-
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Presets", "*.preset.json"))
-            {
-                PrototypePreset preset = LoadJsonAsset<PrototypePreset>(path);
-                if (preset == null || string.IsNullOrEmpty(preset.presetId))
-                {
-                    errors.Add($"Preset is missing presetId: {path}");
-                    continue;
-                }
-
                 var presetTemplates = new HashSet<string>();
                 if (!string.IsNullOrEmpty(preset.template))
                     presetTemplates.Add(preset.template);
@@ -222,46 +202,593 @@ namespace Hollow.HoNpr.Editor
             }
         }
 
+        private static ShaderSystemDeclarations LoadShaderSystemDeclarations(string packageRoot, IncludeRegistry includeRegistry, List<string> errors)
+        {
+            var declarations = new ShaderSystemDeclarations();
+            var templates = new HashSet<string>();
+            var blocks = new HashSet<string>();
+            var presets = new HashSet<string>();
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Templates", "*.honprtemplate"))
+            {
+                ShaderTemplateDeclaration declaration = LoadTemplateDeclaration(packageRoot, path, errors);
+                if (declaration == null || string.IsNullOrEmpty(declaration.id))
+                {
+                    errors.Add($"Template is missing id: {path}");
+                    continue;
+                }
+
+                declaration.path = ToPackageRelativePath(packageRoot, path);
+                if (!templates.Add(declaration.id))
+                    errors.Add($"Duplicate template id {declaration.id}: {path}");
+                else
+                    declarations.templates.Add(declaration);
+            }
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.honprblock"))
+            {
+                ValidateNoRawShaderDirectives(path, errors);
+                FeatureBlockDeclaration declaration = LoadFeatureBlockDeclaration(packageRoot, path, errors);
+                if (declaration == null || string.IsNullOrEmpty(declaration.id))
+                {
+                    errors.Add($"Feature block is missing id: {path}");
+                    continue;
+                }
+
+                declaration.path = ToPackageRelativePath(packageRoot, path);
+                declaration.includePaths = ResolveIncludePaths(declaration.requiredIncludes, includeRegistry);
+                if (!blocks.Add(declaration.id))
+                    errors.Add($"Duplicate feature block id {declaration.id}: {path}");
+                else
+                    declarations.blocks.Add(declaration);
+            }
+
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Presets", "*.honprpreset"))
+            {
+                ValidateNoRawShaderDirectives(path, errors);
+                PrototypePreset preset = LoadPresetDeclaration(packageRoot, path, errors);
+                if (preset == null || string.IsNullOrEmpty(preset.presetId))
+                {
+                    errors.Add($"Preset is missing presetId: {path}");
+                    continue;
+                }
+
+                preset.path = ToPackageRelativePath(packageRoot, path);
+                if (!presets.Add(preset.presetId))
+                    errors.Add($"Duplicate preset id {preset.presetId}: {path}");
+                else
+                    declarations.presets.Add(preset);
+            }
+
+            declarations.templates.Sort((a, b) => string.CompareOrdinal(a.id, b.id));
+            declarations.blocks.Sort((a, b) => string.CompareOrdinal(a.id, b.id));
+            declarations.presets.Sort((a, b) => string.CompareOrdinal(a.presetId, b.presetId));
+            return declarations;
+        }
+
+        private static string[] ResolveIncludePaths(IReadOnlyList<string> aliases, IncludeRegistry includeRegistry)
+        {
+            if (aliases == null)
+                return Array.Empty<string>();
+
+            var paths = new List<string>();
+            foreach (string alias in aliases)
+            {
+                if (includeRegistry.aliasToPath.TryGetValue(alias, out string includePath))
+                    paths.Add(includePath);
+            }
+
+            return paths.ToArray();
+        }
+
+        private static string ToPackageRelativePath(string packageRoot, string assetPath)
+        {
+            string prefix = packageRoot.TrimEnd('/') + "/";
+            return assetPath.StartsWith(prefix, StringComparison.Ordinal) ? assetPath.Substring(prefix.Length) : assetPath;
+        }
+
         private static IEnumerable<string> FindFiles(string packageRoot, string relativeFolder, string searchPattern)
         {
-            string absoluteFolder = Path.Combine(PackageAssetPathToAbsolutePath(packageRoot), NormalizeRelativePath(relativeFolder));
+            string assetFolder = $"{packageRoot}/{relativeFolder}";
+            var yielded = new HashSet<string>();
+
+            if (AssetDatabase.IsValidFolder(assetFolder))
+            {
+                string[] guids = AssetDatabase.FindAssets(string.Empty, new[] { assetFolder });
+                foreach (string guid in guids)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guid);
+                    if (!string.IsNullOrEmpty(path) && MatchesSearchPattern(path, searchPattern) && yielded.Add(path))
+                        yield return path;
+                }
+            }
+
+            string packageAbsoluteRoot = PackageAssetPathToAbsolutePath(packageRoot);
+            string absoluteFolder = Path.Combine(packageAbsoluteRoot, NormalizeRelativePath(relativeFolder));
             if (!Directory.Exists(absoluteFolder))
                 yield break;
 
             foreach (string absolutePath in Directory.EnumerateFiles(absoluteFolder, searchPattern, SearchOption.AllDirectories))
             {
-                string relativePath = Path.GetRelativePath(PackageAssetPathToAbsolutePath(packageRoot), absolutePath)
+                string relativePath = Path.GetRelativePath(packageAbsoluteRoot, absolutePath)
                     .Replace(Path.DirectorySeparatorChar, '/')
                     .Replace(Path.AltDirectorySeparatorChar, '/');
-                yield return $"{packageRoot}/{relativePath}";
+                string assetPath = $"{packageRoot}/{relativePath}";
+                if (yielded.Add(assetPath))
+                    yield return assetPath;
             }
         }
 
-        private static IEnumerable<string> FindTextAssets(string root, string filter)
+        private static bool MatchesSearchPattern(string path, string searchPattern)
         {
-            if (!AssetDatabase.IsValidFolder(root))
-                yield break;
+            if (searchPattern.StartsWith("*", StringComparison.Ordinal))
+                return path.EndsWith(searchPattern.Substring(1), StringComparison.OrdinalIgnoreCase);
 
-            string[] guids = AssetDatabase.FindAssets(filter, new[] { root });
-            foreach (string guid in guids)
+            return string.Equals(Path.GetFileName(path), searchPattern, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool AssetExists(string path)
+        {
+            if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(path) != null)
+                return true;
+
+            string absolutePath = AssetPathToAbsolutePath(path);
+            return File.Exists(absolutePath);
+        }
+
+        private static IncludeRegistry LoadIncludeRegistry(string packageRoot, List<string> errors)
+        {
+            string path = $"{packageRoot}/ShaderSystem/Includes/INCLUDE_REGISTRY.honprinclude";
+            string text = ReadAssetText(path);
+            var registry = new IncludeRegistry();
+
+            if (string.IsNullOrEmpty(text))
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                if (!string.IsNullOrEmpty(path))
-                    yield return path;
+                errors.Add($"Include registry is empty or missing: {path}");
+                return registry;
+            }
+
+            text = StripLineComments(text);
+            foreach (DslStatement statement in ParseStatements(text, path, errors))
+            {
+                if (!statement.NameEquals("include"))
+                    continue;
+
+                string alias = statement.Arguments.Count > 0 ? statement.Arguments[0] : null;
+                string includePath = statement.Value;
+                if (string.IsNullOrEmpty(alias) || string.IsNullOrEmpty(includePath))
+                {
+                    errors.Add($"Include declaration must be `include <Alias> = \"path\";`: {path}");
+                    continue;
+                }
+
+                if (registry.aliasToPath.ContainsKey(alias))
+                    errors.Add($"Duplicate include alias {alias}: {path}");
+                else
+                    registry.aliasToPath.Add(alias, includePath);
+            }
+
+            return registry;
+        }
+
+        private static void ValidateIncludeAliases(IReadOnlyList<string> aliases, IncludeRegistry registry, string ownerId, List<string> errors)
+        {
+            if (aliases == null)
+                return;
+
+            foreach (string alias in aliases)
+            {
+                if (!registry.aliasToPath.ContainsKey(alias))
+                    errors.Add($"{ownerId} references missing include alias {alias}.");
             }
         }
 
-        private static T LoadJsonAsset<T>(string path)
+        private static void RebuildDeclarationTables(string packageRoot, bool logSuccess)
         {
-            TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
-            if (asset != null)
-                return JsonUtility.FromJson<T>(asset.text);
+            var errors = new List<string>();
+            IncludeRegistry includeRegistry = LoadIncludeRegistry(packageRoot, errors);
+            ShaderSystemDeclarations declarations = LoadShaderSystemDeclarations(packageRoot, includeRegistry, errors);
 
-            string absolutePath = Path.Combine(Directory.GetCurrentDirectory(), path.Replace('/', Path.DirectorySeparatorChar));
-            if (!File.Exists(absolutePath))
-                return default;
+            string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
+            WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "Templates", "TEMPLATE_TABLE.md"), BuildTemplateTable(declarations));
+            WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "FeatureBlocks", "FEATURE_BLOCK_TABLE.md"), BuildFeatureBlockTable(declarations));
+            WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "Presets", "PRESET_TABLE.md"), BuildPresetTable(declarations));
 
-            return JsonUtility.FromJson<T>(File.ReadAllText(absolutePath));
+            var importedPaths = new List<string>();
+            ImportAssets($"{packageRoot}/ShaderSystem/Templates", "TEMPLATE_TABLE", importedPaths, false);
+            ImportAssets($"{packageRoot}/ShaderSystem/FeatureBlocks", "FEATURE_BLOCK_TABLE", importedPaths, false);
+            ImportAssets($"{packageRoot}/ShaderSystem/Presets", "PRESET_TABLE", importedPaths, false);
+
+            if (errors.Count > 0)
+            {
+                Debug.LogWarning("[HoNpr.Generator] Rebuilt declaration tables with validation warnings:\n" + string.Join("\n", errors));
+                return;
+            }
+
+            if (logSuccess)
+                Debug.Log($"[HoNpr.Generator] Rebuilt declaration tables from HoNpr DSL. Imported {importedPaths.Count} table assets.");
+        }
+
+        private static string BuildTemplateTable(ShaderSystemDeclarations declarations)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("# 模板表");
+            builder.AppendLine();
+            builder.AppendLine("由 `*.honprtemplate` 自动生成。不要手动编辑表格行。");
+            builder.AppendLine();
+            builder.AppendLine("| 模板 ID | 路径 | Pass | Include 插槽 | 状态 | 说明 |");
+            builder.AppendLine("| --- | --- | --- | --- | --- | --- |");
+
+            foreach (ShaderTemplateDeclaration template in declarations.templates)
+            {
+                builder.Append("| ");
+                builder.Append(Code(template.id));
+                builder.Append(" | ");
+                builder.Append(Code(template.path));
+                builder.Append(" | ");
+                builder.Append(CodeList(template.passes));
+                builder.Append(" | ");
+                builder.Append(CodeList(template.requiredSlots));
+                builder.Append(" | ");
+                builder.Append(template.id == "MaterialTemplate.DebugLitMinimal" ? "已生成" : "已声明");
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(template.description));
+                builder.AppendLine(" |");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string BuildFeatureBlockTable(ShaderSystemDeclarations declarations)
+        {
+            var compatiblePresetMap = BuildCompatiblePresetMap(declarations);
+            var builder = new StringBuilder();
+            builder.AppendLine("# 功能块表");
+            builder.AppendLine();
+            builder.AppendLine("由 `*.honprblock` 自动生成。不要手动编辑表格行。");
+            builder.AppendLine();
+            builder.AppendLine("| ID | Domain | Stage | 消费 | 生产 | Include 别名 | Define | 入口 | 兼容 Preset | Variant 策略 | Debug 视图 |");
+            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
+
+            foreach (FeatureBlockDeclaration block in declarations.blocks)
+            {
+                builder.Append("| ");
+                builder.Append(Code(block.id));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(block.domain));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(block.stage));
+                builder.Append(" | ");
+                builder.Append(CodeList(block.requiredInputs));
+                builder.Append(" | ");
+                builder.Append(CodeList(block.producedFields));
+                builder.Append(" | ");
+                builder.Append(CodeList(block.requiredIncludes));
+                builder.Append(" | ");
+                builder.Append(CodeList(block.requiredDefines));
+                builder.Append(" | ");
+                builder.Append(Code(block.entry));
+                builder.Append(" | ");
+                builder.Append(CodeList(compatiblePresetMap.TryGetValue(block.id, out var presets) ? presets : Array.Empty<string>()));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(DisplayVariantPolicy(block.variantPolicy)));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(block.debugView));
+                builder.AppendLine(" |");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string BuildPresetTable(ShaderSystemDeclarations declarations)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("# Preset 表");
+            builder.AppendLine();
+            builder.AppendLine("由 `*.honprpreset` 自动生成。不要手动编辑表格行。");
+            builder.AppendLine();
+            builder.AppendLine("| Preset ID | 路径 | 模板 | 功能块 | Pass | 生产语义 | 需要的 Capability | Phase 策略 | 生成 Shader | 状态 |");
+            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
+
+            foreach (PrototypePreset preset in declarations.presets)
+            {
+                builder.Append("| ");
+                builder.Append(Code(preset.presetId));
+                builder.Append(" | ");
+                builder.Append(Code(preset.path));
+                builder.Append(" | ");
+                builder.Append(CodeList(GetPresetTemplates(preset)));
+                builder.Append(" | ");
+                builder.Append(CodeList(preset.featureBlocks));
+                builder.Append(" | ");
+                builder.Append(CodeList(preset.passes));
+                builder.Append(" | ");
+                builder.Append(CodeList(preset.producedSemantics));
+                builder.Append(" | ");
+                builder.Append(CodeList(preset.requiredCapabilities));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(DisplayPhasePolicy(preset.phasePolicy)));
+                builder.Append(" | ");
+                builder.Append(Code(preset.generatedShader));
+                builder.Append(" | ");
+                builder.Append(MarkdownCell(DisplayPresetStatus(preset.status)));
+                builder.AppendLine(" |");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string DisplayVariantPolicy(string value)
+        {
+            switch (value)
+            {
+                case "AlwaysCompiled":
+                    return "总是编译";
+                case "PresetStatic":
+                    return "Preset 静态";
+                case "DebugOnly":
+                    return "仅 Debug";
+                case "Unsupported":
+                    return "不支持";
+                default:
+                    return value;
+            }
+        }
+
+        private static string DisplayPhasePolicy(string value)
+        {
+            switch (value)
+            {
+                case "Forward":
+                    return "Forward";
+                case "OitOnly":
+                    return "仅 OIT";
+                default:
+                    return value;
+            }
+        }
+
+        private static string DisplayPresetStatus(string value)
+        {
+            switch (value)
+            {
+                case "Prototype":
+                    return "原型";
+                case "Planned":
+                    return "规划中";
+                case "Active":
+                    return "已启用";
+                case "Deprecated":
+                    return "已废弃";
+                default:
+                    return value;
+            }
+        }
+
+        private static Dictionary<string, string[]> BuildCompatiblePresetMap(ShaderSystemDeclarations declarations)
+        {
+            var map = new Dictionary<string, List<string>>();
+            foreach (PrototypePreset preset in declarations.presets)
+            {
+                if (preset.featureBlocks == null)
+                    continue;
+
+                foreach (string block in preset.featureBlocks)
+                {
+                    if (!map.TryGetValue(block, out List<string> presets))
+                    {
+                        presets = new List<string>();
+                        map.Add(block, presets);
+                    }
+
+                    presets.Add(preset.presetId);
+                }
+            }
+
+            var result = new Dictionary<string, string[]>();
+            foreach (KeyValuePair<string, List<string>> entry in map)
+                result.Add(entry.Key, entry.Value.OrderBy(value => value, StringComparer.Ordinal).ToArray());
+
+            return result;
+        }
+
+        private static string[] GetPresetTemplates(PrototypePreset preset)
+        {
+            if (preset.templates != null && preset.templates.Length > 0)
+                return preset.templates;
+
+            return string.IsNullOrEmpty(preset.template) ? Array.Empty<string>() : new[] { preset.template };
+        }
+
+        private static void WriteTextFile(string path, string content)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, content, System.Text.Encoding.UTF8);
+        }
+
+        private static string CodeList(IReadOnlyList<string> values)
+        {
+            if (values == null || values.Count == 0)
+                return string.Empty;
+
+            return string.Join(", ", values.Where(value => !string.IsNullOrEmpty(value)).Select(Code));
+        }
+
+        private static string Code(string value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : $"`{MarkdownCell(value)}`";
+        }
+
+        private static string MarkdownCell(string value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : value.Replace("|", "\\|").Replace("\r", " ").Replace("\n", " ");
+        }
+
+        private static void ValidateNoRawShaderDirectives(string path, List<string> errors)
+        {
+            string text = ReadAssetText(path);
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            using (var reader = new StringReader(text))
+            {
+                string line;
+                int lineNumber = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    lineNumber++;
+                    string trimmed = line.TrimStart();
+                    if (trimmed.StartsWith("#include", StringComparison.Ordinal) ||
+                        trimmed.StartsWith("#define", StringComparison.Ordinal) ||
+                        trimmed.StartsWith("#pragma", StringComparison.Ordinal))
+                    {
+                        errors.Add($"Raw shader directive is not allowed in DSL declarations: {path}:{lineNumber}");
+                    }
+                }
+            }
+        }
+
+        private static ShaderTemplateDeclaration LoadTemplateDeclaration(string packageRoot, string path, List<string> errors)
+        {
+            string text = ReadAssetText(path);
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            foreach (DslBlock block in ParseBlocks(text, path, errors))
+            {
+                if (!block.KindEquals("template"))
+                    continue;
+
+                var declaration = new ShaderTemplateDeclaration
+                {
+                    id = block.Id,
+                    passes = Array.Empty<string>(),
+                    requiredSlots = Array.Empty<string>()
+                };
+
+                foreach (DslStatement statement in block.Statements)
+                {
+                    if (statement.NameEquals("display"))
+                        declaration.displayName = statement.Value;
+                    else if (statement.NameEquals("description"))
+                        declaration.description = statement.Value;
+                    else if (statement.NameEquals("passes"))
+                        declaration.passes = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("requires") && statement.ArgumentEquals(0, "slots"))
+                        declaration.requiredSlots = statement.ArgumentsFrom(1).ToArray();
+                    else if (statement.NameEquals("shaderNamePattern"))
+                        declaration.shaderNamePattern = statement.Value;
+                }
+
+                return declaration;
+            }
+
+            return null;
+        }
+
+        private static FeatureBlockDeclaration LoadFeatureBlockDeclaration(string packageRoot, string path, List<string> errors)
+        {
+            string text = ReadAssetText(path);
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            foreach (DslBlock block in ParseBlocks(text, path, errors))
+            {
+                if (!block.KindEquals("block"))
+                    continue;
+
+                var declaration = new FeatureBlockDeclaration
+                {
+                    id = block.Id,
+                    domain = block.Domain,
+                    stage = block.Stage,
+                    requiredInputs = Array.Empty<string>(),
+                    producedFields = Array.Empty<string>(),
+                    requiredIncludes = Array.Empty<string>(),
+                    requiredDefines = Array.Empty<string>(),
+                    variants = Array.Empty<string>()
+                };
+
+                foreach (DslStatement statement in block.Statements)
+                {
+                    if (statement.NameEquals("consumes"))
+                        declaration.requiredInputs = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("produces"))
+                        declaration.producedFields = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("requires") && statement.ArgumentEquals(0, "include"))
+                        declaration.requiredIncludes = statement.ArgumentsFrom(1).ToArray();
+                    else if (statement.NameEquals("requires") && statement.ArgumentEquals(0, "define"))
+                        declaration.requiredDefines = statement.ArgumentsFrom(1).ToArray();
+                    else if (statement.NameEquals("entry"))
+                        declaration.entry = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                    else if (statement.NameEquals("variantPolicy"))
+                        declaration.variantPolicy = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                    else if (statement.NameEquals("variant"))
+                        declaration.variants = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("debug"))
+                        declaration.debugView = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                }
+
+                return declaration;
+            }
+
+            return null;
+        }
+
+        private static PrototypePreset LoadPresetDeclaration(string packageRoot, string path, List<string> errors)
+        {
+            string text = ReadAssetText(path);
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            foreach (DslBlock block in ParseBlocks(text, path, errors))
+            {
+                if (!block.KindEquals("preset"))
+                    continue;
+
+                var declaration = new PrototypePreset
+                {
+                    presetId = block.Id,
+                    templates = Array.Empty<string>(),
+                    featureBlocks = Array.Empty<string>(),
+                    passes = Array.Empty<string>(),
+                    producedSemantics = Array.Empty<string>(),
+                    requiredCapabilities = Array.Empty<string>()
+                };
+
+                foreach (DslStatement statement in block.Statements)
+                {
+                    if (statement.NameEquals("display"))
+                        declaration.displayName = statement.Value;
+                    else if (statement.NameEquals("template"))
+                        declaration.template = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                    else if (statement.NameEquals("templates"))
+                        declaration.templates = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("shaderName"))
+                        declaration.shaderName = statement.Value;
+                    else if (statement.NameEquals("generatedShader"))
+                        declaration.generatedShader = statement.Value;
+                    else if (statement.NameEquals("blocks"))
+                        declaration.featureBlocks = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("passes"))
+                        declaration.passes = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("produces"))
+                        declaration.producedSemantics = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("requires") && statement.ArgumentEquals(0, "capability"))
+                        declaration.requiredCapabilities = statement.ArgumentsFrom(1).ToArray();
+                    else if (statement.NameEquals("phase"))
+                        declaration.phasePolicy = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                    else if (statement.NameEquals("status"))
+                        declaration.status = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
+                }
+
+                if (string.IsNullOrEmpty(declaration.template) && declaration.templates.Length > 0)
+                    declaration.template = declaration.templates[0];
+
+                return declaration;
+            }
+
+            return null;
         }
 
         private static int RefreshGeneratedShaderAssets(string packageRoot, bool logSkippedFolders)
@@ -269,25 +796,29 @@ namespace Hollow.HoNpr.Editor
             var importedPaths = new List<string>();
             ImportAssets($"{packageRoot}/Shaders/Generated", "t:Shader", importedPaths, logSkippedFolders);
             ImportAssets($"{packageRoot}/Shaders/Generated", "t:TextAsset", importedPaths, logSkippedFolders);
-            ImportAssets($"{packageRoot}/ShaderSystem/GeneratedManifests", "t:TextAsset", importedPaths, logSkippedFolders);
             return importedPaths.Count;
         }
 
         private static int GeneratePrototypeShaders(string packageRoot)
         {
-            string presetPath = $"{packageRoot}/ShaderSystem/Presets/Debug/Character_DebugLit_SSS_OITReady.preset.json";
-            TextAsset presetAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(presetPath);
-            if (presetAsset == null)
+            var errors = new List<string>();
+            string presetPath = $"{packageRoot}/ShaderSystem/Presets/Debug/Character_DebugLit_SSS_OITReady.honprpreset";
+            PrototypePreset preset = LoadPresetDeclaration(packageRoot, presetPath, errors);
+            if (preset == null)
             {
                 Debug.LogWarning($"[HoNpr.Generator] Could not find preset at {presetPath}.");
                 return 0;
             }
 
-            PrototypePreset preset = JsonUtility.FromJson<PrototypePreset>(presetAsset.text);
             if (preset == null || string.IsNullOrEmpty(preset.generatedShader) || string.IsNullOrEmpty(preset.shaderName))
             {
                 Debug.LogWarning($"[HoNpr.Generator] Preset is missing generated shader metadata: {presetPath}.");
                 return 0;
+            }
+
+            if (errors.Count > 0)
+            {
+                Debug.LogWarning("[HoNpr.Generator] Preset parse warnings:\n" + string.Join("\n", errors));
             }
 
             string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
@@ -295,38 +826,35 @@ namespace Hollow.HoNpr.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(shaderAbsolutePath));
 
             File.WriteAllText(shaderAbsolutePath, BuildDebugLitShader(preset), System.Text.Encoding.UTF8);
-            WriteGeneratedManifest(absolutePackageRoot, preset);
             return 1;
-        }
-
-        private static void WriteGeneratedManifest(string absolutePackageRoot, PrototypePreset preset)
-        {
-            string manifestAbsolutePath = Path.Combine(
-                absolutePackageRoot,
-                "ShaderSystem",
-                "GeneratedManifests",
-                "Character_DebugLit_SSS_OITReady.generated.md");
-            Directory.CreateDirectory(Path.GetDirectoryName(manifestAbsolutePath));
-
-            string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
-            string content =
-                "# Character DebugLit SSS OITReady Generated Manifest\n\n" +
-                $"| Field | Value |\n" +
-                $"| --- | --- |\n" +
-                $"| Preset | `{preset.presetId}` |\n" +
-                $"| Template | `{preset.template}` |\n" +
-                $"| Generated Shader | `{preset.generatedShader}` |\n" +
-                $"| Feature Blocks | `{blockList}` |\n" +
-                $"| Generator | `HoNprGeneratorEditorUtils` |\n" +
-                $"| Status | `{preset.status}` |\n";
-
-            File.WriteAllText(manifestAbsolutePath, content, System.Text.Encoding.UTF8);
         }
 
         private static string PackageAssetPathToAbsolutePath(string packageRoot)
         {
-            string normalizedRoot = packageRoot.Replace('/', Path.DirectorySeparatorChar);
-            return Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), normalizedRoot));
+            return AssetPathToAbsolutePath(packageRoot);
+        }
+
+        private static string AssetPathToAbsolutePath(string assetPath)
+        {
+            string normalizedAssetPath = assetPath.Replace('\\', '/');
+            if (normalizedAssetPath.StartsWith("Packages/", StringComparison.Ordinal))
+            {
+                UnityEditor.PackageManager.PackageInfo packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(normalizedAssetPath);
+                if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
+                {
+                    string packageAssetRoot = packageInfo.assetPath.TrimEnd('/');
+                    if (normalizedAssetPath.Equals(packageAssetRoot, StringComparison.Ordinal))
+                        return packageInfo.resolvedPath;
+
+                    if (normalizedAssetPath.StartsWith(packageAssetRoot + "/", StringComparison.Ordinal))
+                    {
+                        string relativePath = normalizedAssetPath.Substring(packageAssetRoot.Length + 1);
+                        return Path.GetFullPath(Path.Combine(packageInfo.resolvedPath, NormalizeRelativePath(relativePath)));
+                    }
+                }
+            }
+
+            return Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), NormalizeRelativePath(normalizedAssetPath)));
         }
 
         private static string NormalizeRelativePath(string path)
@@ -334,25 +862,204 @@ namespace Hollow.HoNpr.Editor
             return path.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
         }
 
-        private static void RebuildGeneratedManifests(string packageRoot, bool logSuccess)
+        private static string ReadAssetText(string path)
         {
-            var importedPaths = new List<string>();
-            ImportAssets($"{packageRoot}/ShaderSystem/GeneratedManifests", "t:TextAsset", importedPaths, false);
+            TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            if (asset != null)
+                return asset.text;
 
-            if (logSuccess)
-                Debug.Log($"[HoNpr.Generator] Rebuilt generated manifest index placeholder. Imported {importedPaths.Count} manifest assets.");
+            string absolutePath = AssetPathToAbsolutePath(path);
+            return File.Exists(absolutePath) ? File.ReadAllText(absolutePath) : null;
+        }
+
+        private static IEnumerable<DslBlock> ParseBlocks(string text, string path, List<string> errors)
+        {
+            text = StripLineComments(text);
+
+            foreach (Match match in Regex.Matches(text, @"\b(block|preset|template)\s+([A-Za-z0-9_.]+)(?:\s*:\s*([A-Za-z0-9_]+)\s+in\s+([A-Za-z0-9_]+))?\s*\{", RegexOptions.Multiline))
+            {
+                int bodyStart = match.Index + match.Length;
+                int bodyEnd = FindMatchingBrace(text, bodyStart - 1);
+                if (bodyEnd < 0)
+                {
+                    errors.Add($"Unclosed {match.Groups[1].Value} declaration {match.Groups[2].Value}: {path}");
+                    continue;
+                }
+
+                string body = text.Substring(bodyStart, bodyEnd - bodyStart);
+                yield return new DslBlock
+                {
+                    kind = match.Groups[1].Value,
+                    Id = match.Groups[2].Value,
+                    Stage = match.Groups[3].Success ? match.Groups[3].Value : null,
+                    Domain = match.Groups[4].Success ? match.Groups[4].Value : null,
+                    Statements = ParseStatements(body, path, errors)
+                };
+            }
+        }
+
+        private static List<DslStatement> ParseStatements(string text, string path, List<string> errors)
+        {
+            var statements = new List<DslStatement>();
+
+            foreach (string rawStatement in SplitStatements(text))
+            {
+                string statementText = rawStatement.Trim();
+                if (string.IsNullOrEmpty(statementText))
+                    continue;
+
+                int equalsIndex = statementText.IndexOf('=');
+                if (equalsIndex >= 0)
+                {
+                    string left = statementText.Substring(0, equalsIndex).Trim();
+                    string right = statementText.Substring(equalsIndex + 1).Trim();
+                    statements.Add(new DslStatement
+                    {
+                        Name = FirstToken(left),
+                        Arguments = Tokens(left, skipFirst: true),
+                        Value = Unquote(right)
+                    });
+                    continue;
+                }
+
+                List<string> tokens = Tokens(statementText, skipFirst: false);
+                if (tokens.Count == 0)
+                    continue;
+
+                string name = tokens[0];
+                tokens.RemoveAt(0);
+                statements.Add(new DslStatement
+                {
+                    Name = name,
+                    Arguments = tokens,
+                    Value = tokens.Count == 1 ? tokens[0] : null
+                });
+            }
+
+            return statements;
+        }
+
+        private static IEnumerable<string> SplitStatements(string text)
+        {
+            var builder = new StringBuilder();
+            bool inString = false;
+
+            foreach (char c in text)
+            {
+                if (c == '"')
+                    inString = !inString;
+
+                if (c == ';' && !inString)
+                {
+                    yield return builder.ToString();
+                    builder.Length = 0;
+                }
+                else
+                {
+                    builder.Append(c);
+                }
+            }
+
+            if (builder.Length > 0)
+                yield return builder.ToString();
+        }
+
+        private static string StripLineComments(string text)
+        {
+            var builder = new StringBuilder(text.Length);
+            using (var reader = new StringReader(text))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    int commentIndex = FindLineCommentIndex(line);
+                    builder.AppendLine(commentIndex >= 0 ? line.Substring(0, commentIndex) : line);
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        private static int FindLineCommentIndex(string line)
+        {
+            bool inString = false;
+            for (int i = 0; i < line.Length - 1; i++)
+            {
+                if (line[i] == '"')
+                    inString = !inString;
+                else if (!inString && line[i] == '/' && line[i + 1] == '/')
+                    return i;
+            }
+
+            return -1;
+        }
+
+        private static int FindMatchingBrace(string text, int openBraceIndex)
+        {
+            int depth = 0;
+            bool inString = false;
+
+            for (int i = openBraceIndex; i < text.Length; i++)
+            {
+                char c = text[i];
+                if (c == '"')
+                    inString = !inString;
+
+                if (inString)
+                    continue;
+
+                if (c == '{')
+                    depth++;
+                else if (c == '}')
+                {
+                    depth--;
+                    if (depth == 0)
+                        return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private static string FirstToken(string text)
+        {
+            List<string> tokens = Tokens(text, skipFirst: false);
+            return tokens.Count > 0 ? tokens[0] : string.Empty;
+        }
+
+        private static List<string> Tokens(string text, bool skipFirst)
+        {
+            var tokens = new List<string>();
+            foreach (Match match in Regex.Matches(text, @"""([^""]*)""|[A-Za-z0-9_.\-/]+"))
+            {
+                string value = match.Groups[1].Success ? match.Groups[1].Value : match.Value;
+                tokens.Add(value.Trim());
+            }
+
+            if (skipFirst && tokens.Count > 0)
+                tokens.RemoveAt(0);
+
+            return tokens;
+        }
+
+        private static string Unquote(string value)
+        {
+            value = value.Trim();
+            if (value.Length >= 2 && value[0] == '"' && value[value.Length - 1] == '"')
+                return value.Substring(1, value.Length - 2);
+
+            return value;
         }
 
         private static string BuildDebugLitShader(PrototypePreset preset)
         {
             string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
             return
-$@"// Generated by HoNprShaderGenerator.
+$@"// 由 HoNprShaderGenerator 生成。
 // SourcePreset: {preset.presetId}
 // Template: {preset.template}
 // Blocks: {blockList}
-// Manifest: ShaderSystem/GeneratedManifests/Character_DebugLit_SSS_OITReady.generated.md
-// Do not edit generated body by hand. Edit template/block/preset instead.
+// 不要手动修改生成体。请改 template / block / preset。
 Shader ""{preset.shaderName}""
 {{
     Properties
@@ -618,6 +1325,7 @@ Shader ""{preset.shaderName}""
         [System.Serializable]
         private sealed class PrototypePreset
         {
+            public string path;
             public string presetId;
             public string displayName;
             public string template;
@@ -632,10 +1340,81 @@ Shader ""{preset.shaderName}""
             public string status;
         }
 
-        [System.Serializable]
-        private sealed class IdDeclaration
+        private sealed class ShaderTemplateDeclaration
         {
+            public string path;
             public string id;
+            public string displayName;
+            public string description;
+            public string[] passes;
+            public string[] requiredSlots;
+            public string shaderNamePattern;
+        }
+
+        private sealed class FeatureBlockDeclaration
+        {
+            public string path;
+            public string id;
+            public string domain;
+            public string stage;
+            public string[] requiredInputs;
+            public string[] producedFields;
+            public string[] requiredIncludes;
+            public string[] includePaths;
+            public string[] requiredDefines;
+            public string[] variants;
+            public string entry;
+            public string variantPolicy;
+            public string debugView;
+        }
+
+        private sealed class IncludeRegistry
+        {
+            public readonly Dictionary<string, string> aliasToPath = new Dictionary<string, string>();
+        }
+
+        private sealed class ShaderSystemDeclarations
+        {
+            public readonly List<ShaderTemplateDeclaration> templates = new List<ShaderTemplateDeclaration>();
+            public readonly List<FeatureBlockDeclaration> blocks = new List<FeatureBlockDeclaration>();
+            public readonly List<PrototypePreset> presets = new List<PrototypePreset>();
+        }
+
+        private sealed class DslBlock
+        {
+            public string kind;
+            public string Id;
+            public string Stage;
+            public string Domain;
+            public List<DslStatement> Statements;
+
+            public bool KindEquals(string value)
+            {
+                return string.Equals(kind, value, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        private sealed class DslStatement
+        {
+            public string Name;
+            public List<string> Arguments = new List<string>();
+            public string Value;
+
+            public bool NameEquals(string value)
+            {
+                return string.Equals(Name, value, StringComparison.OrdinalIgnoreCase);
+            }
+
+            public bool ArgumentEquals(int index, string value)
+            {
+                return Arguments.Count > index && string.Equals(Arguments[index], value, StringComparison.OrdinalIgnoreCase);
+            }
+
+            public IEnumerable<string> ArgumentsFrom(int index)
+            {
+                for (int i = index; i < Arguments.Count; i++)
+                    yield return Arguments[i];
+            }
         }
 
         private static string FindPackageRoot()

@@ -1,4 +1,3 @@
-# Transparent Presets
+# 透明 Preset
 
-Transparent presets define explicit transparent and OIT-ready material combinations.
-
+透明 preset 定义显式透明和 OIT-ready 的材质组合。

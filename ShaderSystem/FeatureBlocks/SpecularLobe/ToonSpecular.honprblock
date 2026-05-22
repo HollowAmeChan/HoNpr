@@ -1,0 +1,10 @@
+block MaterialBlock.ToonSpecular : SpecularLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext HoNprStyleRamp;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.ToonLobes;
+    requires define HONPR_HAS_TOON_SPECULAR;
+    entry HoNprEvaluateToonSpecular;
+    variantPolicy PresetStatic;
+    debug Lobe.Specular;
+}

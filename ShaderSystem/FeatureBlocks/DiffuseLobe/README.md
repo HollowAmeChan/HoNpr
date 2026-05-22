@@ -1,4 +1,3 @@
-# Diffuse Lobe Blocks
+# Diffuse Lobe 功能块
 
-Diffuse lobe blocks produce diffuse contributions and must not write final color directly.
-
+Diffuse lobe 功能块负责生产 diffuse 贡献，不能直接写最终颜色。

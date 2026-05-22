@@ -1,0 +1,10 @@
+block MaterialBlock.BaseColorTexture : SurfaceInput in MaterialDomain
+{
+    consumes BaseColorTint;
+    produces HoUrpSurfaceData.baseColor HoUrpSurfaceData.alpha;
+    requires include HoNpr.StandardSurface;
+    requires define HONPR_HAS_BASE_COLOR_TEXTURE;
+    entry HoNprApplyBaseColorTexture;
+    variantPolicy PresetStatic;
+    debug Surface.BaseColor;
+}

@@ -1,0 +1,14 @@
+preset MaterialPreset.Transparent_OIT
+{
+    display "Transparent OIT";
+    templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterOit;
+    shaderName "HoNpr/Generated/Transparent_OIT";
+    generatedShader "Shaders/Generated/Transparent/Transparent_OIT.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.OitAccumulationOutput MaterialBlock.ForwardSkipWhenOit;
+    passes UniversalForward HoUrpAovOutput HoUrpOitAccumulation;
+    produces Material.Class OitAccumulationInput OitRevealageInput;
+    requires capability SupportsOit ParticipatesOit;
+    phase OitOnly;
+    status Planned;
+}

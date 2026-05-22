@@ -1,0 +1,10 @@
+block MaterialBlock.HairSpecularSecondary : SpecularLobe in ShadingDomain
+{
+    consumes Normal Tangent HairMask;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.ToonLobes;
+    requires define HONPR_HAS_HAIR_SPECULAR_SECONDARY;
+    entry HoNprEvaluateHairSpecularSecondary;
+    variantPolicy PresetStatic;
+    debug Lobe.HairSpecular;
+}

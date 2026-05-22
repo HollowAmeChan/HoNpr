@@ -1,4 +1,3 @@
-# Transparency Blocks
+# Transparency 功能块
 
-Transparency blocks define alpha, coverage, OIT accumulation, and phase policy behavior without using old `_lilOIT*` globals.
-
+Transparency 功能块定义 alpha、coverage、OIT accumulation 和 phase policy 行为，不使用旧 `_lilOIT*` global。

@@ -1,0 +1,10 @@
+block MaterialBlock.SssSourceProducer : SemanticProducer in ShadingDomain
+{
+    consumes HoUrpSurfaceData SemanticMap;
+    produces Shading.SssSourceColor Shading.SssWeight Aov.SssSource;
+    requires include HoNpr.SemanticSurface;
+    requires define HONPR_HAS_SSS_SOURCE;
+    entry HoNprCreateMaterialSemanticProducer;
+    variantPolicy PresetStatic;
+    debug Semantic.SSS;
+}

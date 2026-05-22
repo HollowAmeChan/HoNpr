@@ -1,4 +1,3 @@
-# Subsurface Blocks
+# Subsurface 功能块
 
-Subsurface blocks keep forward thin SSS, SSS source production, and future transmission inputs separate.
-
+Subsurface 功能块把 forward thin SSS、SSS source 生产和后续 transmission 输入保持为独立职责。

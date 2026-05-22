@@ -1,0 +1,8 @@
+template MaterialTemplate.CharacterDepth
+{
+    display "Character Depth";
+    description "HoNpr 角色材质的 depth pass 骨架。";
+    passes DepthOnly;
+    requires slots SurfaceInput Transparency;
+    shaderNamePattern "HoNpr/Generated/{PresetName}";
+}

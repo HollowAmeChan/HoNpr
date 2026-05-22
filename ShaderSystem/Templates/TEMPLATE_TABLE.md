@@ -1,21 +1,14 @@
-# Template Table
+﻿# 模板表
 
-Templates define shader pass skeletons, include slots, and source mapping comments. Templates do not decide feature combinations.
+由 `*.honprtemplate` 自动生成。不要手动编辑表格行。
 
-| TemplateId | Path | Passes | RequiredHoRpPasses | IncludeSlots | GeneratorStatus | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| `MaterialTemplate.CharacterForward` | `Character/CharacterForward.template` | Forward | `UniversalForward` | SurfaceInput, LightingInput, DiffuseLobe, SpecularLobe, StylizedLobe, Subsurface, Composite | Declared | Character forward skeleton. Not generated yet. |
-| `MaterialTemplate.CharacterAov` | `Character/CharacterAov.template` | AOV | `HoUrpAovOutput` | SurfaceInput, SemanticAov | Declared | Standard material semantic output. Not generated yet. |
-| `MaterialTemplate.CharacterDepth` | `Character/CharacterDepth.template` | Depth | `DepthOnly` | SurfaceInput, Transparency | Declared | Depth/cutout skeleton. Not generated yet. |
-| `MaterialTemplate.CharacterShadow` | `Character/CharacterShadow.template` | Shadow | `ShadowCaster` | SurfaceInput, Transparency | Declared | Shadow caster skeleton. Not generated yet. |
-| `MaterialTemplate.CharacterOit` | `Character/CharacterOit.template` | OIT | `HoUrpOitAccumulation` | SurfaceInput, Transparency | Declared | OIT accumulation skeleton. Not generated yet. |
-| `MaterialTemplate.EnvironmentForward` | `Environment/EnvironmentForward.template` | Forward | `UniversalForward` | SurfaceInput, LightingInput, DiffuseLobe, SpecularLobe, Composite | Declared | Environment PBR subset. Not generated yet. |
-| `MaterialTemplate.EnvironmentAov` | `Environment/EnvironmentAov.template` | AOV | `HoUrpAovOutput` | SurfaceInput, SemanticAov | Declared | Optional environment AOV output. Not generated yet. |
-| `MaterialTemplate.DebugLitMinimal` | `Utility/DebugLit.template` | Forward, AOV, OIT | `UniversalForward`, `HoUrpAovOutput`, `HoUrpOitAccumulation` | SurfaceInput, SemanticAov, Transparency | Generated | Mirrors the current HoURP prototype contract. |
-
-## Rules
-
-- Pass structure comes from template and preset, not from material inspector state.
-- Templates must not contain `_lil*`, `_HoAov*`, `HoAOV`, `HoAOVSSS`, or `lilToonOIT`.
-- Templates may contain source mapping placeholders for the generator.
-- `Declared` means the template is a contract manifest and validation target. `Generated` means the current generator can emit a shader from it.
+| 模板 ID | 路径 | Pass | Include 插槽 | 状态 | 说明 |
+| --- | --- | --- | --- | --- | --- |
+| `MaterialTemplate.CharacterAov` | `ShaderSystem/Templates/Character/CharacterAov.honprtemplate` | `HoUrpAovOutput` | `SurfaceInput`, `SemanticAov` | 已声明 | HoNpr 角色材质的 AOV 输出 pass 骨架。 |
+| `MaterialTemplate.CharacterDepth` | `ShaderSystem/Templates/Character/CharacterDepth.honprtemplate` | `DepthOnly` | `SurfaceInput`, `Transparency` | 已声明 | HoNpr 角色材质的 depth pass 骨架。 |
+| `MaterialTemplate.CharacterForward` | `ShaderSystem/Templates/Character/CharacterForward.honprtemplate` | `UniversalForward` | `SurfaceInput`, `LightingInput`, `DiffuseLobe`, `SpecularLobe`, `StylizedLobe`, `Subsurface`, `Composite` | 已声明 | HoNpr 角色材质的 forward pass 骨架。 |
+| `MaterialTemplate.CharacterOit` | `ShaderSystem/Templates/Character/CharacterOit.honprtemplate` | `HoUrpOitAccumulation` | `SurfaceInput`, `Transparency` | 已声明 | HoNpr 透明角色材质的 OIT 累积 pass 骨架。 |
+| `MaterialTemplate.CharacterShadow` | `ShaderSystem/Templates/Character/CharacterShadow.honprtemplate` | `ShadowCaster` | `SurfaceInput`, `Transparency` | 已声明 | HoNpr 角色材质的 shadow caster pass 骨架。 |
+| `MaterialTemplate.DebugLitMinimal` | `ShaderSystem/Templates/Utility/DebugLit.honprtemplate` | `UniversalForward`, `HoUrpAovOutput`, `HoUrpOitAccumulation` | `SurfaceInput`, `SemanticAov`, `Transparency` | 已生成 | 匹配当前 HoURP 生成材质契约的 HoNpr 原型模板。 |
+| `MaterialTemplate.EnvironmentAov` | `ShaderSystem/Templates/Environment/EnvironmentAov.honprtemplate` | `HoUrpAovOutput` | `SurfaceInput`, `SemanticAov` | 已声明 | HoNpr 环境材质的可选 AOV 输出 pass 骨架。 |
+| `MaterialTemplate.EnvironmentForward` | `ShaderSystem/Templates/Environment/EnvironmentForward.honprtemplate` | `UniversalForward`, `DepthOnly`, `ShadowCaster` | `SurfaceInput`, `LightingInput`, `DiffuseLobe`, `SpecularLobe`, `Composite` | 已声明 | HoNpr 环境 PBR 子集材质的 forward pass 骨架。 |

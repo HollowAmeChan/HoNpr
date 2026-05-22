@@ -1,4 +1,3 @@
-# Debug Presets
+# Debug Preset
 
-Debug presets validate upstream HoRP material contracts before production presets are generated.
-
+Debug preset 用于在生成生产 preset 之前验证上游 HoRP 材质契约。

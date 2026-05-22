@@ -1,0 +1,10 @@
+block MaterialBlock.ForwardSkipWhenOit : Transparency in CompositeDomain
+{
+    consumes MaterialPhasePolicy;
+    produces ForwardSkipDecision;
+    requires include HoNpr.Transparency;
+    requires define HONPR_HAS_FORWARD_SKIP_WHEN_OIT;
+    entry HoNprShouldSkipForwardWhenOit;
+    variantPolicy PresetStatic;
+    debug OIT.Phase;
+}

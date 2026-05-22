@@ -1,0 +1,10 @@
+block MaterialBlock.UrpMainLightInput : LightingInput in LightingDomain
+{
+    consumes UrpMainLight;
+    produces HoLightingContext.mainLightDirWS HoLightingContext.mainLightColor HoLightingContext.mainLightShadow;
+    requires include HoNpr.LightingInput;
+    requires define HONPR_HAS_URP_MAIN_LIGHT;
+    entry HoNprResolveUrpMainLight;
+    variantPolicy AlwaysCompiled;
+    debug Lighting.MainLight;
+}

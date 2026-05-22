@@ -1,0 +1,8 @@
+template MaterialTemplate.CharacterOit
+{
+    display "Character OIT";
+    description "HoNpr 透明角色材质的 OIT 累积 pass 骨架。";
+    passes HoUrpOitAccumulation;
+    requires slots SurfaceInput Transparency;
+    shaderNamePattern "HoNpr/Generated/{PresetName}";
+}

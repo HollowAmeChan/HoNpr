@@ -1,4 +1,3 @@
-# Environment Templates
+# 环境模板
 
-Environment templates define the PBR subset pass skeletons for scene materials.
-
+环境模板定义场景材质使用的 PBR 子集 pass 骨架。

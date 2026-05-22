@@ -1,4 +1,3 @@
-# Semantic AOV Blocks
+# Semantic AOV 功能块
 
-Semantic AOV blocks produce HoRP material and shading semantics and encode standard AOV outputs.
-
+Semantic AOV 功能块负责生产 HoRP material / shading 语义，并编码标准 AOV 输出。

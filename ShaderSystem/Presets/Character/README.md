@@ -1,4 +1,3 @@
-# Character Presets
+# 角色 Preset
 
-Character presets define static block combinations for toon, skin SSS, hair, and related character materials.
-
+角色 preset 定义 toon、skin SSS、hair 以及相关角色材质的静态 block 组合。

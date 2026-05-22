@@ -1,0 +1,10 @@
+block MaterialBlock.PbrSpecularGGX : SpecularLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.PbrLobes;
+    requires define HONPR_HAS_PBR_SPECULAR_GGX;
+    entry HoNprEvaluatePbrSpecularGGX;
+    variantPolicy PresetStatic;
+    debug Lobe.Specular;
+}

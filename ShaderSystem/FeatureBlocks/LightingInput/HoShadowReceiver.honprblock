@@ -1,0 +1,10 @@
+block MaterialBlock.HoShadowReceiver : LightingInput in LightingDomain
+{
+    consumes HoRPShadowContract;
+    produces HoLightingContext.hoShadow;
+    requires include HoNpr.LightingInput;
+    requires define HONPR_HAS_HORP_SHADOW_RECEIVER;
+    entry HoNprResolveHoShadowReceiver;
+    variantPolicy PresetStatic;
+    debug Lighting.HoShadow;
+}

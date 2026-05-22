@@ -1,4 +1,3 @@
-# Environment Presets
+# 环境 Preset
 
-Environment presets define the HoNpr PBR subset for scene materials.
-
+环境 preset 定义场景材质使用的 HoNpr PBR 子集。

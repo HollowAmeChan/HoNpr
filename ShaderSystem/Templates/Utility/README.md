@@ -1,4 +1,3 @@
-# Utility Templates
+# 工具模板
 
-Utility templates hold debug and prototype shader skeletons used to validate HoRP material contracts.
-
+工具模板存放 debug 和原型 shader 骨架，用于验证 HoRP 材质契约。

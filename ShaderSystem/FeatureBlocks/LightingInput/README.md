@@ -1,4 +1,3 @@
-# Lighting Input Blocks
+# Lighting Input 功能块
 
-Lighting input blocks adapt HoRP and URP lighting contracts into data consumed by material lobes.
-
+Lighting input 功能块把 HoRP 和 URP lighting 契约适配成材质 lobe 消费的数据。

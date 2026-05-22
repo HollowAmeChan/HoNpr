@@ -1,0 +1,8 @@
+template MaterialTemplate.EnvironmentForward
+{
+    display "Environment Forward";
+    description "HoNpr 环境 PBR 子集材质的 forward pass 骨架。";
+    passes UniversalForward DepthOnly ShadowCaster;
+    requires slots SurfaceInput LightingInput DiffuseLobe SpecularLobe Composite;
+    shaderNamePattern "HoNpr/Generated/{PresetName}";
+}

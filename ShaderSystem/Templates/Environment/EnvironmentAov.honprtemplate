@@ -1,0 +1,8 @@
+template MaterialTemplate.EnvironmentAov
+{
+    display "Environment AOV";
+    description "HoNpr 环境材质的可选 AOV 输出 pass 骨架。";
+    passes HoUrpAovOutput;
+    requires slots SurfaceInput SemanticAov;
+    shaderNamePattern "HoNpr/Generated/{PresetName}";
+}

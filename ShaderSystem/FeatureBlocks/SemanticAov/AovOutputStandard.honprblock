@@ -1,0 +1,10 @@
+block MaterialBlock.AovOutputStandard : SemanticProducer in MaterialDomain
+{
+    consumes ObjectSemanticData HoUrpMaterialSemanticData;
+    produces Aov.MaskId Aov.NormalDepth Aov.ObjectCustom0_3 Aov.ObjectCustom4_7 Aov.SurfaceData Aov.MaterialCustom0_3 Aov.SssSource;
+    requires include HoNpr.SemanticSurface;
+    requires define HONPR_HAS_STANDARD_AOV;
+    entry HoNprEncodeStandardAov;
+    variantPolicy PresetStatic;
+    debug AOV.Standard;
+}

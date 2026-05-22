@@ -1,0 +1,8 @@
+template MaterialTemplate.CharacterForward
+{
+    display "Character Forward";
+    description "HoNpr 角色材质的 forward pass 骨架。";
+    passes UniversalForward;
+    requires slots SurfaceInput LightingInput DiffuseLobe SpecularLobe StylizedLobe Subsurface Composite;
+    shaderNamePattern "HoNpr/Generated/{PresetName}";
+}

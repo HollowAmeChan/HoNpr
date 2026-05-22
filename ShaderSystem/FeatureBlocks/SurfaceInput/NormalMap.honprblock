@@ -1,0 +1,10 @@
+block MaterialBlock.NormalMap : SurfaceInput in GeometryDomain
+{
+    consumes NormalMap TangentBasis;
+    produces HoUrpSurfaceData.normalWS Geometry.WorldNormal;
+    requires include HoNpr.StandardSurface;
+    requires define HONPR_HAS_NORMAL_MAP;
+    entry HoNprApplyNormalWS;
+    variantPolicy PresetStatic;
+    debug Geometry.Normal;
+}

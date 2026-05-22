@@ -1,0 +1,10 @@
+block MaterialBlock.IndirectLightInput : LightingInput in LightingDomain
+{
+    consumes BakedGI ReflectionProbe;
+    produces HoLightingContext.indirectDiffuse HoLightingContext.indirectSpecular;
+    requires include HoNpr.LightingInput;
+    requires define HONPR_HAS_INDIRECT_LIGHT;
+    entry HoNprResolveIndirectLight;
+    variantPolicy PresetStatic;
+    debug Lighting.Indirect;
+}

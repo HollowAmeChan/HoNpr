@@ -1,0 +1,10 @@
+block MaterialBlock.ToonDiffuseRamp : DiffuseLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext HoNprStyleRamp;
+    produces HoNprLobeOutput.diffuse;
+    requires include HoNpr.ToonLobes;
+    requires define HONPR_HAS_TOON_DIFFUSE_RAMP;
+    entry HoNprEvaluateToonDiffuseRamp;
+    variantPolicy PresetStatic;
+    debug Lobe.Diffuse;
+}
