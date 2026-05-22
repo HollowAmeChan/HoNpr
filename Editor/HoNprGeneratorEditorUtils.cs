@@ -1318,6 +1318,8 @@ Shader ""{preset.shaderName}""
             ENDHLSL
         }}
     }}
+
+    CustomEditor ""Hollow.HoNpr.Editor.MaterialUi.HoNprMaterialShaderGUI""
 }}
 ";
         }

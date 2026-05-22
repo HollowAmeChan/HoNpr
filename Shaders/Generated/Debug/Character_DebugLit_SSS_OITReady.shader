@@ -261,4 +261,6 @@ Shader "HoNpr/Generated/Character_DebugLit_SSS_OITReady"
             ENDHLSL
         }
     }
+
+    CustomEditor "Hollow.HoNpr.Editor.MaterialUi.HoNprMaterialShaderGUI"
 }
