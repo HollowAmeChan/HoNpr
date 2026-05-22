@@ -29,4 +29,21 @@ HoNprLobeOutput HoNprEvaluateRimShade(HoUrpSurfaceData surface, half3 viewDirWS,
     return output;
 }
 
+HoNprLobeOutput HoNprEvaluateBacklight(HoUrpSurfaceData surface, half3 lightDirWS, half3 viewDirWS, half3 backlightColor, half mask, half power)
+{
+    HoNprLobeOutput output = HoNprCreateLobeOutput();
+    half3 viewDir = HoNprSafeNormalize(viewDirWS, surface.normalWS);
+    half3 lightDir = HoNprSafeNormalize(lightDirWS, -viewDir);
+    half backlight = pow(saturate(dot(-lightDir, viewDir)), max(0.01h, power));
+    output.emission = backlightColor * backlight * saturate(mask);
+    return output;
+}
+
+HoNprLobeOutput HoNprEvaluateEmissionPrimary(half3 emissionColor, half intensity, half mask)
+{
+    HoNprLobeOutput output = HoNprCreateLobeOutput();
+    output.emission = max(0.0h, emissionColor) * max(0.0h, intensity) * saturate(mask);
+    return output;
+}
+
 #endif

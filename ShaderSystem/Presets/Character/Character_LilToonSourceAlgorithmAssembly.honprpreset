@@ -1,0 +1,14 @@
+preset MaterialPreset.Character_LilToonSourceAlgorithmAssembly
+{
+    display "Character LilToon Source Algorithm Assembly";
+    templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow MaterialTemplate.CharacterOit;
+    shaderName "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly";
+    generatedShader "Shaders/Generated/Character/Character_LilToonSourceAlgorithmAssembly.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRamp MaterialBlock.ToonSpecular MaterialBlock.RimShade MaterialBlock.RimLight MaterialBlock.Backlight MaterialBlock.MatCap MaterialBlock.EmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.AlphaClipPolicy MaterialBlock.TransparentComposite MaterialBlock.OitAccumulationOutput;
+    passes UniversalForward HoUrpAovOutput DepthOnly ShadowCaster HoUrpOitAccumulation;
+    produces Material.Class Material.Custom0-3 Shading.SssSourceColor Shading.SssWeight Aov.MaskId Aov.NormalDepth Aov.SurfaceData OitAccumulationInput OitRevealageInput;
+    requires capability ReceivesOutline ParticipatesSemanticPost SupportsOit;
+    phase ForwardAndOit;
+    status Prototype;
+}

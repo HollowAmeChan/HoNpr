@@ -34,4 +34,9 @@ half2 HoNprComputeRampUv(half rampCoord, HoNprStylizedSurfaceData stylized, half
     return half2(saturate(rampCoord), (floor(stylized.rampRow) + 0.5h) / rowCount);
 }
 
+half3 HoNprSampleStyleRampAtlas(TEXTURE2D_PARAM(rampAtlas, samplerRampAtlas), half2 rampUv)
+{
+    return SAMPLE_TEXTURE2D(rampAtlas, samplerRampAtlas, rampUv).rgb;
+}
+
 #endif

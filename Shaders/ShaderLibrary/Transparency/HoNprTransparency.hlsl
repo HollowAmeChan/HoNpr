@@ -13,6 +13,22 @@ HoUrpOitAccumulationData HoNprEncodeOitOutput(HoUrpTransparentOutputData transpa
     return HoUrpEncodeOitAccumulation(transparentData);
 }
 
+HoUrpSurfaceData HoNprApplyAlphaClipPolicy(HoUrpSurfaceData surface, half alphaClipThreshold)
+{
+    clip(surface.alpha - saturate(alphaClipThreshold));
+    return surface;
+}
+
+HoUrpTransparentOutputData HoNprApplyTransparentComposite(
+    HoUrpTransparentOutputData transparentData,
+    half alphaMultiplier,
+    half coverage)
+{
+    transparentData.alpha = saturate(transparentData.alpha * saturate(alphaMultiplier));
+    transparentData.coverage = saturate(transparentData.coverage * saturate(coverage));
+    return transparentData;
+}
+
 half HoNprShouldSkipForwardWhenOit(half supportsOit, half participatesOit, half oitPhaseActive)
 {
     return saturate(supportsOit) * saturate(participatesOit) * saturate(oitPhaseActive);

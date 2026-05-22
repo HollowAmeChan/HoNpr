@@ -1,0 +1,10 @@
+block MaterialBlock.AlphaClipPolicy : Transparency in CompositeDomain
+{
+    consumes HoUrpSurfaceData AlphaClipThreshold;
+    produces Coverage;
+    requires include HoNpr.Transparency;
+    requires define HONPR_HAS_ALPHA_CLIP_POLICY;
+    entry HoNprApplyAlphaClipPolicy;
+    variantPolicy PresetStatic;
+    debug Transparency.AlphaClip;
+}

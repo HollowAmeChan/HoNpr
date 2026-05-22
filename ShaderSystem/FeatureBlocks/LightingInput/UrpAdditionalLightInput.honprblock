@@ -1,0 +1,10 @@
+block MaterialBlock.UrpAdditionalLightInput : LightingInput in LightingDomain
+{
+    consumes UrpAdditionalLights;
+    produces HoLightingContext.indirectDiffuse;
+    requires include HoNpr.LightingInput;
+    requires define HONPR_HAS_URP_ADDITIONAL_LIGHTS;
+    entry HoNprResolveAdditionalLight;
+    variantPolicy PresetStatic;
+    debug Lighting.AdditionalLights;
+}

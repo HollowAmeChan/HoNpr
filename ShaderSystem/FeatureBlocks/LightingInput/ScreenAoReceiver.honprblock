@@ -1,0 +1,10 @@
+block MaterialBlock.ScreenAoReceiver : LightingInput in LightingDomain
+{
+    consumes ScreenSpaceAmbientOcclusion;
+    produces HoLightingContext.screenAoDirect HoLightingContext.screenAoIndirect;
+    requires include HoNpr.LightingInput;
+    requires define HONPR_HAS_SCREEN_AO_RECEIVER;
+    entry HoNprResolveScreenAoReceiver;
+    variantPolicy PresetStatic;
+    debug Lighting.ScreenAO;
+}

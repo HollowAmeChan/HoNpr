@@ -21,6 +21,22 @@ struct HoNprCompositeOutput
     half coverage;
 };
 
+struct HoNprSemanticMapData
+{
+    half sssWeight;
+    half specularMask;
+    half stylizedMask;
+    half utility;
+};
+
+struct HoNprRegionMaskData
+{
+    half skin;
+    half hair;
+    half cloth;
+    half accessory;
+};
+
 HoNprLobeOutput HoNprCreateLobeOutput()
 {
     HoNprLobeOutput output;
@@ -32,6 +48,26 @@ HoNprLobeOutput HoNprCreateLobeOutput()
     output.energyWeight = 1.0h;
     output.semanticWeight = 1.0h;
     return output;
+}
+
+HoNprSemanticMapData HoNprCreateSemanticMapData(half4 sample)
+{
+    HoNprSemanticMapData data;
+    data.sssWeight = saturate(sample.r);
+    data.specularMask = saturate(sample.g);
+    data.stylizedMask = saturate(sample.b);
+    data.utility = saturate(sample.a);
+    return data;
+}
+
+HoNprRegionMaskData HoNprCreateRegionMaskData(half4 sample)
+{
+    HoNprRegionMaskData data;
+    data.skin = saturate(sample.r);
+    data.hair = saturate(sample.g);
+    data.cloth = saturate(sample.b);
+    data.accessory = saturate(sample.a);
+    return data;
 }
 
 void HoNprAccumulateLobe(inout HoNprLobeOutput target, HoNprLobeOutput source)

@@ -5,7 +5,7 @@ preset MaterialPreset.Environment_PBR
     shaderName "HoNpr/Generated/Environment_PBR";
     generatedShader "Shaders/Generated/Environment/Environment_PBR.shader";
 
-    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.MaterialMapPacked MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.PbrDiffuse MaterialBlock.PbrSpecularGGX MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.MaterialMapPacked MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.PbrDiffuse MaterialBlock.PbrSpecularGGX MaterialBlock.PbrSpecularAnisotropic MaterialBlock.ClearCoatSpecular MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
     passes UniversalForward DepthOnly ShadowCaster HoUrpAovOutput;
     produces Material.Class;
     requires capability SceneMaterial ParticipatesSemanticPost;

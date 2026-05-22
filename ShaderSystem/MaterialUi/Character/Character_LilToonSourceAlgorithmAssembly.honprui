@@ -1,0 +1,48 @@
+ui MaterialUi.Character_LilToonSourceAlgorithmAssembly for MaterialPreset.Character_LilToonSourceAlgorithmAssembly
+{
+    group Base "基础";
+    property _HoNprBaseMap in Base label "基础贴图" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoUrpBaseColor in Base label "基础颜色" control color default "(1, 1, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprAlphaClipThreshold in Base label "Alpha 阈值" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group LilToonAssembly "LilToon 源组合";
+    contractBox HoNpr.LilToonSource in LilToonAssembly title "源自 lilToon 的算法顺序" severity info message "该 preset 复刻 lilToon 的组装顺序：Base/Shadow/SSS/Rim/Backlight/MatCap/Emission/OIT，但不继承旧 ABI。";
+    property _HoNprStyleRampAtlas in LilToonAssembly label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprShadowThreshold in LilToonAssembly label "阴影阈值" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprShadowSoftness in LilToonAssembly label "阴影柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRow in LilToonAssembly label "Ramp 行" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRows in LilToonAssembly label "Ramp 总行数" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Specular "高光";
+    property _HoNprSpecularThreshold in Specular label "Toon 高光阈值" control slider range 0 1 default 0.72 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprSpecularSoftness in Specular label "Toon 高光柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprSpecularMask in Specular label "高光权重" control slider range 0 1 default 0.6 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Stylized "风格光";
+    property _HoNprRimColor in Stylized label "Rim 颜色" control color default "(0.75, 0.9, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimPower in Stylized label "Rim 强度曲线" control slider range 0.1 12 default 3 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimMask in Stylized label "Rim 权重" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprBacklightColor in Stylized label "Backlight 颜色" control color default "(0.7, 0.5, 0.35, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprBacklightPower in Stylized label "Backlight 曲线" control slider range 0.1 12 default 2 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprMatCapColor in Stylized label "MatCap 颜色" control color default "(0.25, 0.25, 0.3, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprMatCapMask in Stylized label "MatCap 权重" control slider range 0 1 default 0.25 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionColor in Stylized label "Emission 颜色" control color default "(0, 0, 0, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionIntensity in Stylized label "Emission 强度" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group SemanticAov "HoRP AOV 语义";
+    contractBox HoRP.AOV in SemanticAov title "HoRP 契约：AOV 输出" severity info message "这些参数写入 HoUrpAovOutput，不是旧材质 AOV 属性。";
+    property _HoUrpGeneratedMaterialClass in SemanticAov label "材质分类" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialSssProfile in SemanticAov label "SSS Profile" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialThickness in SemanticAov label "厚度" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCurvature in SemanticAov label "曲率" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "材质 Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedSssSourceColor in SemanticAov label "SSS Source 颜色" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedSssWeight in SemanticAov label "SSS 权重" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Transparency "透明 / OIT";
+    contractBox HoRP.OIT in Transparency title "HoRP 契约：OIT" severity info message "OIT pass 存在由 preset 固定；这里仅表达材质是否参与。";
+    property _HoUrpSupportsOit in Transparency label "支持 OIT" control toggle default 1 copy Group tools CopyProperty PasteProperty;
+    property _HoUrpParticipatesOit in Transparency label "参与 OIT" control toggle default 0 copy Group tools CopyProperty PasteProperty;
+
+    renderState queue "Transparent" blend "SrcAlpha OneMinusSrcAlpha / OIT One One, Zero OneMinusSrcAlpha" depth "Forward ZWrite Off; Depth/Shadow ZWrite On" stencil "None" cull "Back";
+}

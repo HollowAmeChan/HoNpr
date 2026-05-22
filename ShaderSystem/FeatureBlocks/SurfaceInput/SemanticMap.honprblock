@@ -1,0 +1,10 @@
+block MaterialBlock.SemanticMap : SurfaceInput in MaterialDomain
+{
+    consumes SemanticMap;
+    produces HoNprSemanticMapData;
+    requires include HoNpr.StandardSurface;
+    requires define HONPR_HAS_SEMANTIC_MAP;
+    entry HoNprApplySemanticMap;
+    variantPolicy PresetStatic;
+    debug Surface.SemanticMap;
+}

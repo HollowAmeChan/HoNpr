@@ -24,4 +24,14 @@ HoUrpSurfaceData HoNprApplyMaterialMapPacked(HoUrpSurfaceData surface, half4 mat
     return surface;
 }
 
+HoNprSemanticMapData HoNprApplySemanticMap(half4 semanticMapSample)
+{
+    return HoNprCreateSemanticMapData(semanticMapSample);
+}
+
+HoNprRegionMaskData HoNprApplyRegionMask(half4 regionMapSample)
+{
+    return HoNprCreateRegionMaskData(regionMapSample);
+}
+
 #endif

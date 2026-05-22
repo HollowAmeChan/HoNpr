@@ -1,0 +1,10 @@
+block MaterialBlock.ClearCoatSpecular : SpecularLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext ClearCoatMask;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.PbrLobes;
+    requires define HONPR_HAS_CLEAR_COAT_SPECULAR;
+    entry HoNprEvaluateClearCoatSpecular;
+    variantPolicy PresetStatic;
+    debug Lobe.ClearCoat;
+}

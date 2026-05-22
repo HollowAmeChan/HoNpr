@@ -1,0 +1,10 @@
+block MaterialBlock.RegionMask : SurfaceInput in MaterialDomain
+{
+    consumes RegionMap;
+    produces HoNprRegionMaskData;
+    requires include HoNpr.StandardSurface;
+    requires define HONPR_HAS_REGION_MASK;
+    entry HoNprApplyRegionMask;
+    variantPolicy PresetStatic;
+    debug Surface.RegionMask;
+}
