@@ -1,8 +1,8 @@
 template MaterialTemplate.CharacterOutline
 {
     display "Character Outline";
-    description "HoNpr character outline pass shell for lilToon-source algorithm assembly.";
-    passes ForwardOutlineLilToonSource;
+    description "HoNpr character outline pass shell using the outline-lilToon algorithm variant.";
+    passes ForwardOutlineLilToon;
     requires slots SurfaceInput StylizedLobe Transparency;
     shaderNamePattern "HoNpr/Generated/{PresetName}";
 }

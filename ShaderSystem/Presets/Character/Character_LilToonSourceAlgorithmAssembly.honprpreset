@@ -5,8 +5,8 @@ preset MaterialPreset.Character_LilToonSourceAlgorithmAssembly
     shaderName "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly";
     generatedShader "Shaders/Generated/Character/Character_LilToonSourceAlgorithmAssembly.shader";
 
-    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.LilToonSourceOutlinePass MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRamp MaterialBlock.ToonSpecular MaterialBlock.RimShade MaterialBlock.RimLight MaterialBlock.Backlight MaterialBlock.MatCap MaterialBlock.EmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.AlphaClipPolicy MaterialBlock.TransparentComposite MaterialBlock.OitAccumulationOutput;
-    passes ForwardOutlineLilToonSource UniversalForward HoUrpAovOutput DepthOnly ShadowCaster HoUrpOitAccumulation;
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.OutlineLilToon MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRamp MaterialBlock.ToonSpecular MaterialBlock.RimShade MaterialBlock.RimLight MaterialBlock.Backlight MaterialBlock.MatCap MaterialBlock.EmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.AlphaClipPolicy MaterialBlock.TransparentComposite MaterialBlock.OitAccumulationOutput;
+    passes ForwardOutlineLilToon UniversalForward HoUrpAovOutput DepthOnly ShadowCaster HoUrpOitAccumulation;
     produces Material.Class Material.Custom0-3 Shading.SssSourceColor Shading.SssWeight Aov.MaskId Aov.NormalDepth Aov.SurfaceData OitAccumulationInput OitRevealageInput;
     requires capability ReceivesOutline ParticipatesSemanticPost SupportsOit;
     phase ForwardAndOit;

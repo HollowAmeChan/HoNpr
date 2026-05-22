@@ -2,8 +2,8 @@
 // SourcePreset: MaterialPreset.Character_LilToonSourceAlgorithmAssembly
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterOutline + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow + MaterialTemplate.CharacterOit
 // SourceReference: lilToon lts/ltspass shader shell and lil_pass_forward_normal.hlsl component order.
-// OutlineReference: lilToon FORWARD_OUTLINE pass, LIL_OUTLINE switch, lil_vert_outline.hlsl object-space extrusion.
-// Blocks: BaseColorTexture, NormalMap, RegionMask, StyleRampAtlas, LilToonSourceOutlinePass, UrpMainLightInput, IndirectLightInput, ScreenAoReceiver, HoShadowReceiver, ToonDiffuseRamp, ToonSpecular, RimShade, RimLight, Backlight, MatCap, EmissionPrimary, MaterialSemanticProducer, AovOutputStandard, TransparentComposite, OitAccumulationOutput
+// OutlineReference: lilToon FORWARD_OUTLINE pass, LIL_OUTLINE switch, lil_vert_outline.hlsl extrusion, OVERRIDE_OUTLINE_COLOR.
+// Blocks: BaseColorTexture, NormalMap, RegionMask, StyleRampAtlas, OutlineLilToon, UrpMainLightInput, IndirectLightInput, ScreenAoReceiver, HoShadowReceiver, ToonDiffuseRamp, ToonSpecular, RimShade, RimLight, Backlight, MatCap, EmissionPrimary, MaterialSemanticProducer, AovOutputStandard, TransparentComposite, OitAccumulationOutput
 // This shader intentionally does not include lilToon files or inherit lilToon ABI names.
 Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
 {
@@ -15,12 +15,20 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
         _HoNprNormalMap("Normal Map", 2D) = "bump" {}
         _HoNprSemanticMap("Semantic Map", 2D) = "white" {}
         _HoNprRegionMap("Region Map", 2D) = "white" {}
-        _HoNprOutlineColor("LilToon Source Outline Color", Color) = (0, 0, 0, 1)
-        _HoNprOutlineWidth("LilToon Source Outline Width", Range(0, 0.05)) = 0.005
-        _HoNprOutlineWidthMask("LilToon Source Outline Width Mask", 2D) = "white" {}
-        _HoNprOutlineFixWidth("LilToon Source Outline Fix Width", Range(0, 1)) = 0
-        _HoNprOutlineZBias("LilToon Source Outline Z Bias", Range(0, 0.02)) = 0
-        _HoNprOutlineVertexWidthMode("LilToon Source Outline Vertex Width Mode", Float) = 0
+        _HoNprOutlineColor("Outline-lilToon Color", Color) = (0.6, 0.56, 0.73, 1)
+        _HoNprOutlineTex("Outline-lilToon Texture", 2D) = "white" {}
+        _HoNprOutlineLitColor("Outline-lilToon Lit Color", Color) = (1, 0.2, 0, 0)
+        _HoNprOutlineLitApplyTex("Outline-lilToon Lit Apply Texture", Float) = 0
+        _HoNprOutlineLitScale("Outline-lilToon Lit Scale", Float) = 10
+        _HoNprOutlineLitOffset("Outline-lilToon Lit Offset", Float) = -8
+        _HoNprOutlineWidth("Outline-lilToon Width", Range(0, 1)) = 0.08
+        _HoNprOutlineWidthMask("Outline-lilToon Width Mask", 2D) = "white" {}
+        _HoNprOutlineFixWidth("Outline-lilToon Fix Width", Range(0, 1)) = 0.5
+        _HoNprOutlineZBias("Outline-lilToon Z Bias", Range(0, 0.02)) = 0
+        _HoNprOutlineVertexWidthMode("Outline-lilToon Vertex Width Mode", Float) = 0
+        _HoNprOutlineVectorMap("Outline-lilToon Vector Map", 2D) = "bump" {}
+        _HoNprOutlineVectorScale("Outline-lilToon Vector Scale", Range(-10, 10)) = 1
+        _HoNprOutlineEnableLighting("Outline-lilToon Enable Lighting", Range(0, 1)) = 1
 
         _HoNprShadowThreshold("Toon Shadow Threshold", Range(0, 1)) = 0.48
         _HoNprShadowSoftness("Toon Shadow Softness", Range(0.001, 1)) = 0.08
@@ -60,12 +68,12 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
 
         Pass
         {
-            Name "ForwardOutlineLilToonSource"
+            Name "ForwardOutlineLilToon"
             Tags { "LightMode" = "SRPDefaultUnlit" }
 
             Cull Front
             ZWrite On
-            ZTest LEqual
+            ZTest Less
             Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
@@ -74,22 +82,36 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
             #pragma fragment FragOutline
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprOutline.hlsl"
 
+            TEXTURE2D(_HoNprOutlineTex);
+            SAMPLER(sampler_HoNprOutlineTex);
             TEXTURE2D(_HoNprOutlineWidthMask);
             SAMPLER(sampler_HoNprOutlineWidthMask);
+            TEXTURE2D(_HoNprOutlineVectorMap);
+            SAMPLER(sampler_HoNprOutlineVectorMap);
 
+            float4 _HoNprOutlineTex_ST;
             float4 _HoNprOutlineWidthMask_ST;
+            float4 _HoNprOutlineVectorMap_ST;
             half4 _HoNprOutlineColor;
+            half4 _HoNprOutlineLitColor;
+            half _HoNprOutlineLitApplyTex;
+            half _HoNprOutlineLitScale;
+            half _HoNprOutlineLitOffset;
             float _HoNprOutlineWidth;
             float _HoNprOutlineFixWidth;
             float _HoNprOutlineZBias;
             float _HoNprOutlineVertexWidthMode;
+            float _HoNprOutlineVectorScale;
+            half _HoNprOutlineEnableLighting;
 
             struct Attributes
             {
                 float4 positionOS : POSITION;
                 float3 normalOS : NORMAL;
+                float4 tangentOS : TANGENT;
                 half4 color : COLOR;
                 float2 uv : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -99,6 +121,7 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
             {
                 float4 positionCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                half3 normalWS : TEXCOORD1;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -109,20 +132,26 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
                 float2 uv = input.uv * _HoNprOutlineWidthMask_ST.xy + _HoNprOutlineWidthMask_ST.zw;
+                float2 vectorUv = input.uv * _HoNprOutlineVectorMap_ST.xy + _HoNprOutlineVectorMap_ST.zw;
                 half widthMask = SAMPLE_TEXTURE2D_LOD(_HoNprOutlineWidthMask, sampler_HoNprOutlineWidthMask, uv, 0).r;
-                HoNprLilToonSourceOutlineSettings outlineSettings;
+                half4 vectorSample = SAMPLE_TEXTURE2D_LOD(_HoNprOutlineVectorMap, sampler_HoNprOutlineVectorMap, vectorUv, 0);
+                HoNprOutlineLilToonSettings outlineSettings;
                 outlineSettings.width = _HoNprOutlineWidth;
                 outlineSettings.widthMask = widthMask;
                 outlineSettings.vertexWidthMode = _HoNprOutlineVertexWidthMode;
                 outlineSettings.fixWidth = _HoNprOutlineFixWidth;
                 outlineSettings.zBias = _HoNprOutlineZBias;
+                outlineSettings.vectorScale = _HoNprOutlineVectorScale;
 
-                output.positionCS = HoNprTransformLilToonSourceOutlineToHClip(
+                output.positionCS = HoNprTransformOutlineLilToonToHClip(
                     input.positionOS.xyz,
                     input.normalOS,
+                    input.tangentOS,
                     input.color,
+                    vectorSample,
                     outlineSettings);
-                output.uv = uv;
+                output.uv = input.uv * _HoNprOutlineTex_ST.xy + _HoNprOutlineTex_ST.zw;
+                output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 return output;
             }
 
@@ -130,8 +159,23 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 clip(_HoNprOutlineWidth - 0.0001);
-                half mask = SAMPLE_TEXTURE2D(_HoNprOutlineWidthMask, sampler_HoNprOutlineWidthMask, input.uv).r;
-                return half4(_HoNprOutlineColor.rgb, _HoNprOutlineColor.a * mask);
+                half4 outlineTex = SAMPLE_TEXTURE2D(_HoNprOutlineTex, sampler_HoNprOutlineTex, input.uv);
+                Light mainLight = GetMainLight();
+                half normalLenSq = dot(input.normalWS, input.normalWS);
+                half3 normalWS = normalLenSq > 1.0e-4h ? input.normalWS * rsqrt(normalLenSq) : half3(0.0h, 0.0h, 1.0h);
+                half3 outlineRgb = outlineTex.rgb * _HoNprOutlineColor.rgb;
+                outlineRgb = HoNprApplyOutlineLilToonLighting(
+                    outlineRgb,
+                    outlineTex,
+                    _HoNprOutlineLitColor,
+                    _HoNprOutlineLitApplyTex,
+                    _HoNprOutlineLitScale,
+                    _HoNprOutlineLitOffset,
+                    _HoNprOutlineEnableLighting,
+                    normalWS,
+                    mainLight.direction,
+                    mainLight.color);
+                return half4(outlineRgb, outlineTex.a * _HoNprOutlineColor.a);
             }
             ENDHLSL
         }

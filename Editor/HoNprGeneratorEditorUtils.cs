@@ -12,7 +12,7 @@ namespace Hollow.HoNpr.Editor
     internal static class HoNprGeneratorEditorUtils
     {
         private const string MenuPathAssets = "Assets/HoNpr/Generator/";
-        private const string MenuPathForceRegenerate = MenuPathAssets + "[Shader] Force regenerate generated shaders";
+        private const string MenuPathForceRegenerate = MenuPathAssets + "[Material] Force regenerate shaders and material UI";
         private const string MenuPathRefreshGenerated = MenuPathAssets + "[Shader] Refresh generated shader assets";
         private const string MenuPathValidateDeclarations = MenuPathAssets + "[Validation] Validate shader system declarations";
         private const string MenuPathRebuildDeclarationTables = MenuPathAssets + "[Documentation] Rebuild declaration tables";
@@ -60,17 +60,22 @@ namespace Hollow.HoNpr.Editor
             bool valid = ValidateShaderSystem(packageRoot, false);
             int generatedCount = GeneratePrototypeShaders(packageRoot);
             int importedCount = RefreshGeneratedShaderAssets(packageRoot, false);
+            MaterialUi.HoNprMaterialUiRefreshResult materialUiResult = MaterialUi.HoNprMaterialUiDatabase.RebuildTable(false);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            if (valid)
+            bool completedWithoutWarnings = valid && materialUiResult.IsValid;
+            if (completedWithoutWarnings)
             {
-                Debug.Log($"[HoNpr.Generator] Force regenerate completed. Generated {generatedCount} shader assets and imported {importedCount} generated assets.");
+                Debug.Log($"[HoNpr.Generator] Material refresh completed. Generated {generatedCount} shader assets, imported {importedCount} generated assets, and rebuilt {materialUiResult.DescriptorCount} material UI descriptors.");
             }
             else
             {
-                Debug.LogWarning($"[HoNpr.Generator] Force regenerate completed with validation warnings. Generated {generatedCount} shader assets and imported {importedCount} generated assets.");
+                string materialUiWarnings = materialUiResult.Errors.Count > 0
+                    ? "\nMaterial UI warnings:\n" + string.Join("\n", materialUiResult.Errors)
+                    : string.Empty;
+                Debug.LogWarning($"[HoNpr.Generator] Material refresh completed with validation warnings. Generated {generatedCount} shader assets, imported {importedCount} generated assets, and rebuilt {materialUiResult.DescriptorCount} material UI descriptors.{materialUiWarnings}");
             }
         }
 

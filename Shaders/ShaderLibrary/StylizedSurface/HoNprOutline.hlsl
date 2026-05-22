@@ -3,16 +3,17 @@
 
 #include "../HoNprCommon.hlsl"
 
-struct HoNprLilToonSourceOutlineSettings
+struct HoNprOutlineLilToonSettings
 {
     float width;
     float widthMask;
     float vertexWidthMode;
     float fixWidth;
     float zBias;
+    float vectorScale;
 };
 
-float HoNprSelectLilToonSourceOutlineVertexWidth(half4 vertexColor, float vertexWidthMode)
+float HoNprSelectOutlineLilToonVertexWidth(half4 vertexColor, float vertexWidthMode)
 {
     if (vertexWidthMode > 1.5)
     {
@@ -27,26 +28,83 @@ float HoNprSelectLilToonSourceOutlineVertexWidth(half4 vertexColor, float vertex
     return 1.0;
 }
 
-float HoNprApplyLilToonSourceOutlineFixWidth(float width, float3 positionWS, float fixWidth)
+float3 HoNprNormalizeOutlineVector(float3 value, float3 fallback)
+{
+    float lenSq = dot(value, value);
+    return lenSq > 1.0e-6 ? value * rsqrt(lenSq) : fallback;
+}
+
+float3 HoNprDecodeOutlineLilToonVectorTS(half4 vectorSample, float vectorScale)
+{
+    float3 vectorTS;
+    #if defined(UNITY_NO_DXT5nm)
+        vectorTS = float3(vectorSample.rgb * 2.0h - 1.0h);
+    #else
+        #if !defined(UNITY_ASTC_NORMALMAP_ENCODING)
+            vectorSample.a *= vectorSample.r;
+        #endif
+        vectorTS.xy = vectorSample.ag * 2.0h - 1.0h;
+        vectorTS.z = sqrt(1.0 - saturate(dot(vectorTS.xy, vectorTS.xy)));
+    #endif
+    vectorTS.xy *= vectorScale;
+    vectorTS.z = max(0.0, vectorTS.z);
+    return HoNprNormalizeOutlineVector(vectorTS, float3(0.0, 0.0, 1.0));
+}
+
+float3 HoNprGetOutlineLilToonVertexColorVector(half4 vertexColor, float3 normalOS, float3x3 tbnOS)
+{
+    bool isDefaultBlack = all(vertexColor.rgb <= 0.0001h);
+    bool isDefaultWhite = all(vertexColor.rgb >= 0.9999h);
+    if (isDefaultBlack || isDefaultWhite)
+    {
+        return normalOS;
+    }
+
+    return mul(float3(vertexColor.rgb * 2.0h - 1.0h), tbnOS);
+}
+
+float3 HoNprGetOutlineLilToonDirectionOS(
+    float3 normalOS,
+    float4 tangentOS,
+    half4 vertexColor,
+    half4 vectorSample,
+    HoNprOutlineLilToonSettings settings)
+{
+    float3 normal = HoNprNormalizeOutlineVector(normalOS, float3(0.0, 0.0, 1.0));
+    float3 tangent = HoNprNormalizeOutlineVector(tangentOS.xyz, float3(1.0, 0.0, 0.0));
+    float3 bitangent = HoNprNormalizeOutlineVector(cross(normal, tangent) * tangentOS.w, float3(0.0, 1.0, 0.0));
+    float3x3 tbnOS = float3x3(tangent, bitangent, normal);
+
+    if (settings.vertexWidthMode > 1.5)
+    {
+        return HoNprNormalizeOutlineVector(HoNprGetOutlineLilToonVertexColorVector(vertexColor, normal, tbnOS), normal);
+    }
+
+    float3 vectorTS = HoNprDecodeOutlineLilToonVectorTS(vectorSample, settings.vectorScale);
+    return HoNprNormalizeOutlineVector(mul(vectorTS, tbnOS), normal);
+}
+
+float HoNprApplyOutlineLilToonFixWidth(float width, float3 positionWS, float fixWidth)
 {
     float distanceToCamera = max(distance(GetCameraPositionWS(), positionWS), 1.0e-4);
     float fixedScale = saturate(distanceToCamera);
     return width * lerp(1.0, fixedScale, saturate(fixWidth));
 }
 
-float4 HoNprTransformLilToonSourceOutlineToHClip(
+float4 HoNprTransformOutlineLilToonToHClip(
     float3 positionOS,
     float3 normalOS,
+    float4 tangentOS,
     half4 vertexColor,
-    HoNprLilToonSourceOutlineSettings settings)
+    half4 vectorSample,
+    HoNprOutlineLilToonSettings settings)
 {
     float3 positionWS = TransformObjectToWorld(positionOS);
-    float width = settings.width * settings.widthMask;
-    width *= HoNprSelectLilToonSourceOutlineVertexWidth(vertexColor, settings.vertexWidthMode);
-    width = HoNprApplyLilToonSourceOutlineFixWidth(width, positionWS, settings.fixWidth);
+    float width = settings.width * 0.01 * settings.widthMask;
+    width *= HoNprSelectOutlineLilToonVertexWidth(vertexColor, settings.vertexWidthMode);
+    width = HoNprApplyOutlineLilToonFixWidth(width, positionWS, settings.fixWidth);
 
-    float normalLenSq = dot(normalOS, normalOS);
-    float3 outlineNormalOS = normalLenSq > 1.0e-6 ? normalOS * rsqrt(normalLenSq) : float3(0.0, 0.0, 1.0);
+    float3 outlineNormalOS = HoNprGetOutlineLilToonDirectionOS(normalOS, tangentOS, vertexColor, vectorSample, settings);
     positionOS += outlineNormalOS * width;
 
     positionWS = TransformObjectToWorld(positionOS);
@@ -56,6 +114,31 @@ float4 HoNprTransformLilToonSourceOutlineToHClip(
     positionWS -= viewDirWS * settings.zBias;
 
     return TransformWorldToHClip(positionWS);
+}
+
+half3 HoNprApplyOutlineLilToonLighting(
+    half3 outlineRgb,
+    half4 outlineTexture,
+    half4 litColor,
+    half litApplyTexture,
+    half litScale,
+    half litOffset,
+    half enableLighting,
+    half3 normalWS,
+    half3 lightDirWS,
+    half3 lightColor)
+{
+    float2 normalVS = mul((float3x3)UNITY_MATRIX_V, float3(normalWS)).xy;
+    float2 lightVS = mul((float3x3)UNITY_MATRIX_V, float3(lightDirWS)).xy;
+    float normalLenSq = max(dot(normalVS, normalVS), 1.0e-6);
+    float lightLenSq = max(dot(lightVS, lightVS), 1.0e-6);
+    half outlineNdotL = half(dot(normalVS * rsqrt(normalLenSq), lightVS * rsqrt(lightLenSq)) * 0.5 + 0.5);
+
+    half3 litTarget = lerp(litColor.rgb, outlineTexture.rgb * litColor.rgb, saturate(litApplyTexture));
+    half litFactor = saturate(outlineNdotL * litScale + litOffset) * saturate(litColor.a);
+    outlineRgb = lerp(outlineRgb, litTarget, litFactor);
+    outlineRgb = lerp(outlineRgb, outlineRgb * max(lightColor, half3(0.0h, 0.0h, 0.0h)), saturate(enableLighting));
+    return outlineRgb;
 }
 
 #endif
