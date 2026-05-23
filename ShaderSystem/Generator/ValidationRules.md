@@ -8,6 +8,8 @@
 | 每个 preset 引用的 template 都必须存在对应 `*.honprtemplate` 声明。 | Error |
 | 每个 feature block 引用的 include alias 都必须存在于 `ShaderSystem/Includes/INCLUDE_REGISTRY.honprinclude`。 | Error |
 | 同一个 `MaterialBlock.*` 只能在 `ShaderSystem/Features/**/*.honprblock` 中出现一次。 | Error |
+| `ShaderSystem/Features/<Domain>/<FeatureId>/` leaf 目录必须有 `Block.honprblock`；`Features/PresetUi/` 仅允许承载 `*.honprui` profile。 | Error |
+| 禁止在 `ShaderSystem/Features/**/README.md` 新增 per-feature 文档；feature 说明集中维护在 `ShaderSystem/README.md` 或派生表。 | Error |
 | UI profile 中出现的 property 必须能追溯到 `ShaderSystem/Features/**/*.honprparams` 中的唯一声明。 | Error |
 | `*.honprblock` 和 `*.honprpreset` 禁止裸写 `#include`、`#define` 和 `#pragma`；block 只能声明式请求 alias、define 和 variant。 | Error |
 | `TEMPLATE_TABLE.md`、`FEATURE_BLOCK_TABLE.md` 和 `PRESET_TABLE.md` 由 DSL 派生，不能手动编辑表格行。 | CI 增加表格漂移测试后按 Error 处理 |

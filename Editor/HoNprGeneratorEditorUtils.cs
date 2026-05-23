@@ -143,6 +143,7 @@ namespace Hollow.HoNpr.Editor
             }
 
             ValidateDeclarationReferences(packageRoot, errors);
+            ValidateFeatureDirectoryHygiene(packageRoot, errors);
 
             if (missing.Count > 0)
             {
@@ -206,6 +207,43 @@ namespace Hollow.HoNpr.Editor
                     if (!blocks.Contains(block))
                         errors.Add($"{preset.presetId} references missing feature block {block}.");
                 }
+            }
+        }
+
+        private static void ValidateFeatureDirectoryHygiene(string packageRoot, List<string> errors)
+        {
+            string packageAbsoluteRoot = PackageAssetPathToAbsolutePath(packageRoot);
+            string featuresRoot = Path.Combine(packageAbsoluteRoot, "ShaderSystem", "Features");
+            if (!Directory.Exists(featuresRoot))
+                return;
+
+            foreach (string readmePath in Directory.EnumerateFiles(featuresRoot, "README.md", SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(packageAbsoluteRoot, readmePath)
+                    .Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(Path.AltDirectorySeparatorChar, '/');
+                errors.Add($"Per-feature README is not allowed; move the explanation into ShaderSystem/README.md or generated tables: {relativePath}");
+            }
+
+            foreach (string directory in Directory.EnumerateDirectories(featuresRoot, "*", SearchOption.AllDirectories))
+            {
+                if (Directory.EnumerateDirectories(directory).Any())
+                    continue;
+
+                string relativePath = Path.GetRelativePath(packageAbsoluteRoot, directory)
+                    .Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(Path.AltDirectorySeparatorChar, '/');
+
+                if (relativePath.StartsWith("ShaderSystem/Features/PresetUi/", StringComparison.Ordinal))
+                    continue;
+
+                string featureRelativePath = relativePath.Substring("ShaderSystem/Features/".Length);
+                if (featureRelativePath.IndexOf('/') < 0)
+                    continue;
+
+                string blockPath = Path.Combine(directory, "Block.honprblock");
+                if (!File.Exists(blockPath))
+                    errors.Add($"Feature leaf directory must contain Block.honprblock or live under Features/PresetUi: {relativePath}");
             }
         }
 

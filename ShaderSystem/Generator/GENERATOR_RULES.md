@@ -82,12 +82,13 @@ preset MaterialPreset.Character_Toon_Standard { ... }
 
 ```text
 ShaderSystem/Features/Stylized/RimLightLilToon/
-  README.md
   Block.honprblock
   Parameters.honprparams
 ```
 
 文件夹就是 feature identity。不要再新增平铺在旧 `FeatureBlocks/` 下的 block；旧目录已废弃。
+
+Feature leaf 目录必须有 `Block.honprblock`，除非它位于 `Features/PresetUi/` 并只承载 preset UI profile。不要再新增 per-feature `README.md`；跨 feature 的说明放在 `ShaderSystem/README.md`，浏览表由 DSL 自动生成。
 
 需要落盘生成 shader 的 preset 必须显式声明生成器，而不是依赖 C# 按 preset 名称白名单选择：
 
