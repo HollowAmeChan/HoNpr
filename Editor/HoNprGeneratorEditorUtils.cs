@@ -11,11 +11,11 @@ namespace Hollow.HoNpr.Editor
 {
     internal static class HoNprGeneratorEditorUtils
     {
-        private const string MenuPathAssets = "Assets/HoNpr/Generator/";
-        private const string MenuPathForceRegenerate = MenuPathAssets + "[Material] Force regenerate shaders and material UI";
-        private const string MenuPathRefreshGenerated = MenuPathAssets + "[Shader] Refresh generated shader assets";
-        private const string MenuPathValidateDeclarations = MenuPathAssets + "[Validation] Validate shader system declarations";
-        private const string MenuPathRebuildDeclarationTables = MenuPathAssets + "[Documentation] Rebuild declaration tables";
+        private const string MenuPathAssets = "Assets/HoNpr/生成器/";
+        private const string MenuPathForceRegenerate = MenuPathAssets + "[材质] 强制刷新 Shader 与材质 UI";
+        private const string MenuPathRefreshGenerated = MenuPathAssets + "[Shader] 刷新生成的 Shader 资源";
+        private const string MenuPathValidateDeclarations = MenuPathAssets + "[校验] 校验 Shader 系统声明";
+        private const string MenuPathRebuildDeclarationTables = MenuPathAssets + "[文档] 重建声明表";
         private const int MenuPriorityGenerator = 1120;
         private const int MenuPriorityRefresh = MenuPriorityGenerator + 1;
         private const int MenuPriorityValidation = MenuPriorityGenerator + 10;
@@ -52,7 +52,7 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.Generator] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 HoNpr package root。");
                 return;
             }
 
@@ -68,14 +68,14 @@ namespace Hollow.HoNpr.Editor
             bool completedWithoutWarnings = valid && materialUiResult.IsValid;
             if (completedWithoutWarnings)
             {
-                Debug.Log($"[HoNpr.Generator] Material refresh completed. Generated {generatedCount} shader assets, imported {importedCount} generated assets, and rebuilt {materialUiResult.DescriptorCount} material UI descriptors.");
+                Debug.Log($"[HoNpr.Generator] 材质系统刷新完成：生成 {generatedCount} 个 shader，导入 {importedCount} 个生成资源，重建 {materialUiResult.DescriptorCount} 个材质 UI 声明。");
             }
             else
             {
                 string materialUiWarnings = materialUiResult.Errors.Count > 0
-                    ? "\nMaterial UI warnings:\n" + string.Join("\n", materialUiResult.Errors)
+                    ? "\n材质 UI 警告：\n" + string.Join("\n", materialUiResult.Errors)
                     : string.Empty;
-                Debug.LogWarning($"[HoNpr.Generator] Material refresh completed with validation warnings. Generated {generatedCount} shader assets, imported {importedCount} generated assets, and rebuilt {materialUiResult.DescriptorCount} material UI descriptors.{materialUiWarnings}");
+                Debug.LogWarning($"[HoNpr.Generator] 材质系统刷新完成，但存在校验警告：生成 {generatedCount} 个 shader，导入 {importedCount} 个生成资源，重建 {materialUiResult.DescriptorCount} 个材质 UI 声明。{materialUiWarnings}");
             }
         }
 
@@ -85,14 +85,14 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.Generator] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 HoNpr package root。");
                 return;
             }
 
             int importedCount = RefreshGeneratedShaderAssets(packageRoot, true);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[HoNpr.Generator] Refreshed {importedCount} generated shader assets.");
+            Debug.Log($"[HoNpr.Generator] 已刷新 {importedCount} 个生成的 Shader 资源。");
         }
 
         [MenuItem(MenuPathValidateDeclarations, false, MenuPriorityValidation)]
@@ -101,7 +101,7 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.Generator] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 HoNpr package root。");
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.Generator] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 HoNpr package root。");
                 return;
             }
 
@@ -146,18 +146,20 @@ namespace Hollow.HoNpr.Editor
 
             if (missing.Count > 0)
             {
-                Debug.LogWarning("[HoNpr.Generator] Shader system validation failed. Missing:\n" + string.Join("\n", missing));
+                Debug.LogWarning("[HoNpr.Generator] Shader 系统校验失败，缺少以下文件或目录：\n" + string.Join("\n", missing));
                 return false;
             }
 
             if (errors.Count > 0)
             {
-                Debug.LogWarning("[HoNpr.Generator] Shader system validation failed. Invalid declarations:\n" + string.Join("\n", errors));
+                Debug.LogWarning("[HoNpr.Generator] Shader 系统校验失败，声明存在问题：\n" + string.Join("\n", errors));
                 return false;
             }
 
             if (logSuccess)
-            Debug.Log("[HoNpr.Generator] Shader system declarations are valid.");
+            {
+                Debug.Log("[HoNpr.Generator] Shader 系统声明有效。");
+            }
 
             return true;
         }
@@ -406,12 +408,12 @@ namespace Hollow.HoNpr.Editor
 
             if (errors.Count > 0)
             {
-                Debug.LogWarning("[HoNpr.Generator] Rebuilt declaration tables with validation warnings:\n" + string.Join("\n", errors));
+                Debug.LogWarning("[HoNpr.Generator] 声明表已重建，但存在校验警告：\n" + string.Join("\n", errors));
                 return;
             }
 
             if (logSuccess)
-                Debug.Log($"[HoNpr.Generator] Rebuilt declaration tables from HoNpr DSL. Imported {importedPaths.Count} table assets.");
+                Debug.Log($"[HoNpr.Generator] 已从 HoNpr DSL 重建声明表，导入 {importedPaths.Count} 个表格资源。");
         }
 
         private static string BuildTemplateTable(ShaderSystemDeclarations declarations)
@@ -811,19 +813,19 @@ namespace Hollow.HoNpr.Editor
             PrototypePreset preset = LoadPresetDeclaration(packageRoot, presetPath, errors);
             if (preset == null)
             {
-                Debug.LogWarning($"[HoNpr.Generator] Could not find preset at {presetPath}.");
+                Debug.LogWarning($"[HoNpr.Generator] 找不到 preset：{presetPath}");
                 return 0;
             }
 
             if (preset == null || string.IsNullOrEmpty(preset.generatedShader) || string.IsNullOrEmpty(preset.shaderName))
             {
-                Debug.LogWarning($"[HoNpr.Generator] Preset is missing generated shader metadata: {presetPath}.");
+                Debug.LogWarning($"[HoNpr.Generator] Preset 缺少生成 Shader 元数据：{presetPath}");
                 return 0;
             }
 
             if (errors.Count > 0)
             {
-                Debug.LogWarning("[HoNpr.Generator] Preset parse warnings:\n" + string.Join("\n", errors));
+                Debug.LogWarning("[HoNpr.Generator] Preset 解析警告：\n" + string.Join("\n", errors));
             }
 
             string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
@@ -1443,7 +1445,7 @@ Shader ""{preset.shaderName}""
             if (!AssetDatabase.IsValidFolder(root))
             {
                 if (logSkippedFolders)
-                    Debug.LogWarning($"[HoNpr.Generator] Could not find folder at {root}.");
+                    Debug.LogWarning($"[HoNpr.Generator] 找不到目录：{root}");
                 return;
             }
 

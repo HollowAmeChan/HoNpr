@@ -41,12 +41,19 @@ namespace Hollow.HoNpr.Editor.MaterialUi
 
         public static void RebuildTable()
         {
+            RebuildTable(true);
+        }
+
+        public static HoNprMaterialUiRefreshResult RebuildTable(bool logResult)
+        {
             var errors = new List<string>();
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.MaterialUI] 找不到 HoNpr package root。");
-                return;
+                errors.Add("找不到 HoNpr package root。");
+                if (logResult)
+                    Debug.LogWarning("[HoNpr.MaterialUI] 找不到 HoNpr package root。");
+                return new HoNprMaterialUiRefreshResult(0, errors);
             }
 
             List<HoNprMaterialUiDescriptor> descriptors = LoadAll(packageRoot, errors);
@@ -59,12 +66,18 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             File.WriteAllText(tablePath, BuildTable(descriptors), Encoding.UTF8);
             AssetDatabase.ImportAsset($"{packageRoot}/ShaderSystem/MaterialUi/MATERIAL_UI_TABLE.md", ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
 
-            if (errors.Count > 0)
-                Debug.LogWarning("[HoNpr.MaterialUI] Material UI 表已重建，但存在校验警告：\n" + string.Join("\n", errors));
-            else
-                Debug.Log($"[HoNpr.MaterialUI] Material UI 表已重建。UI={descriptors.Count}");
-
             cacheBuilt = false;
+            var result = new HoNprMaterialUiRefreshResult(descriptors.Count, errors);
+
+            if (logResult)
+            {
+                if (errors.Count > 0)
+                    Debug.LogWarning("[HoNpr.MaterialUI] 材质 UI 表已重建，但存在校验警告：\n" + string.Join("\n", errors));
+                else
+                    Debug.Log($"[HoNpr.MaterialUI] 材质 UI 表已重建。UI={descriptors.Count}");
+            }
+
+            return result;
         }
 
         private static void EnsureCache()
@@ -86,7 +99,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
 
             cacheBuilt = true;
             if (errors.Count > 0)
-                Debug.LogWarning("[HoNpr.MaterialUI] 载入 Material UI 声明时存在警告：\n" + string.Join("\n", errors));
+                Debug.LogWarning("[HoNpr.MaterialUI] 载入材质 UI 声明时存在警告：\n" + string.Join("\n", errors));
         }
 
         private static List<HoNprMaterialUiDescriptor> LoadAll(string packageRoot, List<string> errors)
@@ -108,7 +121,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             string text = ReadAssetText(assetPath);
             if (string.IsNullOrWhiteSpace(text))
             {
-                errors.Add($"空 Material UI 声明：{assetPath}");
+                errors.Add($"空材质 UI 声明：{assetPath}");
                 return null;
             }
 
@@ -119,7 +132,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             Match header = Regex.Match(text, @"\bui\s+([A-Za-z0-9_.-]+)\s+for\s+([A-Za-z0-9_.-]+)\s*\{(?<body>.*)\}\s*$", RegexOptions.Singleline);
             if (!header.Success)
             {
-                errors.Add($"无法解析 Material UI 声明头：{assetPath}");
+                errors.Add($"无法解析材质 UI 声明头：{assetPath}");
                 return null;
             }
 
@@ -356,7 +369,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
         private static string BuildTable(IEnumerable<HoNprMaterialUiDescriptor> descriptors)
         {
             var builder = new StringBuilder();
-            builder.AppendLine("# Material UI 表");
+            builder.AppendLine("# 材质 UI 表");
             builder.AppendLine();
             builder.AppendLine("由 `*.honprui` 自动生成。不要手动编辑表格行。");
             builder.AppendLine();
@@ -563,6 +576,19 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             public string Name;
             public List<string> Arguments;
         }
+    }
+
+    internal sealed class HoNprMaterialUiRefreshResult
+    {
+        public HoNprMaterialUiRefreshResult(int descriptorCount, IReadOnlyList<string> errors)
+        {
+            DescriptorCount = descriptorCount;
+            Errors = errors ?? Array.Empty<string>();
+        }
+
+        public int DescriptorCount { get; }
+        public IReadOnlyList<string> Errors { get; }
+        public bool IsValid => Errors.Count == 0;
     }
 
     internal sealed class HoNprMaterialUiDescriptor

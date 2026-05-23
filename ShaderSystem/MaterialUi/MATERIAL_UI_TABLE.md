@@ -1,4 +1,4 @@
-﻿# Material UI 表
+﻿# 材质 UI 表
 
 由 `*.honprui` 自动生成。不要手动编辑表格行。
 

@@ -521,15 +521,15 @@ Generator/
   HoNprPresetValidator.cs
 ```
 
-Generator 必须提供类似 `lilToon` 的编辑器强制刷新按钮。现有 HoToon 小模块已经有 [`Assets/HoNpr/HoToon/[Shader] Refresh shaders`](../Editor/HoNprHoToonEditorUtils.cs)；新生成系统的入口位置应放得接近，避免人和 AI 到处找。
+Generator 必须提供类似 `lilToon` 的编辑器强制刷新按钮。现有 HoToon 小模块已经有 [`Assets/HoNpr/HoToon/[Shader] 刷新 Shader`](../Editor/HoNprHoToonEditorUtils.cs)；新生成系统的入口位置应放得接近，避免人和 AI 到处找。
 
 推荐菜单：
 
 ```text
-Assets/HoNpr/Generator/[Shader] Force regenerate generated shaders
-Assets/HoNpr/Generator/[Shader] Refresh generated shader assets
-Assets/HoNpr/Generator/[Validation] Validate shader system declarations
-Assets/HoNpr/Generator/[Documentation] Rebuild declaration tables
+Assets/HoNpr/生成器/[材质] 强制刷新 Shader 与材质 UI
+Assets/HoNpr/生成器/[Shader] 刷新生成的 Shader 资源
+Assets/HoNpr/生成器/[校验] 校验 Shader 系统声明
+Assets/HoNpr/生成器/[文档] 重建声明表
 ```
 
 推荐优先级：
@@ -549,7 +549,7 @@ Generator menu priority: 1120-1140
 - 校验 pass 由模板决定，不能由 UI 参数决定。
 - 生成 `.shader` 时写入 source mapping 注释。
 - 生成产物必须可读、可 diff、可删除重生。
-- 强制刷新按钮必须重建声明表、执行 DSL 声明校验、重跑生成器、刷新 `Shaders/Generated/`，并通过 `AssetDatabase.ImportAsset(..., ForceUpdate | ForceSynchronousImport)` 导入生成结果。
+- 强制刷新按钮必须重建声明表、执行 DSL 声明校验、重跑生成器、刷新 `Shaders/Generated/`，并通过 `AssetDatabase.ImportAsset(..., ForceUpdate | ForceSynchronousImport)` 导入生成结果；随后重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
 - 强制刷新不能读取材质 Inspector 当前状态来决定结构；它只能读取 template / block / preset / include registry。
 
 生成产物头部建议：

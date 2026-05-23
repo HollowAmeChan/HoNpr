@@ -7,10 +7,10 @@
 生成器入口需要放在现有 HoToon 刷新菜单附近：
 
 ```text
-Assets/HoNpr/Generator/[Shader] Force regenerate generated shaders
-Assets/HoNpr/Generator/[Shader] Refresh generated shader assets
-Assets/HoNpr/Generator/[Validation] Validate shader system declarations
-Assets/HoNpr/Generator/[Documentation] Rebuild declaration tables
+Assets/HoNpr/生成器/[材质] 强制刷新 Shader 与材质 UI
+Assets/HoNpr/生成器/[Shader] 刷新生成的 Shader 资源
+Assets/HoNpr/生成器/[校验] 校验 Shader 系统声明
+Assets/HoNpr/生成器/[文档] 重建声明表
 ```
 
 HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-1140`。
@@ -24,7 +24,8 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 3. 读取 include 别名、模板、功能块声明和 preset。
 4. 重新生成 active preset 列出的所有 shader 文件。
 5. 使用 `ForceUpdate | ForceSynchronousImport` 导入生成的 shader 资源。
-6. 调用 `AssetDatabase.SaveAssets()` 和 `AssetDatabase.Refresh()`。
+6. 重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
+7. 调用 `AssetDatabase.SaveAssets()` 和 `AssetDatabase.Refresh()`。
 
 第一阶段生成器只输出 `Character_DebugLit_SSS_OITReady`。生产 preset 可以先声明、后生成，但仍必须通过 template/block 引用校验。
 
@@ -50,6 +51,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 - `TEMPLATE_TABLE.md`.
 - `FEATURE_BLOCK_TABLE.md`.
 - `PRESET_TABLE.md`.
+- `MATERIAL_UI_TABLE.md`.
 
 这些表由 DSL 生成，不能成为第二份事实来源。
 

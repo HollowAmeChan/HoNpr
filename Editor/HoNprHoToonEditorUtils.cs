@@ -7,9 +7,9 @@ namespace Hollow.HoNpr.Editor
     internal static class HoNprHoToonEditorUtils
     {
         private const string MenuPathAssets = "Assets/HoNpr/HoToon/";
-        private const string MenuPathRefreshShaders = MenuPathAssets + "[Shader] Refresh shaders";
-        private const string MenuPathApplyTextureSettings = MenuPathAssets + "[Texture] Apply import settings";
-        private const string MenuPathSelectTextures = MenuPathAssets + "[Texture] Select textures folder";
+        private const string MenuPathRefreshShaders = MenuPathAssets + "[Shader] 刷新 Shader";
+        private const string MenuPathApplyTextureSettings = MenuPathAssets + "[贴图] 应用导入设置";
+        private const string MenuPathSelectTextures = MenuPathAssets + "[贴图] 选择贴图文件夹";
         private const int MenuPriorityAssets = 1100;
         private const int MenuPriorityTextureSettings = MenuPriorityAssets + 10;
         private const int MenuPriorityTextures = MenuPriorityAssets + 11;
@@ -21,7 +21,7 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.HoToon] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.HoToon] 找不到 HoNpr package root。");
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Hollow.HoNpr.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log($"[HoNpr.HoToon] Refreshed {importedPaths.Count} package assets.");
+            Debug.Log($"[HoNpr.HoToon] 已刷新 {importedPaths.Count} 个包资源。");
         }
 
         [MenuItem(MenuPathApplyTextureSettings, false, MenuPriorityTextureSettings)]
@@ -45,14 +45,14 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.HoToon] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.HoToon] 找不到 HoNpr package root。");
                 return;
             }
 
             string textureRoot = $"{packageRoot}/Textures/Halftone";
             if (!AssetDatabase.IsValidFolder(textureRoot))
             {
-                Debug.LogWarning($"[HoNpr.HoToon] Could not find texture folder at {textureRoot}.");
+                Debug.LogWarning($"[HoNpr.HoToon] 找不到贴图目录：{textureRoot}");
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace Hollow.HoNpr.Editor
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
-            Debug.Log($"[HoNpr.HoToon] Applied import settings to {count} texture assets.");
+            Debug.Log($"[HoNpr.HoToon] 已为 {count} 个贴图资源应用导入设置。");
         }
 
         [MenuItem(MenuPathSelectTextures, false, MenuPriorityTextures)]
@@ -81,7 +81,7 @@ namespace Hollow.HoNpr.Editor
             string packageRoot = FindPackageRoot();
             if (string.IsNullOrEmpty(packageRoot))
             {
-                Debug.LogWarning("[HoNpr.HoToon] Could not find the package root.");
+                Debug.LogWarning("[HoNpr.HoToon] 找不到 HoNpr package root。");
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace Hollow.HoNpr.Editor
             Object textureFolder = AssetDatabase.LoadAssetAtPath<Object>(textureRoot);
             if (textureFolder == null)
             {
-                Debug.LogWarning($"[HoNpr.HoToon] Could not find texture folder at {textureRoot}.");
+                Debug.LogWarning($"[HoNpr.HoToon] 找不到贴图目录：{textureRoot}");
                 return;
             }
 

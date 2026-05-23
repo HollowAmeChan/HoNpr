@@ -48,7 +48,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             HoNprMaterialUiDescriptor descriptor = HoNprMaterialUiDatabase.GetForPreset(presetId);
             if (descriptor == null)
             {
-                EditorGUILayout.HelpBox($"找不到 {presetId} 对应的 HoNpr Material UI 声明。", MessageType.Warning);
+                EditorGUILayout.HelpBox($"找不到 {presetId} 对应的 HoNpr 材质 UI 声明。", MessageType.Warning);
                 base.OnGUI(materialEditor, properties);
                 return;
             }
@@ -66,7 +66,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
         private static void DrawHeader(HoNprMaterialUiDescriptor descriptor)
         {
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("HoNpr Material UI", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("HoNpr 材质 UI", EditorStyles.boldLabel);
 
             if (DrawFlatIconButton(MaterialUiIcon.Tools, HeaderToggleWidth, showPerPropertyTools, "显示/隐藏每个参数旁边的复制/粘贴按钮。"))
             {
