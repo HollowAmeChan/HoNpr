@@ -216,6 +216,9 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                     case "default":
                         property.defaultHint = ReadNext(statement.Arguments, ref i);
                         break;
+                    case "options":
+                        ParseEnumOptions(property, ReadNext(statement.Arguments, ref i));
+                        break;
                     case "copy":
                         property.copyScope = ReadNext(statement.Arguments, ref i);
                         break;
@@ -227,6 +230,26 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             }
 
             descriptor.properties.Add(property);
+        }
+
+        private static void ParseEnumOptions(HoNprMaterialUiProperty property, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            foreach (string option in value.Split('|'))
+            {
+                string[] parts = option.Split('=');
+                if (parts.Length != 2)
+                    continue;
+
+                string label = parts[0].Trim();
+                if (string.IsNullOrEmpty(label))
+                    continue;
+
+                property.optionLabels.Add(label);
+                property.optionValues.Add(ReadFloat(parts[1]));
+            }
         }
 
         private static void ParseContractBox(HoNprMaterialUiDescriptor descriptor, DslStatement statement, string assetPath, List<string> errors)
@@ -455,8 +478,27 @@ namespace Hollow.HoNpr.Editor.MaterialUi
         private static bool IsForbiddenRenderStateProperty(string name)
         {
             string lower = name.ToLowerInvariant();
-            return lower.Contains("queue") || lower.Contains("blend") || lower.Contains("stencil") || lower.Contains("zwrite") ||
-                   lower.Contains("ztest") || lower.Contains("cull") || lower.Contains("colormask") || lower.Contains("lightmode");
+            return lower.Contains("renderqueue") ||
+                   lower.Contains("srcblend") ||
+                   lower.Contains("dstblend") ||
+                   lower.Contains("blendop") ||
+                   lower.Contains("zwrite") ||
+                   lower.Contains("ztest") ||
+                   lower.Contains("colormask") ||
+                   lower.Contains("lightmode") ||
+                   lower.Contains("stencil") ||
+                   IsForbiddenRenderStateToken(lower, "queue") ||
+                   IsForbiddenRenderStateToken(lower, "blend") ||
+                   IsForbiddenRenderStateToken(lower, "cull");
+        }
+
+        private static bool IsForbiddenRenderStateToken(string lowerName, string token)
+        {
+            if (lowerName == token || lowerName == "_" + token)
+                return true;
+
+            return lowerName.EndsWith("_" + token, StringComparison.Ordinal) ||
+                   lowerName.Contains("_" + token + "_");
         }
 
         private static string BuildTable(IEnumerable<HoNprMaterialUiDescriptor> descriptors)
@@ -712,6 +754,8 @@ namespace Hollow.HoNpr.Editor.MaterialUi
         public string structuralEffect;
         public float rangeMin;
         public float rangeMax;
+        public readonly List<string> optionLabels = new List<string>();
+        public readonly List<float> optionValues = new List<float>();
         public readonly List<string> tools = new List<string>();
         public bool HasRange => !Mathf.Approximately(rangeMin, rangeMax);
     }

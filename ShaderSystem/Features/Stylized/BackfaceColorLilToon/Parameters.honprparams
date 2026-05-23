@@ -1,4 +1,5 @@
 parameters MaterialBlock.BackfaceColorLilToon
 {
     property _HoNprBackfaceColorLilToonColor semantic Shading.Backface.Color type Color default "(0, 0, 0, 0)";
+    property _HoNprBackfaceColorLilToonBlendMode semantic Shading.Backface.BlendMode type Float default 0;
 }

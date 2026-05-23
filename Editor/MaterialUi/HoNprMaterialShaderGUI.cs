@@ -553,6 +553,9 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                 case "toggle":
                     DrawToggle(materialEditor, materialProperty, label);
                     break;
+                case "enum":
+                    DrawEnumPopup(materialEditor, materialProperty, descriptor, label);
+                    break;
                 case "color":
                     materialEditor.ColorProperty(materialProperty, label.text);
                     break;
@@ -833,6 +836,41 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             }
 
             materialEditor.ShaderProperty(materialProperty, label);
+        }
+
+        private static void DrawEnumPopup(
+            MaterialEditor materialEditor,
+            MaterialProperty materialProperty,
+            HoNprMaterialUiProperty descriptor,
+            GUIContent label)
+        {
+            if ((materialProperty.propertyType != UnityEngine.Rendering.ShaderPropertyType.Float
+                    && materialProperty.propertyType != UnityEngine.Rendering.ShaderPropertyType.Range)
+                || descriptor.optionLabels.Count == 0
+                || descriptor.optionLabels.Count != descriptor.optionValues.Count)
+            {
+                materialEditor.ShaderProperty(materialProperty, label);
+                return;
+            }
+
+            int selected = 0;
+            float current = materialProperty.floatValue;
+            for (int i = 0; i < descriptor.optionValues.Count; i++)
+            {
+                if (Mathf.Abs(current - descriptor.optionValues[i]) < 0.5f)
+                {
+                    selected = i;
+                    break;
+                }
+            }
+
+            EditorGUI.BeginChangeCheck();
+            int next = EditorGUILayout.Popup(label, selected, descriptor.optionLabels.ToArray());
+            if (EditorGUI.EndChangeCheck())
+            {
+                materialEditor.RegisterPropertyChangeUndo(label.text);
+                materialProperty.floatValue = descriptor.optionValues[next];
+            }
         }
 
         private static void DrawUndeclaredProperties(MaterialEditor materialEditor, MaterialProperty[] properties, HashSet<string> drawn)

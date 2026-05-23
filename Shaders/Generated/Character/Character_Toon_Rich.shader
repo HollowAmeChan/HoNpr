@@ -39,20 +39,25 @@ Shader "HoNpr/Character/Toon_Rich"
         _HoNprToonSpecularLilToonThreshold("Toon Specular-lilToon Threshold", Range(0, 1)) = 0.72
         _HoNprToonSpecularLilToonSoftness("Toon Specular-lilToon Softness", Range(0.001, 1)) = 0.08
         _HoNprToonSpecularLilToonMask("Toon Specular-lilToon Mask", Range(0, 1)) = 0.6
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprToonSpecularLilToonBlendMode("Toon Specular-lilToon Blend Mode", Float) = 0
 
 
         _HoNprRimShadeLilToonColor("RimShade-lilToon Color", Color) = (0.15, 0.16, 0.2, 1)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprRimShadeLilToonBlendMode("RimShade-lilToon Blend Mode", Float) = 0
 
 
         _HoNprBacklightLilToonColor("Backlight-lilToon Color", Color) = (0.7, 0.5, 0.35, 1)
         _HoNprBacklightLilToonPower("Backlight-lilToon Power", Range(0.1, 12)) = 2
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBacklightLilToonBlendMode("Backlight-lilToon Blend Mode", Float) = 0
 
 
         _HoNprMatCapLilToonColor("MatCap-lilToon Color", Color) = (0.25, 0.25, 0.3, 1)
         _HoNprMatCapLilToonMask("MatCap-lilToon Mask", Range(0, 1)) = 0.25
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprMatCapLilToonBlendMode("MatCap-lilToon Blend Mode", Float) = 0
 
 
         _HoNprRimLightLilToonColor("RimLight-lilToon Color", Color) = (0.75, 0.9, 1, 1)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprRimLightLilToonBlendMode("RimLight-lilToon Blend Mode", Float) = 0
 
 
         _HoNprRimLilToonPower("Rim-lilToon Power", Range(0.1, 12)) = 3
@@ -60,10 +65,12 @@ Shader "HoNpr/Character/Toon_Rich"
 
 
         _HoNprBackfaceColorLilToonColor("Backface Color-lilToon Color", Color) = (0, 0, 0, 0)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBackfaceColorLilToonBlendMode("Backface Color-lilToon Blend Mode", Float) = 0
 
 
         _HoNprSecondaryMatCapLilToonColor("Secondary MatCap-lilToon Color", Color) = (0.08, 0.1, 0.14, 1)
         _HoNprSecondaryMatCapLilToonMask("Secondary MatCap-lilToon Mask", Range(0, 1)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprSecondaryMatCapLilToonBlendMode("Secondary MatCap-lilToon Blend Mode", Float) = 0
 
 
         _HoNprGlitterLilToonColor("Glitter-lilToon Color", Color) = (1, 0.92, 0.72, 1)
@@ -71,20 +78,24 @@ Shader "HoNpr/Character/Toon_Rich"
         _HoNprGlitterLilToonDensity("Glitter-lilToon Density", Range(1, 256)) = 48
         _HoNprGlitterLilToonThreshold("Glitter-lilToon Threshold", Range(0, 1)) = 0.94
         _HoNprGlitterLilToonPower("Glitter-lilToon Power", Range(1, 128)) = 32
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprGlitterLilToonBlendMode("Glitter-lilToon Blend Mode", Float) = 0
 
 
         _HoNprEmissionPrimaryLilToonColor("EmissionPrimary-lilToon Color", Color) = (0, 0, 0, 1)
         _HoNprEmissionPrimaryLilToonIntensity("EmissionPrimary-lilToon Intensity", Range(0, 16)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprEmissionPrimaryLilToonBlendMode("EmissionPrimary-lilToon Blend Mode", Float) = 0
 
 
         _HoNprEmissionSecondaryLilToonColor("Secondary Emission-lilToon Color", Color) = (0, 0, 0, 1)
         _HoNprEmissionSecondaryLilToonIntensity("Secondary Emission-lilToon Intensity", Range(0, 16)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprEmissionSecondaryLilToonBlendMode("Secondary Emission-lilToon Blend Mode", Float) = 0
 
 
         _HoNprDistanceFadeLilToonColor("Distance Fade-lilToon Color", Color) = (0, 0, 0, 1)
         _HoNprDistanceFadeLilToonStart("Distance Fade-lilToon Start", Float) = 50
         _HoNprDistanceFadeLilToonEnd("Distance Fade-lilToon End", Float) = 80
         _HoNprDistanceFadeLilToonStrength("Distance Fade-lilToon Strength", Range(0, 1)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprDistanceFadeLilToonBlendMode("Distance Fade-lilToon Blend Mode", Float) = 0
 
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
 
@@ -170,9 +181,11 @@ half _HoNprRampRows;
 half _HoNprToonSpecularLilToonThreshold;
 half _HoNprToonSpecularLilToonSoftness;
 half _HoNprToonSpecularLilToonMask;
+half _HoNprToonSpecularLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_RIM_LIGHT_LILTOON)
 half4 _HoNprRimLightLilToonColor;
+half _HoNprRimLightLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_RIM_LIGHT_LILTOON) || defined(HONPR_HAS_RIM_SHADE_LILTOON)
 half _HoNprRimLilToonPower;
@@ -180,21 +193,26 @@ half _HoNprRimLilToonMask;
 #endif
 #if defined(HONPR_HAS_RIM_SHADE_LILTOON)
 half4 _HoNprRimShadeLilToonColor;
+half _HoNprRimShadeLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_BACKLIGHT_LILTOON)
 half4 _HoNprBacklightLilToonColor;
 half _HoNprBacklightLilToonPower;
+half _HoNprBacklightLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_BACKFACE_COLOR_LILTOON)
 half4 _HoNprBackfaceColorLilToonColor;
+half _HoNprBackfaceColorLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_MATCAP_LILTOON)
 half4 _HoNprMatCapLilToonColor;
 half _HoNprMatCapLilToonMask;
+half _HoNprMatCapLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_SECONDARY_MATCAP_LILTOON)
 half4 _HoNprSecondaryMatCapLilToonColor;
 half _HoNprSecondaryMatCapLilToonMask;
+half _HoNprSecondaryMatCapLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_GLITTER_LILTOON)
 half4 _HoNprGlitterLilToonColor;
@@ -202,20 +220,24 @@ half _HoNprGlitterLilToonMask;
 half _HoNprGlitterLilToonDensity;
 half _HoNprGlitterLilToonThreshold;
 half _HoNprGlitterLilToonPower;
+half _HoNprGlitterLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_EMISSION_PRIMARY_LILTOON)
 half4 _HoNprEmissionPrimaryLilToonColor;
 half _HoNprEmissionPrimaryLilToonIntensity;
+half _HoNprEmissionPrimaryLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_EMISSION_SECONDARY_LILTOON)
 half4 _HoNprEmissionSecondaryLilToonColor;
 half _HoNprEmissionSecondaryLilToonIntensity;
+half _HoNprEmissionSecondaryLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_DISTANCE_FADE_LILTOON)
 half4 _HoNprDistanceFadeLilToonColor;
 half _HoNprDistanceFadeLilToonStart;
 half _HoNprDistanceFadeLilToonEnd;
 half _HoNprDistanceFadeLilToonStrength;
+half _HoNprDistanceFadeLilToonBlendMode;
 #endif
 #if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
 half _HoNprAlphaClipThreshold;
@@ -345,37 +367,37 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
     HoNprLobeOutput lobes = HoNprCreateLobeOutput();
     HoNprAccumulateLobe(lobes, HoNprEvaluateToonDiffuseRampLilToon(surface, lighting, stylized, rampColor));
 #if defined(HONPR_HAS_TOON_SPECULAR_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateToonSpecularLilToon(surface, lighting, viewDirWS, _HoNprToonSpecularLilToonMask * semanticMap.specularMask, _HoNprToonSpecularLilToonThreshold, _HoNprToonSpecularLilToonSoftness));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateToonSpecularLilToon(surface, lighting, viewDirWS, _HoNprToonSpecularLilToonMask * semanticMap.specularMask, _HoNprToonSpecularLilToonThreshold, _HoNprToonSpecularLilToonSoftness), _HoNprToonSpecularLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_RIM_SHADE_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateRimShadeLilToon(surface, viewDirWS, _HoNprRimShadeLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateRimShadeLilToon(surface, viewDirWS, _HoNprRimShadeLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower), _HoNprRimShadeLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_BACKLIGHT_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateBacklightLilToon(surface, lighting.mainLightDirWS, viewDirWS, _HoNprBacklightLilToonColor.rgb, semanticMap.stylizedMask, _HoNprBacklightLilToonPower));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateBacklightLilToon(surface, lighting.mainLightDirWS, viewDirWS, _HoNprBacklightLilToonColor.rgb, semanticMap.stylizedMask, _HoNprBacklightLilToonPower), _HoNprBacklightLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_MATCAP_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateMatCapLilToon(surface, _HoNprMatCapLilToonColor.rgb, _HoNprMatCapLilToonMask * semanticMap.stylizedMask, band));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateMatCapLilToon(surface, _HoNprMatCapLilToonColor.rgb, _HoNprMatCapLilToonMask * semanticMap.stylizedMask, band), _HoNprMatCapLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_BACKFACE_COLOR_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateBackfaceColorLilToon(frontFace, _HoNprBackfaceColorLilToonColor));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateBackfaceColorLilToon(frontFace, _HoNprBackfaceColorLilToonColor), _HoNprBackfaceColorLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_SECONDARY_MATCAP_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateSecondaryMatCapLilToon(surface, _HoNprSecondaryMatCapLilToonColor.rgb, _HoNprSecondaryMatCapLilToonMask * semanticMap.stylizedMask, band));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateSecondaryMatCapLilToon(surface, _HoNprSecondaryMatCapLilToonColor.rgb, _HoNprSecondaryMatCapLilToonMask * semanticMap.stylizedMask, band), _HoNprSecondaryMatCapLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_GLITTER_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateGlitterLilToon(surface, lighting.mainLightDirWS, viewDirWS, input.positionWS, _HoNprGlitterLilToonColor.rgb, _HoNprGlitterLilToonMask * semanticMap.stylizedMask, _HoNprGlitterLilToonDensity, _HoNprGlitterLilToonThreshold, _HoNprGlitterLilToonPower));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateGlitterLilToon(surface, lighting.mainLightDirWS, viewDirWS, input.positionWS, _HoNprGlitterLilToonColor.rgb, _HoNprGlitterLilToonMask * semanticMap.stylizedMask, _HoNprGlitterLilToonDensity, _HoNprGlitterLilToonThreshold, _HoNprGlitterLilToonPower), _HoNprGlitterLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_RIM_LIGHT_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateRimLightLilToon(surface, viewDirWS, _HoNprRimLightLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateRimLightLilToon(surface, viewDirWS, _HoNprRimLightLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower), _HoNprRimLightLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_EMISSION_PRIMARY_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateEmissionPrimaryLilToon(_HoNprEmissionPrimaryLilToonColor.rgb, _HoNprEmissionPrimaryLilToonIntensity, 1.0h));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateEmissionPrimaryLilToon(_HoNprEmissionPrimaryLilToonColor.rgb, _HoNprEmissionPrimaryLilToonIntensity, 1.0h), _HoNprEmissionPrimaryLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_EMISSION_SECONDARY_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateEmissionSecondaryLilToon(_HoNprEmissionSecondaryLilToonColor.rgb, _HoNprEmissionSecondaryLilToonIntensity, 1.0h));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateEmissionSecondaryLilToon(_HoNprEmissionSecondaryLilToonColor.rgb, _HoNprEmissionSecondaryLilToonIntensity, 1.0h), _HoNprEmissionSecondaryLilToonBlendMode);
 #endif
 #if defined(HONPR_HAS_DISTANCE_FADE_LILTOON)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateDistanceFadeLilToon(input.positionWS, _WorldSpaceCameraPos.xyz, _HoNprDistanceFadeLilToonColor.rgb, _HoNprDistanceFadeLilToonStart, _HoNprDistanceFadeLilToonEnd, _HoNprDistanceFadeLilToonStrength));
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateDistanceFadeLilToon(input.positionWS, _WorldSpaceCameraPos.xyz, _HoNprDistanceFadeLilToonColor.rgb, _HoNprDistanceFadeLilToonStart, _HoNprDistanceFadeLilToonEnd, _HoNprDistanceFadeLilToonStrength), _HoNprDistanceFadeLilToonBlendMode);
 #endif
     HoNprCompositeOutput composite = HoNprCompositeFinalColor(surface, lobes);
     return half4(composite.color, composite.alpha);

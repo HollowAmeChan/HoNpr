@@ -70,15 +70,38 @@ HoNprRegionMaskData HoNprCreateRegionMaskData(half4 sample)
     return data;
 }
 
-void HoNprAccumulateLobe(inout HoNprLobeOutput target, HoNprLobeOutput source)
+#define HONPR_LOBE_BLEND_ADD 0.0h
+#define HONPR_LOBE_BLEND_SCREEN 1.0h
+#define HONPR_LOBE_BLEND_MAX 2.0h
+#define HONPR_LOBE_BLEND_REPLACE 3.0h
+
+half3 HoNprBlendLobeChannel(half3 target, half3 source, half blendMode)
 {
-    target.diffuse += source.diffuse;
-    target.specular += source.specular;
-    target.transmission += source.transmission;
-    target.emission += source.emission;
+    half mode = floor(blendMode + 0.5h);
+    if (abs(mode - HONPR_LOBE_BLEND_REPLACE) < 0.5h)
+        return dot(abs(source), half3(1.0h, 1.0h, 1.0h)) > 1.0e-5h ? source : target;
+    if (abs(mode - HONPR_LOBE_BLEND_MAX) < 0.5h)
+        return max(target, source);
+    if (abs(mode - HONPR_LOBE_BLEND_SCREEN) < 0.5h)
+        return target + source - target * source;
+
+    return target + source;
+}
+
+void HoNprAccumulateLobeWithMode(inout HoNprLobeOutput target, HoNprLobeOutput source, half blendMode)
+{
+    target.diffuse = HoNprBlendLobeChannel(target.diffuse, source.diffuse, blendMode);
+    target.specular = HoNprBlendLobeChannel(target.specular, source.specular, blendMode);
+    target.transmission = HoNprBlendLobeChannel(target.transmission, source.transmission, blendMode);
+    target.emission = HoNprBlendLobeChannel(target.emission, source.emission, blendMode);
     target.alpha *= source.alpha;
     target.energyWeight *= source.energyWeight;
     target.semanticWeight *= source.semanticWeight;
+}
+
+void HoNprAccumulateLobe(inout HoNprLobeOutput target, HoNprLobeOutput source)
+{
+    HoNprAccumulateLobeWithMode(target, source, HONPR_LOBE_BLEND_ADD);
 }
 
 half HoNprSafeRoughness(half roughness)

@@ -2,4 +2,5 @@ parameters MaterialBlock.MatCapLilToon
 {
     property _HoNprMatCapLilToonColor semantic Shading.MatCap.Color type Color default "(0.25, 0.25, 0.3, 1)";
     property _HoNprMatCapLilToonMask semantic Shading.MatCap.Mask type Float default 0.25;
+    property _HoNprMatCapLilToonBlendMode semantic Shading.MatCap.BlendMode type Float default 0;
 }

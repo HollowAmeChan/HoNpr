@@ -201,6 +201,10 @@ Assembly 层负责把 ShaderLibrary 的复杂实现收束成 preset 级入口。
 - 把内部宏限制在 assembly 和 ShaderLibrary。
 - 给 generated shader 一个稳定 include 和稳定 entry。
 
+`DiffuseLobe` / `SpecularLobe` / `StylizedLobe` 是执行阶段和 lobe 类别，不是唯一 slot。同一 preset 可以包含多个可累加外观组分；唯一性仍按 `MaterialBlock.*`、shader property owner、以及独占语义写入判断。
+
+可累加外观组分可以暴露材质实例级 blend mode，但该参数只影响 `HoNprLobeOutput` 的累加方式，不改变 block 是否存在、pass 结构、render state、include、define、keyword 或 variant。内置模式为 `Add`、`Screen`、`Max`、`Replace`，默认值必须保持向后兼容表现，除非 preset 明确声明迁移破坏。
+
 建议路径：
 
 ```text
