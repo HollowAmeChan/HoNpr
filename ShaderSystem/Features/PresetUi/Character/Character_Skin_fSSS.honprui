@@ -1,0 +1,49 @@
+ui MaterialUi.Character_Skin_fSSS for MaterialPreset.Character_Skin_fSSS
+{
+    group Base "Base";
+    property _HoNprBaseMap in Base label "Base Map" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoUrpBaseColor in Base label "Base Color" control color default "(1, 1, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group SurfaceMaps "Surface Maps";
+    property _HoNprNormalMap in SurfaceMaps label "Normal Map" control texture default "bump" copy Group tools CopyProperty PasteProperty;
+    property _HoNprSemanticMap in SurfaceMaps label "Semantic Map" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprRegionMap in SurfaceMaps label "Region Mask" control texture default "white" copy Group tools CopyProperty PasteProperty;
+
+    group ToonDiffuse "Toon Diffuse-lilToon";
+    property _HoNprStyleRampAtlas in ToonDiffuse label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprToonDiffuseRampLilToonThreshold in ToonDiffuse label "Toon Diffuse Ramp-lilToon Threshold" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprToonDiffuseRampLilToonSoftness in ToonDiffuse label "Toon Diffuse Ramp-lilToon Softness" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRow in ToonDiffuse label "Ramp Row" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRows in ToonDiffuse label "Ramp Rows" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Subsurface "Skin fSSS";
+    contractBox HoNpr.SkinFsss in Subsurface title "Skin fSSS" severity info message "Forward fake thin fSSS adds local transmission; AOV SSS source remains a downstream source buffer.";
+    property _HoUrpGeneratedMaterialSssProfile in Subsurface label "fSSS Profile" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialThickness in Subsurface label "Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCurvature in Subsurface label "Curvature" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedSssSourceColor in Subsurface label "fSSS Source Color" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedSssWeight in Subsurface label "fSSS Weight" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Rim "Rim-lilToon";
+    property _HoNprRimLightLilToonColor in Rim label "RimLight-lilToon Color" control color default "(0.75, 0.9, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLightLilToonBlendMode in Rim label "RimLight-lilToon Blend" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLilToonPower in Rim label "Rim-lilToon Power" control slider range 0.1 12 default 3 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLilToonMask in Rim label "Rim-lilToon Mask" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Backlight "Backlight-lilToon";
+    property _HoNprBacklightLilToonColor in Backlight label "Backlight-lilToon Color" control color default "(0.7, 0.5, 0.35, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprBacklightLilToonPower in Backlight label "Backlight-lilToon Power" control slider range 0.1 12 default 2 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprBacklightLilToonBlendMode in Backlight label "Backlight-lilToon Blend" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Emission "Emission-lilToon";
+    property _HoNprEmissionPrimaryLilToonColor in Emission label "EmissionPrimary-lilToon Color" control color default "(0, 0, 0, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionPrimaryLilToonIntensity in Emission label "EmissionPrimary-lilToon Intensity" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionPrimaryLilToonBlendMode in Emission label "EmissionPrimary-lilToon Blend" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group SemanticAov "HoRP AOV";
+    contractBox HoRP.AOV in SemanticAov title "HoRP AOV Contract" severity info message "These parameters feed HoUrpAovOutput and material semantics.";
+    property _HoUrpGeneratedMaterialClass in SemanticAov label "Material Class" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "Material Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    renderState queue "Geometry" blend "Off" depth "Forward/Depth/Shadow ZWrite On, ZTest LEqual" stencil "None" cull "Back";
+}

@@ -1,4 +1,4 @@
-﻿# 材质 UI 表
+# 材质 UI 表
 
 由 `*.honprui` 自动生成。不要手动编辑表格行。
 
@@ -84,6 +84,33 @@
 | `MaterialUi.Character_LilToonSourceAlgorithmAssembly` | `MaterialPreset.Character_LilToonSourceAlgorithmAssembly` | HoRP AOV 语义 | `_HoUrpGeneratedSssWeight` | SSS 权重 | slider | 0..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoRP.AOV` | Group | None |
 | `MaterialUi.Character_LilToonSourceAlgorithmAssembly` | `MaterialPreset.Character_LilToonSourceAlgorithmAssembly` | 透明 / OIT | `_HoUrpSupportsOit` | 支持 OIT | toggle |  | `CopyProperty`, `PasteProperty` | `HoRP.OIT` | Group | None |
 | `MaterialUi.Character_LilToonSourceAlgorithmAssembly` | `MaterialPreset.Character_LilToonSourceAlgorithmAssembly` | 透明 / OIT | `_HoUrpParticipatesOit` | 参与 OIT | toggle |  | `CopyProperty`, `PasteProperty` | `HoRP.OIT` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Base | `_HoNprBaseMap` | Base Map | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Base | `_HoUrpBaseColor` | Base Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Surface Maps | `_HoNprNormalMap` | Normal Map | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Surface Maps | `_HoNprSemanticMap` | Semantic Map | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Surface Maps | `_HoNprRegionMap` | Region Mask | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Toon Diffuse-lilToon | `_HoNprStyleRampAtlas` | Ramp Atlas | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Toon Diffuse-lilToon | `_HoNprToonDiffuseRampLilToonThreshold` | Toon Diffuse Ramp-lilToon Threshold | slider | 0..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Toon Diffuse-lilToon | `_HoNprToonDiffuseRampLilToonSoftness` | Toon Diffuse Ramp-lilToon Softness | slider | 0.001..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Toon Diffuse-lilToon | `_HoNprRampRow` | Ramp Row | slider | 0..16 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Toon Diffuse-lilToon | `_HoNprRampRows` | Ramp Rows | slider | 1..32 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Skin fSSS | `_HoUrpGeneratedMaterialSssProfile` | fSSS Profile | slider | 0..16 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoNpr.SkinFsss` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Skin fSSS | `_HoUrpGeneratedMaterialThickness` | Thickness | slider | 0..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoNpr.SkinFsss` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Skin fSSS | `_HoUrpGeneratedMaterialCurvature` | Curvature | slider | -1..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoNpr.SkinFsss` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Skin fSSS | `_HoUrpGeneratedSssSourceColor` | fSSS Source Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoNpr.SkinFsss` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Skin fSSS | `_HoUrpGeneratedSssWeight` | fSSS Weight | slider | 0..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoNpr.SkinFsss` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Rim-lilToon | `_HoNprRimLightLilToonColor` | RimLight-lilToon Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Rim-lilToon | `_HoNprRimLightLilToonBlendMode` | RimLight-lilToon Blend | enum |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Rim-lilToon | `_HoNprRimLilToonPower` | Rim-lilToon Power | slider | 0.1..12 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Rim-lilToon | `_HoNprRimLilToonMask` | Rim-lilToon Mask | slider | 0..1 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Backlight-lilToon | `_HoNprBacklightLilToonColor` | Backlight-lilToon Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Backlight-lilToon | `_HoNprBacklightLilToonPower` | Backlight-lilToon Power | slider | 0.1..12 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Backlight-lilToon | `_HoNprBacklightLilToonBlendMode` | Backlight-lilToon Blend | enum |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Emission-lilToon | `_HoNprEmissionPrimaryLilToonColor` | EmissionPrimary-lilToon Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Emission-lilToon | `_HoNprEmissionPrimaryLilToonIntensity` | EmissionPrimary-lilToon Intensity | slider | 0..16 | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | Emission-lilToon | `_HoNprEmissionPrimaryLilToonBlendMode` | EmissionPrimary-lilToon Blend | enum |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | HoRP AOV | `_HoUrpGeneratedMaterialClass` | Material Class | slider | 0..16 | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoRP.AOV` | Group | None |
+| `MaterialUi.Character_Skin_fSSS` | `MaterialPreset.Character_Skin_fSSS` | HoRP AOV | `_HoUrpGeneratedMaterialCustom0_3` | Material Custom 0-3 | vector |  | `CopyProperty`, `PasteProperty`, `ResetGroup` | `HoRP.AOV` | Group | None |
 | `MaterialUi.Character_Toon_Lite` | `MaterialPreset.Character_Toon_Lite` | Base | `_HoNprBaseMap` | Base Map | texture |  | `CopyProperty`, `PasteProperty` |  | Group | None |
 | `MaterialUi.Character_Toon_Lite` | `MaterialPreset.Character_Toon_Lite` | Base | `_HoUrpBaseColor` | Base Color | color |  | `CopyProperty`, `PasteProperty`, `ResetGroup` |  | Group | None |
 | `MaterialUi.Character_Toon_Lite` | `MaterialPreset.Character_Toon_Lite` | Surface Maps | `_HoNprNormalMap` | Normal Map | texture |  | `CopyProperty`, `PasteProperty` | `HoNpr.SurfaceMaps` | Group | None |

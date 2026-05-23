@@ -94,6 +94,7 @@ Shader "HoNpr/Hair_Toon"
 
 
 
+
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonHair.hlsl"
 
     ENDHLSL

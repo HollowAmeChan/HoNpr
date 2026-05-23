@@ -1,9 +1,9 @@
-﻿// 由 HoNprShaderGenerator 生成。
-// SourcePreset: MaterialPreset.Character_Toon_Transparent
-// Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterOit
-// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.ToonDiffuseRampLilToon, MaterialBlock.ToonSpecularLilToon, MaterialBlock.RimLightLilToon, MaterialBlock.BacklightLilToon, MaterialBlock.MatCapLilToon, MaterialBlock.EmissionPrimaryLilToon, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.AlphaClipPolicy, MaterialBlock.TransparentComposite, MaterialBlock.OitAccumulationOutput
+// 由 HoNprShaderGenerator 生成。
+// SourcePreset: MaterialPreset.Character_Skin_fSSS
+// Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow
+// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.ToonDiffuseRampLilToon, MaterialBlock.ForwardThinSss, MaterialBlock.SssSourceProducer, MaterialBlock.RimLightLilToon, MaterialBlock.BacklightLilToon, MaterialBlock.EmissionPrimaryLilToon, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Character_Toon_Transparent"
+Shader "HoNpr/Character_Skin_fSSS"
 {
     Properties
     {
@@ -21,11 +21,6 @@ Shader "HoNpr/Character_Toon_Transparent"
         _HoNprRampRows("Ramp Rows", Float) = 8
 
 
-        _HoNprToonSpecularLilToonThreshold("Toon Specular-lilToon Threshold", Range(0, 1)) = 0.72
-        _HoNprToonSpecularLilToonSoftness("Toon Specular-lilToon Softness", Range(0.001, 1)) = 0.08
-        _HoNprToonSpecularLilToonMask("Toon Specular-lilToon Mask", Range(0, 1)) = 0.6
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprToonSpecularLilToonBlendMode("Toon Specular-lilToon Blend Mode", Float) = 0
-
 
 
 
@@ -34,10 +29,6 @@ Shader "HoNpr/Character_Toon_Transparent"
         _HoNprBacklightLilToonPower("Backlight-lilToon Power", Range(0.1, 12)) = 2
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBacklightLilToonBlendMode("Backlight-lilToon Blend Mode", Float) = 0
 
-
-        _HoNprMatCapLilToonColor("MatCap-lilToon Color", Color) = (0.25, 0.25, 0.3, 1)
-        _HoNprMatCapLilToonMask("MatCap-lilToon Mask", Range(0, 1)) = 0.25
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprMatCapLilToonBlendMode("MatCap-lilToon Blend Mode", Float) = 0
 
 
         _HoNprRimLightLilToonColor("RimLight-lilToon Color", Color) = (0.75, 0.9, 1, 1)
@@ -59,45 +50,46 @@ Shader "HoNpr/Character_Toon_Transparent"
 
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
 
+        _HoUrpGeneratedMaterialSssProfile("fSSS Profile", Float) = 0
+        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
+        _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
+
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
+        _HoUrpGeneratedSssSourceColor("fSSS Source Color", Color) = (1, 0.75, 0.6, 1)
+        _HoUrpGeneratedSssWeight("fSSS Weight", Range(0, 1)) = 0
 
-        _HoNprAlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0
 
-
-        _HoUrpSupportsOit("Supports OIT", Float) = 1
-        _HoUrpParticipatesOit("Participates OIT", Float) = 1
 
     }
 
     HLSLINCLUDE
-    #define HONPR_HAS_ALPHA_CLIP_POLICY 1
     #define HONPR_HAS_BACKLIGHT_LILTOON 1
     #define HONPR_HAS_BASE_COLOR_TEXTURE 1
     #define HONPR_HAS_EMISSION_PRIMARY_LILTOON 1
+    #define HONPR_HAS_FINAL_COLOR_COMPOSITE 1
+    #define HONPR_HAS_FORWARD_THIN_SSS 1
     #define HONPR_HAS_HORP_SHADOW_RECEIVER 1
     #define HONPR_HAS_INDIRECT_LIGHT 1
-    #define HONPR_HAS_MATCAP_LILTOON 1
     #define HONPR_HAS_MATERIAL_SEMANTICS 1
     #define HONPR_HAS_NORMAL_MAP 1
-    #define HONPR_HAS_OIT_ACCUMULATION 1
     #define HONPR_HAS_REGION_MASK 1
     #define HONPR_HAS_RIM_LIGHT_LILTOON 1
     #define HONPR_HAS_SCREEN_AO_RECEIVER 1
     #define HONPR_HAS_SEMANTIC_MAP 1
+    #define HONPR_HAS_SSS_SOURCE 1
     #define HONPR_HAS_STANDARD_AOV 1
     #define HONPR_HAS_STYLE_RAMP_ATLAS 1
     #define HONPR_HAS_TOON_DIFFUSE_RAMP_LILTOON 1
-    #define HONPR_HAS_TOON_SPECULAR_LILTOON 1
-    #define HONPR_HAS_TRANSPARENT_COMPOSITE 1
+    #define HONPR_HAS_URP_ADDITIONAL_LIGHTS 1
     #define HONPR_HAS_URP_MAIN_LIGHT 1
 
 
 
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonSkinFSSS.hlsl"
 
 
 
-#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonTransparent.hlsl"
 
 
     ENDHLSL
@@ -105,8 +97,8 @@ Shader "HoNpr/Character_Toon_Transparent"
     SubShader
     {
 
-        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Transparent" "Queue" = "Transparent" }
 
+        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" "Queue" = "Geometry" }
 
 
 
@@ -119,12 +111,10 @@ Shader "HoNpr/Character_Toon_Transparent"
             Cull Back
 
 
-            ZWrite Off
 
+            ZWrite On
 
             ZTest LEqual
-
-            Blend SrcAlpha OneMinusSrcAlpha
 
 
             HLSLPROGRAM
@@ -152,23 +142,40 @@ Shader "HoNpr/Character_Toon_Transparent"
 
 
 
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+            Cull Back
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex HoNprCharacterDepthVert
+            #pragma fragment HoNprCharacterDepthFrag
+            ENDHLSL
+        }
+
 
 
         Pass
         {
-            Name "HoUrpOitAccumulation"
-            Tags { "LightMode" = "HoUrpOitAccumulation" }
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
             Cull Back
-            ZWrite Off
+            ZWrite On
             ZTest LEqual
-            Blend One One, Zero OneMinusSrcAlpha
+            ColorMask 0
 
             HLSLPROGRAM
             #pragma target 4.5
-            #pragma vertex HoNprCharacterVert
-            #pragma fragment HoNprCharacterFragOit
+            #pragma vertex HoNprCharacterDepthVert
+            #pragma fragment HoNprCharacterDepthFrag
             ENDHLSL
         }
+
 
 
     }

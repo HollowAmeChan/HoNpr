@@ -9,6 +9,7 @@
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprSubsurface.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprOutline.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl"
 
@@ -273,6 +274,9 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
 #if defined(HONPR_HAS_HAIR_SPECULAR_SECONDARY)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateHairSpecularSecondary(surface, lighting, viewDirWS, input.tangentWS, _HoNprHairSpecularSecondaryShift, _HoNprHairSpecularSecondaryWidth, _HoNprHairSpecularSecondaryMask * regionMask.hair), _HoNprHairSpecularSecondaryBlendMode);
 #endif
+#if defined(HONPR_HAS_FORWARD_THIN_SSS)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateForwardThinSss(surface, lighting, viewDirWS, _HoUrpGeneratedMaterialThickness, _HoUrpGeneratedSssWeight * semanticMap.sssWeight, _HoUrpGeneratedSssSourceColor.rgb));
+#endif
 #if defined(HONPR_HAS_RIM_SHADE_LILTOON)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateRimShadeLilToon(surface, viewDirWS, _HoNprRimShadeLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower), _HoNprRimShadeLilToonBlendMode);
 #endif
@@ -321,11 +325,12 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     half3 sssSourceColor = half3(0.0h, 0.0h, 0.0h);
     half sssWeight = 0.0h;
 #if defined(HONPR_HAS_SSS_SOURCE)
+    HoNprSemanticMapData semanticMap = HoNprCharacterResolveSemanticMap(input.uv);
     materialSssProfile = half(_HoUrpGeneratedMaterialSssProfile);
     materialThickness = half(_HoUrpGeneratedMaterialThickness);
     materialCurvature = half(_HoUrpGeneratedMaterialCurvature);
     sssSourceColor = half3(_HoUrpGeneratedSssSourceColor.rgb);
-    sssWeight = half(_HoUrpGeneratedSssWeight);
+    sssWeight = half(_HoUrpGeneratedSssWeight) * semanticMap.sssWeight;
 #endif
     HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(
         half(_HoUrpGeneratedMaterialClass),
