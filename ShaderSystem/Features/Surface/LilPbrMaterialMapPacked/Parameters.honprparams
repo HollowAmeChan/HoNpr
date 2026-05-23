@@ -1,0 +1,7 @@
+﻿parameters MaterialBlock.LilPbrMaterialMapPacked
+{
+    property _HoNprMaterialMap semantic Surface.Material.PackedMap type Texture2D default "white";
+    property _HoNprMaterialMetallicScale semantic Surface.Material.MetallicScale type Range default 1 range 0 1;
+    property _HoNprMaterialRoughnessScale semantic Surface.Material.RoughnessScale type Range default 1 range 0.01 2;
+    property _HoNprMaterialOcclusionStrength semantic Surface.Material.OcclusionStrength type Range default 1 range 0 1;
+}

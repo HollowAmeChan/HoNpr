@@ -1,4 +1,4 @@
-// HoNpr include aliases are the only include names feature blocks may request.
+﻿// HoNpr include aliases are the only include names feature blocks may request.
 // The generator expands aliases to paths after sorting and de-duplicating.
 
 include Unity.Core = "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl";
@@ -12,7 +12,7 @@ include HoUrp.ObjectSemantic = "Packages/com.hollow.hourp-extensions/Runtime/Sha
 
 include HoNpr.Common = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/HoNprCommon.hlsl";
 include HoNpr.StandardSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl";
-include HoNpr.PbrLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprPbrLobes.hlsl";
+include HoNpr.LilPbrLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprLilPbrLobes.hlsl";
 include HoNpr.Subsurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprSubsurface.hlsl";
 include HoNpr.StylizedSurface = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl";
 include HoNpr.ToonLobes = "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl";

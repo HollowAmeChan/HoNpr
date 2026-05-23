@@ -1,0 +1,5 @@
+﻿parameters MaterialBlock.LilPbrSpecularAnisotropic
+{
+    property _HoNprAnisotropy semantic Shading.Pbr.Anisotropy type Range default 0 range -1 1;
+    property _HoNprAnisotropyMask semantic Shading.Pbr.AnisotropyMask type Range default 0 range 0 1;
+}

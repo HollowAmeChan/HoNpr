@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilPbrSpecularAnisotropic : SpecularLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext Tangent AnisotropyMask;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.LilPbrLobes;
+    requires define HONPR_HAS_LILPBR_SPECULAR_ANISOTROPIC;
+    entry HoNprEvaluateLilPbrSpecularAnisotropic;
+    variantPolicy PresetStatic;
+    debug Lobe.SpecularAnisotropic;
+}

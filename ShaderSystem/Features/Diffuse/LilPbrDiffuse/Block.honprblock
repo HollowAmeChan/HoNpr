@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilPbrDiffuse : DiffuseLobe in ShadingDomain
+{
+    consumes HoUrpSurfaceData HoLightingContext;
+    produces HoNprLobeOutput.diffuse;
+    requires include HoNpr.LilPbrLobes;
+    requires define HONPR_HAS_LILPBR_DIFFUSE;
+    entry HoNprEvaluateLilPbrDiffuse;
+    variantPolicy PresetStatic;
+    debug Lobe.Diffuse;
+}

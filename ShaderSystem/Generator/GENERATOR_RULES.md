@@ -1,4 +1,4 @@
-# 生成器规则
+﻿# 生成器规则
 
 生成器负责结构；Inspector 只负责显示和参数编辑。
 
@@ -33,12 +33,12 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 
 第一批面向用户的 toon 生成目标是：
 
-- `MaterialPreset.Character_Toon_Lite`
-- `MaterialPreset.Character_Toon_Standard`
-- `MaterialPreset.Character_Toon_Rich`
-- `MaterialPreset.Character_Toon_Transparent`
+- `MaterialPreset.Character_LilToon_Lite`
+- `MaterialPreset.Character_LilToon_Standard`
+- `MaterialPreset.Character_LilToon_Rich`
+- `MaterialPreset.Character_LilToon_Transparent`
 
-`Character_Toon_Core` 是旧规划遗留的过渡 preset，不能作为新增材质的默认生成目标。生成器后续选择 active preset 时，应优先生成上述四个用途明确的 shader 类型；`Deprecated` preset 只在兼容或回归需求下显式生成。
+`Character_LilToon_Core` 是旧规划遗留的过渡 preset，不能作为新增材质的默认生成目标。生成器后续选择 active preset 时，应优先生成上述四个用途明确的 shader 类型；`Deprecated` preset 只在兼容或回归需求下显式生成。
 
 ## 禁止输入
 
@@ -75,7 +75,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 ```text
 template MaterialTemplate.CharacterForward { ... }
 block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... }
-preset MaterialPreset.Character_Toon_Standard { ... }
+preset MaterialPreset.Character_LilToon_Standard { ... }
 ```
 
 新 feature 应优先放在文件夹边界里：
@@ -93,14 +93,16 @@ Feature leaf 目录必须有 `Block.honprblock`，除非它位于 `Features/Pres
 需要落盘生成 shader 的 preset 必须显式声明生成器，而不是依赖 C# 按 preset 名称白名单选择：
 
 ```text
-preset MaterialPreset.Character_Toon_Standard {
+preset MaterialPreset.Character_LilToon_Standard {
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov;
     generator CharacterToonTemplate;
     ...
 }
 ```
 
-`generator` 只选择组装器；具体 pass、block、assembly、entry、属性和 render state 必须继续来自 `templates` / `blocks` / `passes` / `preset` 声明与模板条件，不能在 C# 中按 `Character_Toon_*`、`Lite`、`Rich` 等名称分支硬编码。
+`generator` 只选择组装器；具体 pass、block、assembly、entry、属性和 render state 必须继续来自 `templates` / `blocks` / `passes` / `preset` 声明与模板条件，不能在 C# 中按 `Character_LilToon_*`、`Lite`、`Rich` 等名称分支硬编码。
+
+`generatedShader` 路径用于审查生成物来源，不作为用户 shader 菜单 ABI。来源型 shader 应在路径里显式标注来源，例如 lilToon 来源角色 shader 写入 `Shaders/Generated/LilToon/`，lilPBR 来源环境 shader 写入 `Shaders/Generated/LilPBR/`。文件名不重复写已经由目录表达的 `Character_`、`Environment_` 前缀。
 
 功能块可以声明自己需要的 include 别名和 capability define：
 

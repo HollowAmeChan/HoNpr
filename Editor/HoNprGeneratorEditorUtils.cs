@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -912,8 +912,8 @@ namespace Hollow.HoNpr.Editor
                     return BuildDebugLitShader(preset);
                 case "CharacterToonTemplate":
                     return BuildCharacterToonShader(packageRoot, declarations, preset);
-                case "EnvironmentPbrTemplate":
-                    return BuildEnvironmentPbrShader(packageRoot, declarations, preset);
+                case "EnvironmentLilPbrTemplate":
+                    return BuildEnvironmentLilPbrShader(packageRoot, declarations, preset);
                 default:
                     Debug.LogWarning($"[HoNpr.Generator] Preset 使用未知生成器：{preset.presetId} -> {preset.generator}");
                     return null;
@@ -1195,23 +1195,23 @@ namespace Hollow.HoNpr.Editor
             return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
         }
 
-        private static string BuildEnvironmentPbrShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
+        private static string BuildEnvironmentLilPbrShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
         {
             string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
             string templateList = string.Join(" + ", GetPresetTemplates(preset));
             HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
             string environmentDefines = BuildRequiredDefineBlock(declarations, preset);
 
-            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Environment/EnvironmentPbr.shader.template");
+            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Environment/EnvironmentLilPbr.shader.template");
             if (string.IsNullOrEmpty(template))
             {
-                Debug.LogWarning("[HoNpr.Generator] Missing EnvironmentPbr shader template.");
+                Debug.LogWarning("[HoNpr.Generator] Missing EnvironmentLilPbr shader template.");
                 return null;
             }
 
             string shader = template
                 .Replace("${SHADER_NAME}", preset.shaderName)
-                .Replace("${ENVIRONMENT_PBR_DEFINES}", environmentDefines);
+                .Replace("${ENVIRONMENT_LILPBR_DEFINES}", environmentDefines);
             return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
         }
 

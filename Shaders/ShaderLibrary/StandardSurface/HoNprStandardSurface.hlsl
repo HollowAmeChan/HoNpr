@@ -1,4 +1,4 @@
-#ifndef HONPR_STANDARD_SURFACE_INCLUDED
+﻿#ifndef HONPR_STANDARD_SURFACE_INCLUDED
 #define HONPR_STANDARD_SURFACE_INCLUDED
 
 #include "../HoNprCommon.hlsl"
@@ -16,7 +16,7 @@ HoUrpSurfaceData HoNprApplyNormalWS(HoUrpSurfaceData surface, half3 normalWS)
     return surface;
 }
 
-HoUrpSurfaceData HoNprApplyMaterialMapPacked(HoUrpSurfaceData surface, half4 materialMapSample, half metallicScale, half roughnessScale, half occlusionStrength)
+HoUrpSurfaceData HoNprApplyLilPbrMaterialMapPacked(HoUrpSurfaceData surface, half4 materialMapSample, half metallicScale, half roughnessScale, half occlusionStrength)
 {
     surface.metallic = saturate(materialMapSample.r * metallicScale);
     surface.roughness = HoNprSafeRoughness(materialMapSample.g * roughnessScale);

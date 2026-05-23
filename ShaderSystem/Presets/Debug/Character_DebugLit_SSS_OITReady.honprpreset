@@ -4,7 +4,7 @@ preset MaterialPreset.Character_DebugLit_SSS_OITReady
     template MaterialTemplate.DebugLitMinimal;
     generator DebugLitMinimal;
     shaderName "HoNpr/Character_DebugLit_SSS_OITReady";
-    generatedShader "Shaders/Generated/Debug/Character_DebugLit_SSS_OITReady.shader";
+    generatedShader "Shaders/Generated/Debug/Character/Lit_SSS_OITReady.shader";
 
     blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SssSourceProducer MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.OitAccumulationOutput;
     passes UniversalForward HoUrpAovOutput HoUrpOitAccumulation;

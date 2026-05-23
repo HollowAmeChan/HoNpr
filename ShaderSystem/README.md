@@ -1,4 +1,4 @@
-# HoNpr Shader System
+﻿# HoNpr Shader System
 
 这个目录是 HoNpr 材质生成系统的显式声明层。
 
@@ -55,7 +55,7 @@ Features/<Domain>/<FeatureId>/
 
 | Feature | 说明 | 不负责 |
 | --- | --- | --- |
-| `Debug/DebugLitMinimal` | 调试用 feature family，用于在生产 preset 前验证 HoRP 材质契约。当前连接 `MaterialPreset.Character_DebugLit_SSS_OITReady`、`MaterialTemplate.DebugLitMinimal`、`DebugLitMinimal` 生成器和 `Shaders/Generated/Debug/Character_DebugLit_SSS_OITReady.shader`。 | 用户默认材质入口；反向定义 HoRP AOV / OIT 契约。 |
+| `Debug/DebugLitMinimal` | 调试用 feature family，用于在生产 preset 前验证 HoRP 材质契约。当前连接 `MaterialPreset.Character_DebugLit_SSS_OITReady`、`MaterialTemplate.DebugLitMinimal`、`DebugLitMinimal` 生成器和 `Shaders/Generated/Debug/Character/Lit_SSS_OITReady.shader`。 | 用户默认材质入口；反向定义 HoRP AOV / OIT 契约。 |
 | `Diffuse/ToonDiffuseRampLilToon` | lilToon 来源的 toon diffuse ramp feature，把 surface、lighting 和 style ramp 输入收敛为 diffuse lobe。 | specular、rim、matcap 等其他 stylized lobe；pass 或 shader 类型选择；ramp atlas 资源生命周期。 |
 | `Geometry/OutlineLilToon` | lilToon 来源的几何描边 feature，拥有 outline pass 所需的宽度、纹理、vector map、z bias 和 lighting 参数。 | 是否生成 outline pass；forward pass 中的外观 lobe。 |
 | `Semantic/MaterialSemanticProducer` | 材质语义 producer，把材质分类、SSS profile、厚度、曲率和 custom 数据声明为 HoRP material semantic。 | object semantic；AOV RT 绑定；pass 请求解析。 |
@@ -67,17 +67,17 @@ Features/<Domain>/<FeatureId>/
 
 `ShaderSystem/Templates/` 定义 shader pass 骨架：
 
-- `Character/`：角色材质使用的 forward、AOV、depth、shadow 和 OIT pass 骨架。`CharacterToonLilToonSource.shader.template` 与 `CharacterToonLilToonSourceInline.hlsl.template` 是 lilToon 来源语义的迁移期组装模板，可以生成 `Character_Toon_*` 用户 shader；文件名保留 `LilToonSource`，避免被误读为通用 Character Toon ABI。
-- `Environment/`：场景材质使用的 PBR 子集 pass 骨架。
+- `Character/`：角色材质使用的 forward、AOV、depth、shadow 和 OIT pass 骨架。`CharacterToonLilToonSource.shader.template` 与 `CharacterToonLilToonSourceInline.hlsl.template` 是 lilToon 来源语义的迁移期组装模板，可以生成 `Character_LilToon_*` 用户 shader；文件名保留 `LilToonSource`，避免被误读为通用 Character Toon ABI。
+- `Environment/`：lilPBR 来源的场景 PBR 子集 pass 骨架。
 - `Utility/`：debug 和原型 shader 骨架，用于验证 HoRP 材质契约。
 
 ## Presets
 
 `ShaderSystem/Presets/` 定义生成器使用的静态材质组合：
 
-- `Character/`：toon、skin fSSS、hair 以及相关角色材质。`Character_LilToonSourceAlgorithmAssembly` 是迁移期原型，参考 lilToon 成品 shader 的 pass 壳和 `lil_pass_forward_normal.hlsl` 的组装顺序，但只使用 HoNpr/HoRP block、pass 和属性命名。长期用户入口不要继续扩张这个大 shader；第一批角色 shader 类型拆为 `Character_Toon_Lite`、`Character_Toon_Standard`、`Character_Toon_Rich`、`Character_Toon_Transparent` 和 `Character_Skin_fSSS`。
+- `Character/`：toon、skin fSSS、hair 以及相关角色材质。`Character_LilToonSourceAlgorithmAssembly` 是迁移期原型，参考 lilToon 成品 shader 的 pass 壳和 `lil_pass_forward_normal.hlsl` 的组装顺序，但只使用 HoNpr/HoRP block、pass 和属性命名。长期用户入口不要继续扩张这个大 shader；第一批角色 shader 类型拆为 `Character_LilToon_Lite`、`Character_LilToon_Standard`、`Character_LilToon_Rich`、`Character_LilToon_Transparent` 和 `Character_LilToon_Skin_fSSS`。
 - `Debug/`：在生成生产 preset 前验证上游 HoRP 材质契约。
-- `Environment/`：场景材质使用的 HoNpr PBR 子集。
+- `Environment/`：lilPBR 来源的场景材质 PBR 子集，当前入口为 `Environment_LilPBR`，避免和未来 HoNpr 原生 PBR 命名空间混用。
 - `Transparent/`：显式透明和 OIT-ready 的材质组合。
 
 ## Material UI

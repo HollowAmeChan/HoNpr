@@ -1,10 +1,10 @@
-# 来源映射
+﻿# 来源映射
 
 每个生成 shader 都必须以来源头开始。
 
 ```text
 // 由 HoNprShaderGenerator 生成。
-// SourcePreset: MaterialPreset.Character_Toon_Standard
+// SourcePreset: MaterialPreset.Character_LilToon_Standard
 // Template: MaterialTemplate.CharacterForward
 // Blocks: BaseColorTexture, NormalMap, ToonDiffuseRampLilToon, AovOutputStandard
 // 不要手动修改生成体。请改 template / block / preset。

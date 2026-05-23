@@ -1,0 +1,15 @@
+﻿preset MaterialPreset.Environment_LilPBR
+{
+    display "Environment LilPBR";
+    templates MaterialTemplate.EnvironmentForward MaterialTemplate.EnvironmentAov;
+    generator EnvironmentLilPbrTemplate;
+    shaderName "HoNpr/Environment_LilPBR";
+    generatedShader "Shaders/Generated/LilPBR/Environment.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.LilPbrMaterialMapPacked MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.LilPbrDiffuse MaterialBlock.LilPbrSpecularGGX MaterialBlock.LilPbrSpecularAnisotropic MaterialBlock.LilPbrClearCoatSpecular MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    passes UniversalForward DepthOnly ShadowCaster HoUrpAovOutput;
+    produces Material.Class;
+    requires capability SceneMaterial ParticipatesSemanticPost;
+    phase Forward;
+    status Prototype;
+}
