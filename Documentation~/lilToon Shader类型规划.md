@@ -64,5 +64,6 @@ lilToon 通过 UI 开关隐藏/显示大量能力；HoNpr 不让 UI 开关决定
 
 1. 先新增 `Character_Toon_Lite`、`Character_Toon_Standard`、`Character_Toon_Rich`、`Character_Toon_Transparent` preset 声明。
 2. 把 `Character_LilToonSourceAlgorithmAssembly` 标为 migration prototype，不再作为默认目标。
-3. 生成器后续按 preset 生成对应 shader，而不是继续扩张单个大 shader。
-4. 再评估 Refraction/Fur/Gem 的 template 和 HoRP 资源依赖。
+3. 为四个新 shader 类型补对应 `*.honprui`，但 UI 只做参数白名单和契约提示，不提供结构开关。
+4. 生成器后续按 preset 生成对应 shader，而不是继续扩张单个大 shader。
+5. 再评估 Refraction/Fur/Gem 的 template 和 HoRP 资源依赖。

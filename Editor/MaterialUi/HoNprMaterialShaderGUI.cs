@@ -103,7 +103,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             DrawRenderStateField("Cull", descriptor.renderState.cull, false);
 
             if (material.renderQueue != -1)
-                EditorGUILayout.HelpBox($"当前材质存在 render queue override：{material.renderQueue}。HoNpr 建议让 queue 由 preset/template 固定。", MessageType.Warning);
+                EditorGUILayout.HelpBox($"当前材质实例存在 render queue override：{material.renderQueue}。这是材质实例覆盖，不是 preset render state 声明；HoNpr 建议让 queue 由 preset/template 固定。", MessageType.Warning);
             EndTintedContent();
 
             EditorGUILayout.EndVertical();
@@ -879,7 +879,37 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             if (shaderName.EndsWith("Character_DebugLit_SSS_OITReady", StringComparison.Ordinal))
                 return "MaterialPreset.Character_DebugLit_SSS_OITReady";
 
-            return SourcePresetPrefix + shaderName.Replace("HoNpr/Generated/", string.Empty).Replace("/", "_");
+            if (TryGetSemanticPresetId(shaderName, out string presetId))
+                return presetId;
+
+            const string generatedPrefix = "HoNpr/Generated/";
+            if (shaderName.StartsWith(generatedPrefix, StringComparison.Ordinal))
+                return SourcePresetPrefix + shaderName.Substring(generatedPrefix.Length).Replace("/", "_");
+
+            return SourcePresetPrefix + shaderName.Replace("/", "_");
+        }
+
+        private static bool TryGetSemanticPresetId(string shaderName, out string presetId)
+        {
+            presetId = null;
+            return TryGetSemanticPresetId(shaderName, "HoNpr/Character/", "Character_", out presetId)
+                || TryGetSemanticPresetId(shaderName, "HoNpr/Environment/", "Environment_", out presetId)
+                || TryGetSemanticPresetId(shaderName, "HoNpr/Transparent/", "Transparent_", out presetId)
+                || TryGetSemanticPresetId(shaderName, "HoNpr/Hair/", "Hair_", out presetId);
+        }
+
+        private static bool TryGetSemanticPresetId(string shaderName, string shaderPrefix, string presetPrefix, out string presetId)
+        {
+            presetId = null;
+            if (!shaderName.StartsWith(shaderPrefix, StringComparison.Ordinal))
+                return false;
+
+            string suffix = shaderName.Substring(shaderPrefix.Length);
+            if (string.IsNullOrEmpty(suffix))
+                return false;
+
+            presetId = SourcePresetPrefix + presetPrefix + suffix.Replace("/", "_");
+            return true;
         }
 
         private static void CopyProperty(MaterialProperty property)

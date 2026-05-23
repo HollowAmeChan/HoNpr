@@ -44,15 +44,18 @@
 | 18 | Fur | fur forward pass | `FurShell` / `HairShell` | 涉及几何/多 pass，先不塞进普通 lobe | 待评估 | 未落地 |
 | 19 | Gem | gem forward pass | `GemSurface` | 作为独立 preset 候选 | 待评估 | 未落地 |
 | 20 | Fake shadow | fake shadow pass | `CharacterFakeShadow` | 更接近角色 composite/lighting policy，先不进材质核心 | 待评估 | 未落地 |
+| 21 | lilToon shader 家族拆分 | `ltsl*` / `lts*` / `*_trans` / `ltsmulti*` | `Character_Toon_Lite` / `Character_Toon_Standard` / `Character_Toon_Rich` / `Character_Toon_Transparent` | 用少量用途明确 preset 替代单个宽泛 shader；UI descriptor 只声明参数白名单，不决定结构 | 本轮开始 | `ShaderSystem/Presets/Character/Character_Toon_*.honprpreset`、`ShaderSystem/MaterialUi/Character/Character_Toon_*.honprui` |
 
 ## 本轮执行范围
 
-本轮推进第 6、10、11、12、13 项：
+本轮已推进第 6、10、11、12、13 项，并开始第 21 项：
 
 - 新增 `SecondaryMatCapLilToon`、`EmissionSecondaryLilToon`、`GlitterLilToon`、`DistanceFadeLilToon`、`BackfaceColorLilToon` Feature Block 声明。
 - 在 `HoNprStylizedLobes.hlsl` 中补对应 lobe 函数。
 - 把 `Character_LilToonSourceAlgorithmAssembly` 原型 preset / generated shader 接入这些 block 和参数。
 - 更新原型 UI descriptor，不改旧 ABI，不接 lilToon include，不把 UI 作为结构来源。
+- 新增 `Character_Toon_Lite`、`Character_Toon_Standard`、`Character_Toon_Rich`、`Character_Toon_Transparent` 的 preset / UI descriptor 声明。
+- 将 `Character_Toon_Core` 降级为兼容/过渡 preset，避免它继续作为新增材质的主入口。
 
 ## 下一轮候选
 

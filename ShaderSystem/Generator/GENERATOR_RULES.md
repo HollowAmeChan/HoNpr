@@ -27,7 +27,16 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 6. 重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
 7. 调用 `AssetDatabase.SaveAssets()` 和 `AssetDatabase.Refresh()`。
 
-第一阶段生成器只输出 `Character_DebugLit_SSS_OITReady`。生产 preset 可以先声明、后生成，但仍必须通过 template/block 引用校验。
+第一阶段生成器先输出 `Character_DebugLit_SSS_OITReady` 和迁移原型 `Character_LilToonSourceAlgorithmAssembly`。
+
+第一批面向用户的 toon 生成目标是：
+
+- `MaterialPreset.Character_Toon_Lite`
+- `MaterialPreset.Character_Toon_Standard`
+- `MaterialPreset.Character_Toon_Rich`
+- `MaterialPreset.Character_Toon_Transparent`
+
+`Character_Toon_Core` 是旧规划遗留的过渡 preset，不能作为新增材质的默认生成目标。生成器后续选择 active preset 时，应优先生成上述四个用途明确的 shader 类型；`Deprecated` preset 只在兼容或回归需求下显式生成。
 
 ## 禁止输入
 
@@ -62,7 +71,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 ```text
 template MaterialTemplate.CharacterForward { ... }
 block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... }
-preset MaterialPreset.Character_Toon_Core { ... }
+preset MaterialPreset.Character_Toon_Standard { ... }
 ```
 
 功能块可以声明自己需要的 include 别名和 capability define：

@@ -321,10 +321,22 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                 shader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
 
             if (shader == null)
+            {
+                string declaredShaderName = FindPresetShaderName(descriptor.presetId, packageRoot);
+                if (!string.IsNullOrEmpty(declaredShaderName))
+                    shader = Shader.Find(declaredShaderName);
+            }
+
+            if (shader == null)
                 shader = Shader.Find(DeriveGeneratedShaderName(descriptor.presetId));
 
             if (shader == null)
             {
+                string status = FindPresetStatus(descriptor.presetId, packageRoot);
+                if (string.Equals(status, "Planned", StringComparison.Ordinal)
+                    || string.Equals(status, "Deprecated", StringComparison.Ordinal))
+                    return null;
+
                 errors.Add($"{descriptor.id} 找不到对应 generated shader，无法校验 UI property 白名单。");
                 return null;
             }
@@ -345,6 +357,40 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                 string text = ReadAssetText(shaderPath);
                 if (!string.IsNullOrEmpty(text) && text.Contains(marker))
                     return shaderPath;
+            }
+
+            return null;
+        }
+
+        private static string FindPresetShaderName(string presetId, string packageRoot)
+        {
+            return FindPresetField(presetId, packageRoot, "shaderName");
+        }
+
+        private static string FindPresetStatus(string presetId, string packageRoot)
+        {
+            return FindPresetField(presetId, packageRoot, "status");
+        }
+
+        private static string FindPresetField(string presetId, string packageRoot, string fieldName)
+        {
+            if (string.IsNullOrEmpty(presetId))
+                return null;
+
+            string marker = $"preset {presetId}";
+            foreach (string presetPath in FindFiles(packageRoot, "ShaderSystem/Presets", "*.honprpreset"))
+            {
+                string text = ReadAssetText(presetPath);
+                if (string.IsNullOrEmpty(text) || !text.Contains(marker))
+                    continue;
+
+                Match quoted = Regex.Match(text, $@"\b{Regex.Escape(fieldName)}\s+""([^""]+)""");
+                if (quoted.Success)
+                    return quoted.Groups[1].Value;
+
+                Match bare = Regex.Match(text, $@"\b{Regex.Escape(fieldName)}\s+([A-Za-z0-9_.-]+)\s*;");
+                if (bare.Success)
+                    return bare.Groups[1].Value;
             }
 
             return null;
