@@ -80,6 +80,8 @@ Features/<Domain>/<FeatureId>/
 - `Environment/`：lilPBR 来源的场景材质 PBR 子集，当前入口为 `Environment_LilPBR`，避免和未来 HoNpr 原生 PBR 命名空间混用。
 - `Transparent/`：显式透明和 OIT-ready 的材质组合。
 
+当前仓库已经为 Debug、Environment_LilPBR、Lite、Standard、Rich、Transparent、Skin_fSSS、Hair 和 SourceAssembly 生成 `.shader` 审查产物。`status Planned` 的 preset 可以已经生成，但仍表示还没按当前阶段的表面标准放行。默认入口应以 `Active` 状态为准；`Active` 只代表结构、参数、UI 和语义看起来正确，不代表每个光照组分已经完成最终视觉验证。
+
 ## Material UI
 
 `*.honprui` 只描述参数如何显示、哪些小工具可以绘制、哪些 HoRP 契约提示需要醒目展示。它不参与 shader 结构、pass、include、define、keyword 或 variant 决策。

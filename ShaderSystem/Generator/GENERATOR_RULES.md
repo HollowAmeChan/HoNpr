@@ -24,21 +24,24 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 1. 从 HoNpr DSL 重建声明表。
 2. 校验 HoNpr DSL 声明。
 3. 读取 include 别名、feature 文件夹中的功能块声明、模板和 preset。
-4. 重新生成 active preset 列出的所有 shader 文件。
+4. 重新生成所有允许落盘的 preset shader 文件。
 5. 使用 `ForceUpdate | ForceSynchronousImport` 导入生成的 shader 资源。
 6. 重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
 7. 调用 `AssetDatabase.SaveAssets()` 和 `AssetDatabase.Refresh()`。
 
-第一阶段生成器先输出 `Debug_LitSSS_OIT` 和迁移原型 `Character_LilToon_SourceAssembly`。
+当前生成器已经不只输出 `Debug_LitSSS_OIT` 和迁移原型 `Character_LilToon_SourceAssembly`。实际落盘规则是：preset 非 `Deprecated`，并且显式声明了 `generator`，即可生成对应 shader。`Planned` 表示还没按当前阶段的表面标准放行，不表示不会生成。
 
-第一批面向用户的 toon 生成目标是：
+当前已经有 generated shader 审查产物的主要入口包括：
 
 - `MaterialPreset.Character_LilToon_Lite`
 - `MaterialPreset.Character_LilToon_Standard`
 - `MaterialPreset.Character_LilToon_Rich`
 - `MaterialPreset.Character_LilToon_Transparent`
+- `MaterialPreset.Character_LilToon_Skin_fSSS`
+- `MaterialPreset.Hair_LilToon`
+- `MaterialPreset.Environment_LilPBR`
 
-`Character_LilToon_Core` 是旧规划遗留的过渡 preset，不能作为新增材质的默认生成目标。生成器后续选择 active preset 时，应优先生成上述四个用途明确的 shader 类型；`Deprecated` preset 只在兼容或回归需求下显式生成。
+`Character_LilToon_Core` 是旧规划遗留的过渡 preset，不能作为新增材质的默认生成目标。`Deprecated` preset 只在兼容或回归需求下显式生成。把某个 preset 升级为默认用户入口时，应先把 status 调整为 `Active`，并确认 generated shader、参数模块、UI profile、LegacyInterop 和语义归属在表面上都对得上；每个光照组分的视觉正确性另按后续渲染质量任务处理。
 
 ## 禁止输入
 
@@ -112,3 +115,5 @@ requires define HONPR_HAS_TOON_DIFFUSE_RAMP;
 ```
 
 最终 include 顺序、assembly 选择和 entry 绑定都由生成器负责。block 声明里不能直接写裸 `#include`、`#define` 或 `#pragma` 行。最终 generated shader 不应残留大量 `HONPR_HAS_*` 结构宏；复杂宏和开关应收束在 `Shaders/ShaderLibrary` 或 `Shaders/ShaderLibrary/Assemblies` 内部。
+
+当前 `CharacterToon` 仍处于迁移期：`Generated/LilToon/*.shader` 会从 block 声明聚合 `HONPR_HAS_*` define，并 include 对应具名 assembly；具名 assembly 里仍有一部分结构由 shared assembly 宏裁剪。后续工作应优先把这些差异下沉到 Lite / Standard / Rich / Transparent / Skin / Hair 等具名 assembly，避免 generated shader 的 define 集合继续增长。
