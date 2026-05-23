@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -910,8 +910,8 @@ namespace Hollow.HoNpr.Editor
             {
                 case "DebugLitMinimal":
                     return BuildDebugLitShader(preset);
-                case "CharacterToonTemplate":
-                    return BuildCharacterToonShader(packageRoot, declarations, preset);
+                case "CharacterLilToonTemplate":
+                    return BuildCharacterLilToonShader(packageRoot, declarations, preset);
                 case "EnvironmentLilPbrTemplate":
                     return BuildEnvironmentLilPbrShader(packageRoot, declarations, preset);
                 default:
@@ -1167,31 +1167,29 @@ namespace Hollow.HoNpr.Editor
             return false;
         }
 
-        private static string BuildCharacterToonShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
+        private static string BuildCharacterLilToonShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
         {
             string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
             string templateList = string.Join(" + ", GetPresetTemplates(preset));
             HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
-            string characterToonDefines = BuildRequiredDefineBlock(declarations, preset);
 
-            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonLilToonSource.shader.template");
+            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterLilToonSource.shader.template");
             if (string.IsNullOrEmpty(template))
             {
-                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonLilToonSource shader 模板。");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterLilToonSource shader 模板。");
                 return null;
             }
 
-            string sharedTemplate = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonLilToonSourceInline.hlsl.template");
+            string sharedTemplate = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterLilToonSourceInline.hlsl.template");
             if (string.IsNullOrEmpty(sharedTemplate))
             {
-                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonLilToonSourceInline HLSL 模板。");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterLilToonSourceInline HLSL 模板。");
                 return null;
             }
 
             string shader = template
                 .Replace("${SHADER_NAME}", preset.shaderName)
-                .Replace("${CHARACTER_TOON_DEFINES}", characterToonDefines)
-                .Replace("${CHARACTER_TOON_SHARED}", sharedTemplate.Trim());
+                .Replace("${CHARACTER_LILTOON_SHARED}", sharedTemplate.Trim());
             return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
         }
 
@@ -1200,7 +1198,6 @@ namespace Hollow.HoNpr.Editor
             string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
             string templateList = string.Join(" + ", GetPresetTemplates(preset));
             HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
-            string environmentDefines = BuildRequiredDefineBlock(declarations, preset);
 
             string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Environment/EnvironmentLilPbr.shader.template");
             if (string.IsNullOrEmpty(template))
@@ -1210,8 +1207,7 @@ namespace Hollow.HoNpr.Editor
             }
 
             string shader = template
-                .Replace("${SHADER_NAME}", preset.shaderName)
-                .Replace("${ENVIRONMENT_LILPBR_DEFINES}", environmentDefines);
+                .Replace("${SHADER_NAME}", preset.shaderName);
             return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
         }
 
@@ -1265,27 +1261,6 @@ $@"// 由 HoNprShaderGenerator 生成。
             }
 
             return tokens;
-        }
-
-        private static string BuildRequiredDefineBlock(ShaderSystemDeclarations declarations, PrototypePreset preset)
-        {
-            var defines = new SortedSet<string>(StringComparer.Ordinal);
-            Dictionary<string, FeatureBlockDeclaration> blocksById = declarations.blocks.ToDictionary(block => block.id);
-
-            foreach (string blockId in preset.featureBlocks ?? Array.Empty<string>())
-            {
-                if (!blocksById.TryGetValue(blockId, out FeatureBlockDeclaration block))
-                    continue;
-
-                foreach (string define in block.requiredDefines ?? Array.Empty<string>())
-                    defines.Add(define);
-            }
-
-            var builder = new StringBuilder();
-            foreach (string define in defines)
-                builder.AppendLine($"    #define {define} 1");
-
-            return builder.ToString().TrimEnd();
         }
 
         private static string LastSegment(string value)

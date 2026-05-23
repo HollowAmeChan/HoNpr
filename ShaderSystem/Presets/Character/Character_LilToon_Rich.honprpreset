@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Character_LilToon_Rich
+preset MaterialPreset.Character_LilToon_Rich
 {
-    display "Character Toon Rich";
+    display "Character lilToon Rich";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/Character_LilToon_Rich";
     generatedShader "Shaders/Generated/LilToon/Rich.shader";
 

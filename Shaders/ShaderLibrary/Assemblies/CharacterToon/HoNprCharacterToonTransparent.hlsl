@@ -1,6 +1,0 @@
-#ifndef HONPR_CHARACTER_TOON_TRANSPARENT_INCLUDED
-#define HONPR_CHARACTER_TOON_TRANSPARENT_INCLUDED
-
-#include "HoNprCharacterToonShared.hlsl"
-
-#endif

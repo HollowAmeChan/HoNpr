@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Character_LilToon_SourceAssembly
+preset MaterialPreset.Character_LilToon_SourceAssembly
 {
     display "Character LilToon Source Assembly";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow MaterialTemplate.CharacterOit;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/LilToon/SourceAssembly";
     generatedShader "Shaders/Generated/LilToon/SourceAssembly.shader";
 

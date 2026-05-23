@@ -21,7 +21,6 @@
     }
 
     HLSLINCLUDE
-${ENVIRONMENT_LILPBR_DEFINES}
     #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/EnvironmentLilPbr/HoNprEnvironmentLilPbr.hlsl"
     ENDHLSL
 

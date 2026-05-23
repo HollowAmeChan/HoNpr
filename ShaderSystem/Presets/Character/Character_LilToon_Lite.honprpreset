@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Character_LilToon_Lite
+preset MaterialPreset.Character_LilToon_Lite
 {
-    display "Character Toon Lite";
+    display "Character lilToon Lite";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/Character_LilToon_Lite";
     generatedShader "Shaders/Generated/LilToon/Lite.shader";
 

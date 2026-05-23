@@ -1,4 +1,4 @@
-﻿# lilToon 迁移与 HoNpr Shader 类型
+# lilToon 迁移与 HoNpr Shader 类型
 
 本文定义 lilToon 来源能力如何进入 HoNpr。迁移目标不是复刻 lilToon shader 家族，而是把来源能力收敛成 HoNpr 的长期类型。
 
@@ -42,9 +42,9 @@
 
 当前主要剩余技术债：
 
-- `CharacterToon` 多个具名 assembly 仍复用 `HoNprCharacterToonShared.hlsl`，结构差异主要依赖 `HONPR_HAS_*` 宏裁剪。
-- `CharacterToonLilToonSource.shader.template` 仍以 `HONPR_HAS_*` 条件生成 Properties 和 render state 片段。
-- `Generated/LilToon/*.shader` 已经没有完整 HLSL 主体，但仍会输出较多结构 define；这是迁移期可接受形态，不应继续扩大。
+- `CharacterLilToon` 多个具名 assembly 仍复用 `HoNprCharacterLilToonShared.hlsl`，结构差异主要依赖 `HONPR_HAS_*` 宏裁剪。
+- `CharacterLilToonSource.shader.template` 仍以 `HONPR_HAS_*` 条件生成 Properties 和 render state 片段。
+- `Generated/LilToon/*.shader` 已经不再输出 `HONPR_HAS_*` 结构 define，只 include 对应具名 assembly；后续应继续把 shared assembly 内部的宏裁剪下沉为具名 assembly 的固定结构。
 
 ## lilToon 文件族归类
 
@@ -115,7 +115,7 @@ Block 命名：
 2. 维护第一批用户 toon preset：Lite、Standard、Rich、Transparent、Skin_fSSS、Hair，以及 `Environment_LilPBR`。
 3. 为每个用户 preset 维护对应 `.honprui` 白名单，并让 UI 校验能追踪到 generated shader 的 `Properties`。
 4. 生成器当前按“非 Deprecated 且显式声明 generator”落盘生成 shader；`Planned` 不表示不会生成，只表示还没有按当前阶段的表面标准放行。
-5. 把 `CharacterToon` shared assembly 中按 `HONPR_HAS_*` 裁剪的结构，逐步下沉到 Lite / Standard / Rich / Transparent / Skin / Hair 等具名 assembly。
+5. 把 `CharacterLilToon` shared assembly 中按 `HONPR_HAS_*` 裁剪的结构，逐步下沉到 Lite / Standard / Rich / Transparent / Skin / Hair 等具名 assembly。
 6. 在 `LegacyInterop` 中补齐旧 shader / property / keyword 到新 preset 和参数的迁移规则。
 7. shader 生成、参数模块、材质 UI、语义归属和 generated shader 审查都表面通过后，可以把 preset 从 `Prototype` 或 `Planned` 升为 `Active`；具体光照组分效果是否完全正确另开后续任务处理。
 8. 再评估 Refraction、Fur、Gem、Layered 等第二批类型。

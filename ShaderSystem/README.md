@@ -1,4 +1,4 @@
-﻿# HoNpr Shader System
+# HoNpr Shader System
 
 这个目录是 HoNpr 材质生成系统的显式声明层。
 
@@ -67,7 +67,7 @@ Features/<Domain>/<FeatureId>/
 
 `ShaderSystem/Templates/` 定义 shader pass 骨架：
 
-- `Character/`：角色材质使用的 forward、AOV、depth、shadow 和 OIT pass 骨架。`CharacterToonLilToonSource.shader.template` 与 `CharacterToonLilToonSourceInline.hlsl.template` 是 lilToon 来源语义的迁移期组装模板，可以生成 `Character_LilToon_*` 用户 shader；文件名保留 `LilToonSource`，避免被误读为通用 Character Toon ABI。
+- `Character/`：角色材质使用的 forward、AOV、depth、shadow 和 OIT pass 骨架。`CharacterLilToonSource.shader.template` 与 `CharacterLilToonSourceInline.hlsl.template` 是 lilToon 来源语义的迁移期组装模板，可以生成 `Character_LilToon_*` 用户 shader；文件名保留 `LilToonSource`，避免被误读为通用 Character lilToon ABI。
 - `Environment/`：lilPBR 来源的场景 PBR 子集 pass 骨架。
 - `Utility/`：debug 和原型 shader 骨架，用于验证 HoRP 材质契约。
 

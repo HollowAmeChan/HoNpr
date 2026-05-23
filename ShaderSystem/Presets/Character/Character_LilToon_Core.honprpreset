@@ -1,6 +1,6 @@
-﻿preset MaterialPreset.Character_LilToon_Core
+preset MaterialPreset.Character_LilToon_Core
 {
-    display "Character Toon Core";
+    display "Character lilToon Core";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
     shaderName "HoNpr/Character_LilToon_Core";
     generatedShader "Shaders/Generated/LilToon/Core.shader";

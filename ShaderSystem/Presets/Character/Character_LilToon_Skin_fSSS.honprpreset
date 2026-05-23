@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Character_LilToon_Skin_fSSS
+preset MaterialPreset.Character_LilToon_Skin_fSSS
 {
     display "Character Skin fSSS";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/Character_LilToon_Skin_fSSS";
     generatedShader "Shaders/Generated/LilToon/Skin_fSSS.shader";
 

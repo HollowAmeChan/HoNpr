@@ -51,23 +51,9 @@ Shader "HoNpr/Character_LilToon_Lite"
     }
 
     HLSLINCLUDE
-    #define HONPR_HAS_BASE_COLOR_TEXTURE 1
-    #define HONPR_HAS_FINAL_COLOR_COMPOSITE 1
-    #define HONPR_HAS_HORP_SHADOW_RECEIVER 1
-    #define HONPR_HAS_INDIRECT_LIGHT 1
-    #define HONPR_HAS_LILTOON_DIFFUSE_RAMP 1
-    #define HONPR_HAS_LILTOON_EMISSION_PRIMARY 1
-    #define HONPR_HAS_LILTOON_RIM_LIGHT 1
-    #define HONPR_HAS_MATERIAL_SEMANTICS 1
-    #define HONPR_HAS_NORMAL_MAP 1
-    #define HONPR_HAS_REGION_MASK 1
-    #define HONPR_HAS_SCREEN_AO_RECEIVER 1
-    #define HONPR_HAS_STANDARD_AOV 1
-    #define HONPR_HAS_STYLE_RAMP_ATLAS 1
-    #define HONPR_HAS_URP_MAIN_LIGHT 1
 
 
-#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonLite.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonLite.hlsl"
 
 
 

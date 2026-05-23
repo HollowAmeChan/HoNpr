@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Character_LilToon_Transparent
+preset MaterialPreset.Character_LilToon_Transparent
 {
-    display "Character Toon Transparent";
+    display "Character lilToon Transparent";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterOit;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/Character_LilToon_Transparent";
     generatedShader "Shaders/Generated/LilToon/Transparent.shader";
 

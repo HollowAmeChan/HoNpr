@@ -1,8 +1,8 @@
-﻿preset MaterialPreset.Hair_LilToon
+preset MaterialPreset.Hair_LilToon
 {
     display "Hair Toon";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     shaderName "HoNpr/Hair_LilToon";
     generatedShader "Shaders/Generated/LilToon/Hair.shader";
 

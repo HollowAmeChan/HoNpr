@@ -1,4 +1,4 @@
-﻿# 生成器规则
+# 生成器规则
 
 生成器负责结构；Inspector 只负责显示和参数编辑。
 
@@ -98,7 +98,7 @@ Feature leaf 目录必须有 `Block.honprblock`，除非它位于 `Features/Pres
 ```text
 preset MaterialPreset.Character_LilToon_Standard {
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov;
-    generator CharacterToonTemplate;
+    generator CharacterLilToonTemplate;
     ...
 }
 ```
@@ -114,6 +114,6 @@ requires include HoNpr.ToonLobes;
 requires define HONPR_HAS_TOON_DIFFUSE_RAMP;
 ```
 
-最终 include 顺序、assembly 选择和 entry 绑定都由生成器负责。block 声明里不能直接写裸 `#include`、`#define` 或 `#pragma` 行。最终 generated shader 不应残留大量 `HONPR_HAS_*` 结构宏；复杂宏和开关应收束在 `Shaders/ShaderLibrary` 或 `Shaders/ShaderLibrary/Assemblies` 内部。
+最终 include 顺序、assembly 选择和 entry 绑定都由生成器负责。block 声明里不能直接写裸 `#include`、`#define` 或 `#pragma` 行。最终 generated shader 不应输出 `HONPR_HAS_*` 结构宏；复杂宏和开关应收束在 `Shaders/ShaderLibrary` 或 `Shaders/ShaderLibrary/Assemblies` 内部。
 
-当前 `CharacterToon` 仍处于迁移期：`Generated/LilToon/*.shader` 会从 block 声明聚合 `HONPR_HAS_*` define，并 include 对应具名 assembly；具名 assembly 里仍有一部分结构由 shared assembly 宏裁剪。后续工作应优先把这些差异下沉到 Lite / Standard / Rich / Transparent / Skin / Hair 等具名 assembly，避免 generated shader 的 define 集合继续增长。
+当前 `CharacterLilToon` 仍处于迁移期：`Generated/LilToon/*.shader` 只 include 对应具名 assembly；具名 assembly 自己声明 `HONPR_HAS_*`，其中仍有一部分结构由 shared assembly 宏裁剪。后续工作应优先把这些差异下沉到 Lite / Standard / Rich / Transparent / Skin / Hair 等具名 assembly，减少 shared assembly 内部条件分支。

@@ -1,6 +1,22 @@
 ﻿#ifndef HONPR_ENVIRONMENT_LILPBR_INCLUDED
 #define HONPR_ENVIRONMENT_LILPBR_INCLUDED
 
+#define HONPR_HAS_BASE_COLOR_TEXTURE 1
+#define HONPR_HAS_FINAL_COLOR_COMPOSITE 1
+#define HONPR_HAS_HORP_SHADOW_RECEIVER 1
+#define HONPR_HAS_INDIRECT_LIGHT 1
+#define HONPR_HAS_LILPBR_CLEAR_COAT_SPECULAR 1
+#define HONPR_HAS_LILPBR_DIFFUSE 1
+#define HONPR_HAS_LILPBR_MATERIAL_MAP_PACKED 1
+#define HONPR_HAS_LILPBR_SPECULAR_ANISOTROPIC 1
+#define HONPR_HAS_LILPBR_SPECULAR_GGX 1
+#define HONPR_HAS_MATERIAL_SEMANTICS 1
+#define HONPR_HAS_NORMAL_MAP 1
+#define HONPR_HAS_SCREEN_AO_RECEIVER 1
+#define HONPR_HAS_STANDARD_AOV 1
+#define HONPR_HAS_URP_ADDITIONAL_LIGHTS 1
+#define HONPR_HAS_URP_MAIN_LIGHT 1
+
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpObjectSemantic.hlsl"

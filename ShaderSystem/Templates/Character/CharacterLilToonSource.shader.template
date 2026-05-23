@@ -1,4 +1,4 @@
-﻿Shader "${SHADER_NAME}"
+Shader "${SHADER_NAME}"
 {
     Properties
     {
@@ -125,8 +125,7 @@
     }
 
     HLSLINCLUDE
-${CHARACTER_TOON_DEFINES}
-${CHARACTER_TOON_SHARED}
+${CHARACTER_LILTOON_SHARED}
     ENDHLSL
 
     SubShader
