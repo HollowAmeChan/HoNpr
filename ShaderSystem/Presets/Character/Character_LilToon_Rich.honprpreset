@@ -11,5 +11,5 @@
     produces Material.Class Material.Custom0-3 Aov.MaskId Aov.NormalDepth Aov.SurfaceData;
     requires capability ReceivesOutline ParticipatesSemanticPost;
     phase Forward;
-    status Planned;
+    status Active;
 }

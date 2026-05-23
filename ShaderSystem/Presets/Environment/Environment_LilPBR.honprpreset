@@ -11,5 +11,5 @@
     produces Material.Class;
     requires capability SceneMaterial ParticipatesSemanticPost;
     phase Forward;
-    status Prototype;
+    status Active;
 }

@@ -11,5 +11,5 @@
     produces Material.Class Material.Custom0-3 Aov.MaskId Aov.NormalDepth Aov.SurfaceData OitAccumulationInput OitRevealageInput;
     requires capability SupportsOit ParticipatesSemanticPost;
     phase ForwardAndOit;
-    status Planned;
+    status Active;
 }

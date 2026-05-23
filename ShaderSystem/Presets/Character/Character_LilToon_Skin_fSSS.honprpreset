@@ -11,5 +11,5 @@
     produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Shading.SssSourceColor Shading.SssWeight Aov.SssSource;
     requires capability ReceivesFsss ParticipatesSemanticPost;
     phase Forward;
-    status Prototype;
+    status Active;
 }
