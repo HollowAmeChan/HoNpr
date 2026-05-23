@@ -23,7 +23,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 
 1. 从 HoNpr DSL 重建声明表。
 2. 校验 HoNpr DSL 声明。
-3. 读取 include 别名、模板、功能块声明和 preset。
+3. 读取 include 别名、feature 文件夹中的功能块声明、旧功能块声明、模板和 preset。
 4. 重新生成 active preset 列出的所有 shader 文件。
 5. 使用 `ForceUpdate | ForceSynchronousImport` 导入生成的 shader 资源。
 6. 重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
@@ -52,6 +52,8 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 允许作为结构输入的内容：
 
 - `ShaderSystem/Includes/INCLUDE_REGISTRY.honprinclude`.
+- `ShaderSystem/Features/**/*.honprblock`.
+- `ShaderSystem/Features/**/*.honprparams`.
 - `*.honprtemplate`.
 - `*.honprblock`.
 - `*.honprpreset`.
@@ -75,6 +77,17 @@ template MaterialTemplate.CharacterForward { ... }
 block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... }
 preset MaterialPreset.Character_Toon_Standard { ... }
 ```
+
+新 feature 应优先放在文件夹边界里：
+
+```text
+ShaderSystem/Features/Stylized/RimLightLilToon/
+  README.md
+  Block.honprblock
+  Parameters.honprparams
+```
+
+文件夹就是 feature identity。不要再新增平铺在 `FeatureBlocks/` 下的长期 block；旧目录只保留未迁移内容。
 
 需要落盘生成 shader 的 preset 必须显式声明生成器，而不是依赖 C# 按 preset 名称白名单选择：
 

@@ -27,6 +27,7 @@ namespace Hollow.HoNpr.Editor
             "ShaderSystem",
             "ShaderSystem/Contract",
             "ShaderSystem/Includes",
+            "ShaderSystem/Features",
             "ShaderSystem/Templates",
             "ShaderSystem/FeatureBlocks",
             "ShaderSystem/Presets",
@@ -214,6 +215,7 @@ namespace Hollow.HoNpr.Editor
             var declarations = new ShaderSystemDeclarations();
             var templates = new HashSet<string>();
             var blocks = new HashSet<string>();
+            var blockPathsById = new Dictionary<string, string>();
             var presets = new HashSet<string>();
 
             foreach (string path in FindFiles(packageRoot, "ShaderSystem/Templates", "*.honprtemplate"))
@@ -232,7 +234,8 @@ namespace Hollow.HoNpr.Editor
                     declarations.templates.Add(declaration);
             }
 
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.honprblock"))
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.honprblock")
+                .Concat(FindFiles(packageRoot, "ShaderSystem/Features", "*.honprblock")))
             {
                 ValidateNoRawShaderDirectives(path, errors);
                 FeatureBlockDeclaration declaration = LoadFeatureBlockDeclaration(packageRoot, path, errors);
@@ -245,9 +248,12 @@ namespace Hollow.HoNpr.Editor
                 declaration.path = ToPackageRelativePath(packageRoot, path);
                 declaration.includePaths = ResolveIncludePaths(declaration.requiredIncludes, includeRegistry);
                 if (!blocks.Add(declaration.id))
-                    errors.Add($"Duplicate feature block id {declaration.id}: {path}");
+                    errors.Add($"Duplicate feature block id {declaration.id}: {blockPathsById[declaration.id]} and {path}");
                 else
+                {
+                    blockPathsById.Add(declaration.id, path);
                     declarations.blocks.Add(declaration);
+                }
             }
 
             foreach (string path in FindFiles(packageRoot, "ShaderSystem/Presets", "*.honprpreset"))
@@ -454,13 +460,15 @@ namespace Hollow.HoNpr.Editor
             builder.AppendLine();
             builder.AppendLine("由 `*.honprblock` 自动生成。不要手动编辑表格行。");
             builder.AppendLine();
-            builder.AppendLine("| ID | Domain | Stage | 消费 | 生产 | Include 别名 | Define | 入口 | 兼容 Preset | Variant 策略 | Debug 视图 |");
-            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
+            builder.AppendLine("| ID | Path | Domain | Stage | 消费 | 生产 | Include 别名 | Define | 入口 | 兼容 Preset | Variant 策略 | Debug 视图 |");
+            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
 
             foreach (FeatureBlockDeclaration block in declarations.blocks)
             {
                 builder.Append("| ");
                 builder.Append(Code(block.id));
+                builder.Append(" | ");
+                builder.Append(Code(block.path));
                 builder.Append(" | ");
                 builder.Append(MarkdownCell(block.domain));
                 builder.Append(" | ");

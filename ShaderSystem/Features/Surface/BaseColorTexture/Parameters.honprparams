@@ -1,0 +1,5 @@
+parameters MaterialBlock.BaseColorTexture
+{
+    property _HoNprBaseMap semantic Surface.BaseColor.Texture type Texture2D default "white";
+    property _HoUrpBaseColor semantic Surface.BaseColor.Tint type Color default "(1, 1, 1, 1)";
+}
