@@ -3,7 +3,7 @@
 // Template: MaterialTemplate.EnvironmentForward + MaterialTemplate.EnvironmentAov
 // Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.MaterialMapPacked, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.PbrDiffuse, MaterialBlock.PbrSpecularGGX, MaterialBlock.PbrSpecularAnisotropic, MaterialBlock.ClearCoatSpecular, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Generated/Environment_PBR"
+Shader "HoNpr/Environment_PBR"
 {
     Properties
     {

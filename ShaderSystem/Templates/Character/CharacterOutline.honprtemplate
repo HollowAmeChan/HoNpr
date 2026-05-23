@@ -4,5 +4,5 @@ template MaterialTemplate.CharacterOutline
     description "HoNpr character outline pass shell using the outline-lilToon algorithm variant.";
     passes ForwardOutlineLilToon;
     requires slots SurfaceInput StylizedLobe Transparency;
-    shaderNamePattern "HoNpr/Generated/{PresetName}";
+    shaderNamePattern "HoNpr/{PresetName}";
 }

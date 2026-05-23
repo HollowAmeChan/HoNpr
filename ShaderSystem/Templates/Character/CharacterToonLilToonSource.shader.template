@@ -36,6 +36,18 @@ Shader "${SHADER_NAME}"
         _HoNprToonSpecularLilToonMask("Toon Specular-lilToon Mask", Range(0, 1)) = 0.6
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprToonSpecularLilToonBlendMode("Toon Specular-lilToon Blend Mode", Float) = 0
 {{/if HONPR_HAS_TOON_SPECULAR_LILTOON}}
+{{#if HONPR_HAS_HAIR_SPECULAR_PRIMARY}}
+        _HoNprHairSpecularPrimaryShift("Hair Specular Primary Shift", Range(-1, 1)) = 0.08
+        _HoNprHairSpecularPrimaryWidth("Hair Specular Primary Width", Range(1, 256)) = 48
+        _HoNprHairSpecularPrimaryMask("Hair Specular Primary Mask", Range(0, 1)) = 0.6
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprHairSpecularPrimaryBlendMode("Hair Specular Primary Blend Mode", Float) = 0
+{{/if HONPR_HAS_HAIR_SPECULAR_PRIMARY}}
+{{#if HONPR_HAS_HAIR_SPECULAR_SECONDARY}}
+        _HoNprHairSpecularSecondaryShift("Hair Specular Secondary Shift", Range(-1, 1)) = -0.12
+        _HoNprHairSpecularSecondaryWidth("Hair Specular Secondary Width", Range(1, 256)) = 96
+        _HoNprHairSpecularSecondaryMask("Hair Specular Secondary Mask", Range(0, 1)) = 0.35
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprHairSpecularSecondaryBlendMode("Hair Specular Secondary Blend Mode", Float) = 0
+{{/if HONPR_HAS_HAIR_SPECULAR_SECONDARY}}
 {{#if HONPR_HAS_RIM_SHADE_LILTOON}}
         _HoNprRimShadeLilToonColor("RimShade-lilToon Color", Color) = (0.15, 0.16, 0.2, 1)
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprRimShadeLilToonBlendMode("RimShade-lilToon Blend Mode", Float) = 0

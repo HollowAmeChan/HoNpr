@@ -4,5 +4,5 @@ template MaterialTemplate.DebugLitMinimal
     description "匹配当前 HoURP 生成材质契约的 HoNpr 原型模板。";
     passes UniversalForward HoUrpAovOutput HoUrpOitAccumulation;
     requires slots SurfaceInput SemanticAov Transparency;
-    shaderNamePattern "HoNpr/Generated/{PresetName}";
+    shaderNamePattern "HoNpr/{PresetName}";
 }

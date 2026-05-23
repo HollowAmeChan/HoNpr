@@ -3,7 +3,7 @@ preset MaterialPreset.Character_Toon_Standard
     display "Character Toon Standard";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
     generator CharacterToonTemplate;
-    shaderName "HoNpr/Character/Toon_Standard";
+    shaderName "HoNpr/Character_Toon_Standard";
     generatedShader "Shaders/Generated/Character/Character_Toon_Standard.shader";
 
     blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.OutlineLilToon MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRampLilToon MaterialBlock.ToonSpecularLilToon MaterialBlock.RimShadeLilToon MaterialBlock.RimLightLilToon MaterialBlock.BacklightLilToon MaterialBlock.MatCapLilToon MaterialBlock.EmissionPrimaryLilToon MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;

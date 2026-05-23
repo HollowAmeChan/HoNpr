@@ -3,7 +3,7 @@
 // Template: MaterialTemplate.DebugLitMinimal
 // Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SssSourceProducer, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.OitAccumulationOutput
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Generated/Character_DebugLit_SSS_OITReady"
+Shader "HoNpr/Character_DebugLit_SSS_OITReady"
 {
     Properties
     {

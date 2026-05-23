@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -913,41 +914,95 @@ namespace Hollow.HoNpr.Editor.MaterialUi
 
         private static string GetPresetId(Material material)
         {
-            string shaderName = material.shader == null ? string.Empty : material.shader.name;
+            Shader shader = material.shader;
+            string shaderName = shader == null ? string.Empty : shader.name;
+            if (TryGetSourcePresetId(shader, out string sourcePresetId))
+                return sourcePresetId;
+
             if (shaderName.EndsWith("Character_DebugLit_SSS_OITReady", StringComparison.Ordinal))
                 return "MaterialPreset.Character_DebugLit_SSS_OITReady";
 
-            if (TryGetSemanticPresetId(shaderName, out string presetId))
-                return presetId;
+            const string hoNprPrefix = "HoNpr/";
+            if (shaderName.StartsWith(hoNprPrefix, StringComparison.Ordinal))
+            {
+                string suffix = shaderName.Substring(hoNprPrefix.Length);
+                if (suffix.StartsWith("Generated/", StringComparison.Ordinal))
+                    suffix = suffix.Substring("Generated/".Length);
 
-            const string generatedPrefix = "HoNpr/Generated/";
-            if (shaderName.StartsWith(generatedPrefix, StringComparison.Ordinal))
-                return SourcePresetPrefix + shaderName.Substring(generatedPrefix.Length).Replace("/", "_");
+                return SourcePresetPrefix + suffix.Replace("/", "_");
+            }
 
             return SourcePresetPrefix + shaderName.Replace("/", "_");
         }
 
-        private static bool TryGetSemanticPresetId(string shaderName, out string presetId)
+        private static bool TryGetSourcePresetId(Shader shader, out string presetId)
         {
             presetId = null;
-            return TryGetSemanticPresetId(shaderName, "HoNpr/Character/", "Character_", out presetId)
-                || TryGetSemanticPresetId(shaderName, "HoNpr/Environment/", "Environment_", out presetId)
-                || TryGetSemanticPresetId(shaderName, "HoNpr/Transparent/", "Transparent_", out presetId)
-                || TryGetSemanticPresetId(shaderName, "HoNpr/Hair/", "Hair_", out presetId);
+            if (shader == null)
+                return false;
+
+            string assetPath = AssetDatabase.GetAssetPath(shader);
+            if (string.IsNullOrEmpty(assetPath))
+                return false;
+
+            string text = ReadAssetText(assetPath);
+            if (string.IsNullOrEmpty(text))
+                return false;
+
+            const string marker = "// SourcePreset:";
+            try
+            {
+                int scannedLines = 0;
+                using (var reader = new StringReader(text))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (++scannedLines > 32)
+                            break;
+
+                        int index = line.IndexOf(marker, StringComparison.Ordinal);
+                        if (index < 0)
+                            continue;
+
+                        string value = line.Substring(index + marker.Length).Trim();
+                        if (!value.StartsWith(SourcePresetPrefix, StringComparison.Ordinal))
+                            return false;
+
+                        presetId = value;
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
         }
 
-        private static bool TryGetSemanticPresetId(string shaderName, string shaderPrefix, string presetPrefix, out string presetId)
+        private static string ReadAssetText(string assetPath)
         {
-            presetId = null;
-            if (!shaderName.StartsWith(shaderPrefix, StringComparison.Ordinal))
-                return false;
+            TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(assetPath);
+            if (asset != null)
+                return asset.text;
 
-            string suffix = shaderName.Substring(shaderPrefix.Length);
-            if (string.IsNullOrEmpty(suffix))
-                return false;
+            string absolutePath = AssetPathToAbsolutePath(assetPath);
+            return File.Exists(absolutePath) ? File.ReadAllText(absolutePath, Encoding.UTF8) : null;
+        }
 
-            presetId = SourcePresetPrefix + presetPrefix + suffix.Replace("/", "_");
-            return true;
+        private static string AssetPathToAbsolutePath(string assetPath)
+        {
+            UnityEditor.PackageManager.PackageInfo info = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(assetPath);
+            if (info != null && !string.IsNullOrEmpty(info.assetPath) && assetPath.StartsWith(info.assetPath, StringComparison.OrdinalIgnoreCase))
+            {
+                string relativePath = assetPath.Substring(info.assetPath.Length).TrimStart('/', '\\');
+                return Path.GetFullPath(Path.Combine(info.resolvedPath, relativePath));
+            }
+
+            string projectRoot = Directory.GetParent(Application.dataPath).FullName;
+            return Path.GetFullPath(Path.Combine(projectRoot, assetPath));
         }
 
         private static void CopyProperty(MaterialProperty property)

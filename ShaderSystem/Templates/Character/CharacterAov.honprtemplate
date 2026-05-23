@@ -4,5 +4,5 @@ template MaterialTemplate.CharacterAov
     description "HoNpr 角色材质的 AOV 输出 pass 骨架。";
     passes HoUrpAovOutput;
     requires slots SurfaceInput SemanticAov;
-    shaderNamePattern "HoNpr/Generated/{PresetName}";
+    shaderNamePattern "HoNpr/{PresetName}";
 }

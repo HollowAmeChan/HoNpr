@@ -48,13 +48,13 @@
 
 | Preset | Shader | 用途 | 应包含 | 不包含 |
 | --- | --- | --- | --- | --- |
-| `MaterialPreset.Character_Toon_Lite` | `HoNpr/Character/Toon_Lite` | 低成本角色或配件 toon | BaseColor、Normal、Ramp Diffuse、Main Light、Indirect、AO、RimLight、PrimaryEmission、AOV、Depth、Shadow | Outline、SecondaryMatCap、Glitter、DistanceFade、OIT |
-| `MaterialPreset.Character_Toon_Standard` | `HoNpr/Character/Toon_Standard` | 默认角色 toon | Lite + ToonSpecular、RimShade、Backlight、MatCap、Outline、Semantic/AOV | Glitter、SecondaryMatCap、SecondaryEmission、DistanceFade、OIT |
-| `MaterialPreset.Character_Toon_Rich` | `HoNpr/Character/Toon_Rich` | 完整 stylized 角色外观 | Standard + SecondaryMatCap、Glitter、SecondaryEmission、DistanceFade、BackfaceColor | Refraction、Fur、Gem |
-| `MaterialPreset.Character_Toon_Transparent` | `HoNpr/Character/Toon_Transparent` | 半透明 toon | Standard 核心 + AlphaClip、TransparentComposite、OIT 输出 | Refraction blur、Fur、Gem |
-| `MaterialPreset.Character_Skin_SSS` | `HoNpr/Character/Skin_SSS` | 皮肤或 SSS 角色材质 | SSS source、thin SSS、semantic/AOV | Glitter、Fur、Gem |
-| `MaterialPreset.Hair_Toon` | `HoNpr/Character/Hair_Toon` | 头发 toon | HairSpecularPrimary、HairSpecularSecondary、toon diffuse、rim、AOV | Gem、Refraction |
-| `MaterialPreset.Environment_PBR` | `HoNpr/Environment/PBR` | 场景 PBR | PBR diffuse、GGX、anisotropic、clear coat、AOV | 角色 stylized lobe |
+| `MaterialPreset.Character_Toon_Lite` | `HoNpr/Character_Toon_Lite` | 低成本角色或配件 toon | BaseColor、Normal、Ramp Diffuse、Main Light、Indirect、AO、RimLight、PrimaryEmission、AOV、Depth、Shadow | Outline、SecondaryMatCap、Glitter、DistanceFade、OIT |
+| `MaterialPreset.Character_Toon_Standard` | `HoNpr/Character_Toon_Standard` | 默认角色 toon | Lite + ToonSpecular、RimShade、Backlight、MatCap、Outline、Semantic/AOV | Glitter、SecondaryMatCap、SecondaryEmission、DistanceFade、OIT |
+| `MaterialPreset.Character_Toon_Rich` | `HoNpr/Character_Toon_Rich` | 完整 stylized 角色外观 | Standard + SecondaryMatCap、Glitter、SecondaryEmission、DistanceFade、BackfaceColor | Refraction、Fur、Gem |
+| `MaterialPreset.Character_Toon_Transparent` | `HoNpr/Character_Toon_Transparent` | 半透明 toon | Standard 核心 + AlphaClip、TransparentComposite、OIT 输出 | Refraction blur、Fur、Gem |
+| `MaterialPreset.Character_Skin_SSS` | `HoNpr/Character_Skin_SSS` | 皮肤或 SSS 角色材质 | SSS source、thin SSS、semantic/AOV | Glitter、Fur、Gem |
+| `MaterialPreset.Hair_Toon` | `HoNpr/Hair_Toon` | 头发 toon | HairSpecularPrimary、HairSpecularSecondary、toon diffuse、rim、AOV | Gem、Refraction |
+| `MaterialPreset.Environment_PBR` | `HoNpr/Environment_PBR` | 场景 PBR | PBR diffuse、GGX、anisotropic、clear coat、AOV | 角色 stylized lobe |
 
 ## 第二批候选
 
@@ -100,4 +100,3 @@ Block 命名：
 5. 把大模板中的算法主体逐步下沉到 ShaderLibrary / Assembly。
 6. 在 `LegacyInterop` 中补齐旧 property 到新参数的迁移规则。
 7. 再评估 Refraction、Fur、Gem、Layered 等第二批类型。
-

@@ -1,9 +1,9 @@
 ﻿// 由 HoNprShaderGenerator 生成。
-// SourcePreset: MaterialPreset.Character_Toon_Lite
+// SourcePreset: MaterialPreset.Hair_Toon
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow
-// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.ToonDiffuseRampLilToon, MaterialBlock.RimLightLilToon, MaterialBlock.EmissionPrimaryLilToon, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
+// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.ToonDiffuseRampLilToon, MaterialBlock.HairSpecularPrimary, MaterialBlock.HairSpecularSecondary, MaterialBlock.RimLightLilToon, MaterialBlock.BacklightLilToon, MaterialBlock.MatCapLilToon, MaterialBlock.EmissionPrimaryLilToon, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Character_Toon_Lite"
+Shader "HoNpr/Hair_Toon"
 {
     Properties
     {
@@ -20,9 +20,27 @@ Shader "HoNpr/Character_Toon_Lite"
 
 
 
+        _HoNprHairSpecularPrimaryShift("Hair Specular Primary Shift", Range(-1, 1)) = 0.08
+        _HoNprHairSpecularPrimaryWidth("Hair Specular Primary Width", Range(1, 256)) = 48
+        _HoNprHairSpecularPrimaryMask("Hair Specular Primary Mask", Range(0, 1)) = 0.6
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprHairSpecularPrimaryBlendMode("Hair Specular Primary Blend Mode", Float) = 0
+
+
+        _HoNprHairSpecularSecondaryShift("Hair Specular Secondary Shift", Range(-1, 1)) = -0.12
+        _HoNprHairSpecularSecondaryWidth("Hair Specular Secondary Width", Range(1, 256)) = 96
+        _HoNprHairSpecularSecondaryMask("Hair Specular Secondary Mask", Range(0, 1)) = 0.35
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprHairSpecularSecondaryBlendMode("Hair Specular Secondary Blend Mode", Float) = 0
 
 
 
+        _HoNprBacklightLilToonColor("Backlight-lilToon Color", Color) = (0.7, 0.5, 0.35, 1)
+        _HoNprBacklightLilToonPower("Backlight-lilToon Power", Range(0.1, 12)) = 2
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBacklightLilToonBlendMode("Backlight-lilToon Blend Mode", Float) = 0
+
+
+        _HoNprMatCapLilToonColor("MatCap-lilToon Color", Color) = (0.25, 0.25, 0.3, 1)
+        _HoNprMatCapLilToonMask("MatCap-lilToon Mask", Range(0, 1)) = 0.25
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprMatCapLilToonBlendMode("MatCap-lilToon Blend Mode", Float) = 0
 
 
         _HoNprRimLightLilToonColor("RimLight-lilToon Color", Color) = (0.75, 0.9, 1, 1)
@@ -51,11 +69,15 @@ Shader "HoNpr/Character_Toon_Lite"
     }
 
     HLSLINCLUDE
+    #define HONPR_HAS_BACKLIGHT_LILTOON 1
     #define HONPR_HAS_BASE_COLOR_TEXTURE 1
     #define HONPR_HAS_EMISSION_PRIMARY_LILTOON 1
     #define HONPR_HAS_FINAL_COLOR_COMPOSITE 1
+    #define HONPR_HAS_HAIR_SPECULAR_PRIMARY 1
+    #define HONPR_HAS_HAIR_SPECULAR_SECONDARY 1
     #define HONPR_HAS_HORP_SHADOW_RECEIVER 1
     #define HONPR_HAS_INDIRECT_LIGHT 1
+    #define HONPR_HAS_MATCAP_LILTOON 1
     #define HONPR_HAS_MATERIAL_SEMANTICS 1
     #define HONPR_HAS_NORMAL_MAP 1
     #define HONPR_HAS_REGION_MASK 1
@@ -64,14 +86,15 @@ Shader "HoNpr/Character_Toon_Lite"
     #define HONPR_HAS_STANDARD_AOV 1
     #define HONPR_HAS_STYLE_RAMP_ATLAS 1
     #define HONPR_HAS_TOON_DIFFUSE_RAMP_LILTOON 1
+    #define HONPR_HAS_URP_ADDITIONAL_LIGHTS 1
     #define HONPR_HAS_URP_MAIN_LIGHT 1
 
 
-#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonLite.hlsl"
 
 
 
 
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonHair.hlsl"
 
     ENDHLSL
 

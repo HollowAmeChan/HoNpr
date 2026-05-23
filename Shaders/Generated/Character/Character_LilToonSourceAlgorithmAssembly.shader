@@ -3,7 +3,7 @@
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterOutline + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow + MaterialTemplate.CharacterOit
 // Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.OutlineLilToon, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.ToonDiffuseRampLilToon, MaterialBlock.ToonSpecularLilToon, MaterialBlock.RimShadeLilToon, MaterialBlock.RimLightLilToon, MaterialBlock.BacklightLilToon, MaterialBlock.BackfaceColorLilToon, MaterialBlock.MatCapLilToon, MaterialBlock.SecondaryMatCapLilToon, MaterialBlock.GlitterLilToon, MaterialBlock.EmissionPrimaryLilToon, MaterialBlock.EmissionSecondaryLilToon, MaterialBlock.DistanceFadeLilToon, MaterialBlock.MaterialSemanticProducer, MaterialBlock.SssSourceProducer, MaterialBlock.AovOutputStandard, MaterialBlock.AlphaClipPolicy, MaterialBlock.TransparentComposite, MaterialBlock.OitAccumulationOutput
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
+Shader "HoNpr/Character_LilToonSourceAlgorithmAssembly"
 {
     Properties
     {
@@ -40,6 +40,8 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
         _HoNprToonSpecularLilToonSoftness("Toon Specular-lilToon Softness", Range(0.001, 1)) = 0.08
         _HoNprToonSpecularLilToonMask("Toon Specular-lilToon Mask", Range(0, 1)) = 0.6
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprToonSpecularLilToonBlendMode("Toon Specular-lilToon Blend Mode", Float) = 0
+
+
 
 
         _HoNprRimShadeLilToonColor("RimShade-lilToon Color", Color) = (0.15, 0.16, 0.2, 1)
@@ -148,6 +150,7 @@ Shader "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly"
     #define HONPR_HAS_URP_MAIN_LIGHT 1
 
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonLilToonSourceAlgorithmAssembly.hlsl"
+
 
 
 

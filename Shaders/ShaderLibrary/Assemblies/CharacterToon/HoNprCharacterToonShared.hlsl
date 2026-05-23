@@ -14,6 +14,10 @@
 
 TEXTURE2D(_HoNprBaseMap);
 SAMPLER(sampler_HoNprBaseMap);
+#if defined(HONPR_HAS_NORMAL_MAP)
+TEXTURE2D(_HoNprNormalMap);
+SAMPLER(sampler_HoNprNormalMap);
+#endif
 TEXTURE2D(_HoNprStyleRampAtlas);
 SAMPLER(sampler_HoNprStyleRampAtlas);
 #if defined(HONPR_HAS_SEMANTIC_MAP)
@@ -48,6 +52,18 @@ half _HoNprToonSpecularLilToonThreshold;
 half _HoNprToonSpecularLilToonSoftness;
 half _HoNprToonSpecularLilToonMask;
 half _HoNprToonSpecularLilToonBlendMode;
+#endif
+#if defined(HONPR_HAS_HAIR_SPECULAR_PRIMARY)
+half _HoNprHairSpecularPrimaryShift;
+half _HoNprHairSpecularPrimaryWidth;
+half _HoNprHairSpecularPrimaryMask;
+half _HoNprHairSpecularPrimaryBlendMode;
+#endif
+#if defined(HONPR_HAS_HAIR_SPECULAR_SECONDARY)
+half _HoNprHairSpecularSecondaryShift;
+half _HoNprHairSpecularSecondaryWidth;
+half _HoNprHairSpecularSecondaryMask;
+half _HoNprHairSpecularSecondaryBlendMode;
 #endif
 #if defined(HONPR_HAS_RIM_LIGHT_LILTOON)
 half4 _HoNprRimLightLilToonColor;
@@ -154,8 +170,10 @@ struct HoNprCharacterVaryings
     float4 positionCS : SV_POSITION;
     float3 positionWS : TEXCOORD0;
     half3 normalWS : TEXCOORD1;
-    float2 uv : TEXCOORD2;
-    float2 depthZW : TEXCOORD3;
+    half3 tangentWS : TEXCOORD2;
+    half3 bitangentWS : TEXCOORD3;
+    float2 uv : TEXCOORD4;
+    float2 depthZW : TEXCOORD5;
     UNITY_VERTEX_OUTPUT_STEREO
 };
 
@@ -184,10 +202,12 @@ HoNprCharacterVaryings HoNprCharacterVert(HoNprCharacterAttributes input)
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
     VertexPositionInputs positionInputs = GetVertexPositionInputs(input.positionOS.xyz);
-    VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS);
+    VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS, input.tangentOS);
     output.positionCS = positionInputs.positionCS;
     output.positionWS = positionInputs.positionWS;
     output.normalWS = NormalizeNormalPerVertex(normalInputs.normalWS);
+    output.tangentWS = NormalizeNormalPerVertex(normalInputs.tangentWS);
+    output.bitangentWS = NormalizeNormalPerVertex(normalInputs.bitangentWS);
     output.uv = input.uv * _HoNprBaseMap_ST.xy + _HoNprBaseMap_ST.zw;
     output.depthZW = positionInputs.positionCS.zw;
     return output;
@@ -202,16 +222,28 @@ HoNprSemanticMapData HoNprCharacterResolveSemanticMap(float2 uv)
 #endif
 }
 
+HoUrpSurfaceData HoNprCharacterResolveSurface(HoNprCharacterVaryings input)
+{
+    half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv);
+    HoUrpSurfaceData surface = HoUrpCreateSurfaceData(_HoUrpBaseColor.rgb, _HoUrpBaseColor.a, input.normalWS);
+    surface = HoNprApplyBaseColorTexture(surface, baseSample, _HoUrpBaseColor);
+#if defined(HONPR_HAS_NORMAL_MAP)
+    half4 normalSample = SAMPLE_TEXTURE2D(_HoNprNormalMap, sampler_HoNprNormalMap, input.uv);
+    half3 normalTS = HoNprSafeNormalize(normalSample.xyz * 2.0h - 1.0h, half3(0.0h, 0.0h, 1.0h));
+    half3 normalWS = normalTS.x * input.tangentWS + normalTS.y * input.bitangentWS + normalTS.z * input.normalWS;
+    surface = HoNprApplyNormalWS(surface, normalWS);
+#endif
+    return surface;
+}
+
 half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-    half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv);
     half4 regionSample = SAMPLE_TEXTURE2D(_HoNprRegionMap, sampler_HoNprRegionMap, input.uv);
     HoNprSemanticMapData semanticMap = HoNprCharacterResolveSemanticMap(input.uv);
     HoNprRegionMaskData regionMask = HoNprApplyRegionMask(regionSample);
 
-    HoUrpSurfaceData surface = HoUrpCreateSurfaceData(_HoUrpBaseColor.rgb, _HoUrpBaseColor.a, input.normalWS);
-    surface = HoNprApplyBaseColorTexture(surface, baseSample, _HoUrpBaseColor);
+    HoUrpSurfaceData surface = HoNprCharacterResolveSurface(input);
 #if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
     clip(surface.alpha - _HoNprAlphaClipThreshold);
 #endif
@@ -234,6 +266,12 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
     HoNprAccumulateLobe(lobes, HoNprEvaluateToonDiffuseRampLilToon(surface, lighting, stylized, rampColor));
 #if defined(HONPR_HAS_TOON_SPECULAR_LILTOON)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateToonSpecularLilToon(surface, lighting, viewDirWS, _HoNprToonSpecularLilToonMask * semanticMap.specularMask, _HoNprToonSpecularLilToonThreshold, _HoNprToonSpecularLilToonSoftness), _HoNprToonSpecularLilToonBlendMode);
+#endif
+#if defined(HONPR_HAS_HAIR_SPECULAR_PRIMARY)
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateHairSpecularPrimary(surface, lighting, viewDirWS, input.tangentWS, _HoNprHairSpecularPrimaryShift, _HoNprHairSpecularPrimaryWidth, _HoNprHairSpecularPrimaryMask * regionMask.hair), _HoNprHairSpecularPrimaryBlendMode);
+#endif
+#if defined(HONPR_HAS_HAIR_SPECULAR_SECONDARY)
+    HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateHairSpecularSecondary(surface, lighting, viewDirWS, input.tangentWS, _HoNprHairSpecularSecondaryShift, _HoNprHairSpecularSecondaryWidth, _HoNprHairSpecularSecondaryMask * regionMask.hair), _HoNprHairSpecularSecondaryBlendMode);
 #endif
 #if defined(HONPR_HAS_RIM_SHADE_LILTOON)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateRimShadeLilToon(surface, viewDirWS, _HoNprRimShadeLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower), _HoNprRimShadeLilToonBlendMode);
@@ -273,7 +311,8 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     HoUrpObjectSemanticData objectSemantic = HoUrpResolveObjectSemanticData();
-    half3 normalWS = normalize(input.normalWS);
+    HoUrpSurfaceData surface = HoNprCharacterResolveSurface(input);
+    half3 normalWS = normalize(surface.normalWS);
     float rawDepth = input.depthZW.x / max(input.depthZW.y, 1.0e-6);
     half linear01Depth = half(saturate(Linear01Depth(rawDepth, _ZBufferParams)));
     half materialSssProfile = 0.0h;
@@ -323,11 +362,10 @@ half4 HoNprCharacterDepthFrag(float4 positionCS : SV_POSITION) : SV_Target
 HoNprCharacterOitOutput HoNprCharacterFragOit(HoNprCharacterVaryings input)
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-    half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv) * _HoUrpBaseColor;
+    HoUrpSurfaceData surface = HoNprCharacterResolveSurface(input);
 #if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
-    clip(baseSample.a - _HoNprAlphaClipThreshold);
+    clip(surface.alpha - _HoNprAlphaClipThreshold);
 #endif
-    HoUrpSurfaceData surface = HoUrpCreateSurfaceData(baseSample.rgb, baseSample.a, input.normalWS);
     HoUrpTransparentOutputData transparentData = HoUrpCreateTransparentOutputData(surface, half(_HoUrpSupportsOit), half(_HoUrpParticipatesOit));
     transparentData.alpha *= transparentData.supportsOit * transparentData.participatesOit;
     HoUrpOitAccumulationData accumulation = HoUrpEncodeOitAccumulation(transparentData);

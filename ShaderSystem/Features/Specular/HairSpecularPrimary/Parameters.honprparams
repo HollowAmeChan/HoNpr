@@ -1,0 +1,7 @@
+parameters MaterialBlock.HairSpecularPrimary
+{
+    property _HoNprHairSpecularPrimaryShift semantic Shading.HairSpecularPrimary.Shift type Float default 0.08;
+    property _HoNprHairSpecularPrimaryWidth semantic Shading.HairSpecularPrimary.Width type Float default 48;
+    property _HoNprHairSpecularPrimaryMask semantic Shading.HairSpecularPrimary.Mask type Float default 0.6;
+    property _HoNprHairSpecularPrimaryBlendMode semantic Shading.HairSpecularPrimary.BlendMode type Float default 0;
+}

@@ -36,4 +36,14 @@ HoNprLobeOutput HoNprEvaluateHairSpecular(HoUrpSurfaceData surface, HoNprLightin
     return output;
 }
 
+HoNprLobeOutput HoNprEvaluateHairSpecularPrimary(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half3 tangentWS, half shift, half width, half mask)
+{
+    return HoNprEvaluateHairSpecular(surface, lighting, viewDirWS, tangentWS, shift, width, mask);
+}
+
+HoNprLobeOutput HoNprEvaluateHairSpecularSecondary(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half3 tangentWS, half shift, half width, half mask)
+{
+    return HoNprEvaluateHairSpecular(surface, lighting, viewDirWS, tangentWS, shift, width, mask);
+}
+
 #endif

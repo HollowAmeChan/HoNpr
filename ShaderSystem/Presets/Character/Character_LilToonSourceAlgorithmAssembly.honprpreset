@@ -3,7 +3,7 @@ preset MaterialPreset.Character_LilToonSourceAlgorithmAssembly
     display "Character LilToon Source Algorithm Assembly";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow MaterialTemplate.CharacterOit;
     generator CharacterToonTemplate;
-    shaderName "HoNpr/Generated/Character_LilToonSourceAlgorithmAssembly";
+    shaderName "HoNpr/Character_LilToonSourceAlgorithmAssembly";
     generatedShader "Shaders/Generated/Character/Character_LilToonSourceAlgorithmAssembly.shader";
 
     blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.OutlineLilToon MaterialBlock.UrpMainLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRampLilToon MaterialBlock.ToonSpecularLilToon MaterialBlock.RimShadeLilToon MaterialBlock.RimLightLilToon MaterialBlock.BacklightLilToon MaterialBlock.BackfaceColorLilToon MaterialBlock.MatCapLilToon MaterialBlock.SecondaryMatCapLilToon MaterialBlock.GlitterLilToon MaterialBlock.EmissionPrimaryLilToon MaterialBlock.EmissionSecondaryLilToon MaterialBlock.DistanceFadeLilToon MaterialBlock.MaterialSemanticProducer MaterialBlock.SssSourceProducer MaterialBlock.AovOutputStandard MaterialBlock.AlphaClipPolicy MaterialBlock.TransparentComposite MaterialBlock.OitAccumulationOutput;

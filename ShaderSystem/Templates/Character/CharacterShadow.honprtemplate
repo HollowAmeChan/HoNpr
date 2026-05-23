@@ -4,5 +4,5 @@ template MaterialTemplate.CharacterShadow
     description "HoNpr 角色材质的 shadow caster pass 骨架。";
     passes ShadowCaster;
     requires slots SurfaceInput Transparency;
-    shaderNamePattern "HoNpr/Generated/{PresetName}";
+    shaderNamePattern "HoNpr/{PresetName}";
 }

@@ -13,3 +13,6 @@
 {{#if PRESET_Character_Toon_Transparent}}
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonTransparent.hlsl"
 {{/if PRESET_Character_Toon_Transparent}}
+{{#if PRESET_Hair_Toon}}
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonHair.hlsl"
+{{/if PRESET_Hair_Toon}}
