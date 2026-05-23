@@ -2,6 +2,8 @@
 
 生成器负责结构；Inspector 只负责显示和参数编辑。
 
+生成器易错约束另见 [`Documentation~/生成器注释事项.md`](../../Documentation~/生成器注释事项.md)。材质 shader 分层边界另见 [`Documentation~/HoNpr材质Shader边界契约.md`](../../Documentation~/HoNpr材质Shader边界契约.md)。
+
 ## Editor 菜单
 
 生成器入口需要放在现有 HoToon 刷新菜单附近：
@@ -74,6 +76,18 @@ block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... 
 preset MaterialPreset.Character_Toon_Standard { ... }
 ```
 
+需要落盘生成 shader 的 preset 必须显式声明生成器，而不是依赖 C# 按 preset 名称白名单选择：
+
+```text
+preset MaterialPreset.Character_Toon_Standard {
+    templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov;
+    generator CharacterToonTemplate;
+    ...
+}
+```
+
+`generator` 只选择组装器；具体 pass、block、assembly、entry、属性和 render state 必须继续来自 `templates` / `blocks` / `passes` / `preset` 声明与模板条件，不能在 C# 中按 `Character_Toon_*`、`Lite`、`Rich` 等名称分支硬编码。
+
 功能块可以声明自己需要的 include 别名和 capability define：
 
 ```text
@@ -81,4 +95,4 @@ requires include HoNpr.ToonLobes;
 requires define HONPR_HAS_TOON_DIFFUSE_RAMP;
 ```
 
-最终 include 顺序、define 发射和 variant 展开都由生成器负责。block 声明里不能直接写裸 `#include`、`#define` 或 `#pragma` 行。
+最终 include 顺序、assembly 选择和 entry 绑定都由生成器负责。block 声明里不能直接写裸 `#include`、`#define` 或 `#pragma` 行。最终 generated shader 不应残留大量 `HONPR_HAS_*` 结构宏；复杂宏和开关应收束在 `Shaders/ShaderLibrary` 或 `Shaders/ShaderLibrary/Assemblies` 内部。

@@ -2,6 +2,7 @@ preset MaterialPreset.Character_Toon_Lite
 {
     display "Character Toon Lite";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
+    generator CharacterToonTemplate;
     shaderName "HoNpr/Character/Toon_Lite";
     generatedShader "Shaders/Generated/Character/Character_Toon_Lite.shader";
 

@@ -2,6 +2,7 @@ preset MaterialPreset.Character_Toon_Transparent
 {
     display "Character Toon Transparent";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterOit;
+    generator CharacterToonTemplate;
     shaderName "HoNpr/Character/Toon_Transparent";
     generatedShader "Shaders/Generated/Character/Character_Toon_Transparent.shader";
 

@@ -2,6 +2,7 @@ preset MaterialPreset.Character_Toon_Standard
 {
     display "Character Toon Standard";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
+    generator CharacterToonTemplate;
     shaderName "HoNpr/Character/Toon_Standard";
     generatedShader "Shaders/Generated/Character/Character_Toon_Standard.shader";
 

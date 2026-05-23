@@ -494,8 +494,8 @@ namespace Hollow.HoNpr.Editor
             builder.AppendLine();
             builder.AppendLine("由 `*.honprpreset` 自动生成。不要手动编辑表格行。");
             builder.AppendLine();
-            builder.AppendLine("| Preset ID | 路径 | 模板 | 功能块 | Pass | 生产语义 | 需要的 Capability | Phase 策略 | 生成 Shader | 状态 |");
-            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
+            builder.AppendLine("| Preset ID | 路径 | 模板 | 生成器 | 功能块 | Pass | 生产语义 | 需要的 Capability | Phase 策略 | 生成 Shader | 状态 |");
+            builder.AppendLine("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
 
             foreach (PrototypePreset preset in declarations.presets)
             {
@@ -505,6 +505,8 @@ namespace Hollow.HoNpr.Editor
                 builder.Append(Code(preset.path));
                 builder.Append(" | ");
                 builder.Append(CodeList(GetPresetTemplates(preset)));
+                builder.Append(" | ");
+                builder.Append(Code(preset.generator));
                 builder.Append(" | ");
                 builder.Append(CodeList(preset.featureBlocks));
                 builder.Append(" | ");
@@ -610,7 +612,14 @@ namespace Hollow.HoNpr.Editor
         private static void WriteTextFile(string path, string content)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.WriteAllText(path, content, System.Text.Encoding.UTF8);
+            File.WriteAllText(path, NormalizeLineEndings(content), System.Text.Encoding.UTF8);
+        }
+
+        private static string NormalizeLineEndings(string content)
+        {
+            return string.IsNullOrEmpty(content)
+                ? content
+                : content.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
         private static string CodeList(IReadOnlyList<string> values)
@@ -771,6 +780,8 @@ namespace Hollow.HoNpr.Editor
                         declaration.template = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
                     else if (statement.NameEquals("templates"))
                         declaration.templates = statement.Arguments.ToArray();
+                    else if (statement.NameEquals("generator"))
+                        declaration.generator = statement.Arguments.Count > 0 ? statement.Arguments[0] : statement.Value;
                     else if (statement.NameEquals("shaderName"))
                         declaration.shaderName = statement.Value;
                     else if (statement.NameEquals("generatedShader"))
@@ -809,31 +820,57 @@ namespace Hollow.HoNpr.Editor
         private static int GeneratePrototypeShaders(string packageRoot)
         {
             var errors = new List<string>();
-            string presetPath = $"{packageRoot}/ShaderSystem/Presets/Debug/Character_DebugLit_SSS_OITReady.honprpreset";
-            PrototypePreset preset = LoadPresetDeclaration(packageRoot, presetPath, errors);
-            if (preset == null)
-            {
-                Debug.LogWarning($"[HoNpr.Generator] 找不到 preset：{presetPath}");
-                return 0;
-            }
-
-            if (preset == null || string.IsNullOrEmpty(preset.generatedShader) || string.IsNullOrEmpty(preset.shaderName))
-            {
-                Debug.LogWarning($"[HoNpr.Generator] Preset 缺少生成 Shader 元数据：{presetPath}");
-                return 0;
-            }
+            IncludeRegistry includeRegistry = LoadIncludeRegistry(packageRoot, errors);
+            ShaderSystemDeclarations declarations = LoadShaderSystemDeclarations(packageRoot, includeRegistry, errors);
 
             if (errors.Count > 0)
-            {
                 Debug.LogWarning("[HoNpr.Generator] Preset 解析警告：\n" + string.Join("\n", errors));
-            }
 
             string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
-            string shaderAbsolutePath = Path.Combine(absolutePackageRoot, NormalizeRelativePath(preset.generatedShader));
-            Directory.CreateDirectory(Path.GetDirectoryName(shaderAbsolutePath));
+            int generatedCount = 0;
+            foreach (PrototypePreset preset in declarations.presets)
+            {
+                if (!ShouldGeneratePreset(preset))
+                    continue;
 
-            File.WriteAllText(shaderAbsolutePath, BuildDebugLitShader(preset), System.Text.Encoding.UTF8);
-            return 1;
+                if (string.IsNullOrEmpty(preset.generatedShader) || string.IsNullOrEmpty(preset.shaderName))
+                {
+                    Debug.LogWarning($"[HoNpr.Generator] Preset 缺少生成 Shader 元数据：{preset.presetId}");
+                    continue;
+                }
+
+                string shaderSource = BuildGeneratedShader(packageRoot, declarations, preset);
+                if (string.IsNullOrEmpty(shaderSource))
+                    continue;
+
+                string shaderAbsolutePath = Path.Combine(absolutePackageRoot, NormalizeRelativePath(preset.generatedShader));
+                WriteTextFile(shaderAbsolutePath, shaderSource);
+                generatedCount++;
+            }
+
+            return generatedCount;
+        }
+
+        private static bool ShouldGeneratePreset(PrototypePreset preset)
+        {
+            if (preset == null || string.Equals(preset.status, "Deprecated", StringComparison.Ordinal))
+                return false;
+
+            return !string.IsNullOrEmpty(preset.generator);
+        }
+
+        private static string BuildGeneratedShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
+        {
+            switch (preset.generator)
+            {
+                case "DebugLitMinimal":
+                    return BuildDebugLitShader(preset);
+                case "CharacterToonTemplate":
+                    return BuildCharacterToonShader(packageRoot, declarations, preset);
+                default:
+                    Debug.LogWarning($"[HoNpr.Generator] Preset 使用未知生成器：{preset.presetId} -> {preset.generator}");
+                    return null;
+            }
         }
 
         private static string PackageAssetPathToAbsolutePath(string packageRoot)
@@ -1056,6 +1093,132 @@ namespace Hollow.HoNpr.Editor
                 return value.Substring(1, value.Length - 2);
 
             return value;
+        }
+
+        private static string ApplyConditionalBlocks(string template, ISet<string> tokens)
+        {
+            return Regex.Replace(
+                template,
+                @"(?s)\{\{#if\s+(!?)([A-Za-z0-9_.\-_|]+)\}\}(.*?)\{\{/if\s+!?\2\}\}",
+                match =>
+                {
+                    bool negated = match.Groups[1].Value == "!";
+                    string expression = match.Groups[2].Value;
+                    bool keep = EvaluateConditionExpression(expression, tokens);
+                    return keep != negated ? match.Groups[3].Value : string.Empty;
+                });
+        }
+
+        private static bool EvaluateConditionExpression(string expression, ISet<string> tokens)
+        {
+            foreach (string token in expression.Split('|'))
+            {
+                if (tokens.Contains(token))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static string BuildCharacterToonShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
+        {
+            string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
+            string templateList = string.Join(" + ", GetPresetTemplates(preset));
+            HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
+            string characterToonDefines = BuildRequiredDefineBlock(declarations, preset);
+
+            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToon.shader.template");
+            if (string.IsNullOrEmpty(template))
+            {
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToon shader 模板。");
+                return null;
+            }
+
+            string sharedTemplate = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonInline.hlsl.template");
+            if (string.IsNullOrEmpty(sharedTemplate))
+            {
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonInline HLSL 模板。");
+                return null;
+            }
+
+            string shader = template
+                .Replace("${SHADER_NAME}", preset.shaderName)
+                .Replace("${CHARACTER_TOON_DEFINES}", characterToonDefines)
+                .Replace("${CHARACTER_TOON_SHARED}", sharedTemplate.Trim());
+            return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
+        }
+
+        private static string BuildGeneratedShaderHeader(PrototypePreset preset, string templateList, string blockList)
+        {
+            return
+$@"// 由 HoNprShaderGenerator 生成。
+// SourcePreset: {preset.presetId}
+// Template: {templateList}
+// Blocks: {blockList}
+// 不要手动修改生成体。请改 template / block / preset。
+";
+        }
+
+        private static HashSet<string> BuildPresetConditionTokens(ShaderSystemDeclarations declarations, PrototypePreset preset)
+        {
+            var tokens = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (string pass in preset.passes ?? Array.Empty<string>())
+                tokens.Add("PASS_" + pass);
+
+            foreach (string template in GetPresetTemplates(preset))
+            {
+                tokens.Add("TEMPLATE_" + template);
+                tokens.Add("TEMPLATE_" + LastSegment(template));
+            }
+
+            foreach (string capability in preset.requiredCapabilities ?? Array.Empty<string>())
+                tokens.Add("CAPABILITY_" + capability);
+
+            if (!string.IsNullOrEmpty(preset.phasePolicy))
+                tokens.Add("PHASE_" + preset.phasePolicy);
+
+            Dictionary<string, FeatureBlockDeclaration> blocksById = declarations.blocks.ToDictionary(block => block.id);
+            foreach (string blockId in preset.featureBlocks ?? Array.Empty<string>())
+            {
+                tokens.Add("BLOCK_" + blockId);
+                tokens.Add("BLOCK_" + LastSegment(blockId));
+
+                if (!blocksById.TryGetValue(blockId, out FeatureBlockDeclaration block))
+                    continue;
+
+                foreach (string define in block.requiredDefines ?? Array.Empty<string>())
+                    tokens.Add(define);
+            }
+
+            return tokens;
+        }
+
+        private static string BuildRequiredDefineBlock(ShaderSystemDeclarations declarations, PrototypePreset preset)
+        {
+            var defines = new SortedSet<string>(StringComparer.Ordinal);
+            Dictionary<string, FeatureBlockDeclaration> blocksById = declarations.blocks.ToDictionary(block => block.id);
+
+            foreach (string blockId in preset.featureBlocks ?? Array.Empty<string>())
+            {
+                if (!blocksById.TryGetValue(blockId, out FeatureBlockDeclaration block))
+                    continue;
+
+                foreach (string define in block.requiredDefines ?? Array.Empty<string>())
+                    defines.Add(define);
+            }
+
+            var builder = new StringBuilder();
+            foreach (string define in defines)
+                builder.AppendLine($"    #define {define} 1");
+
+            return builder.ToString().TrimEnd();
+        }
+
+        private static string LastSegment(string value)
+        {
+            int index = value.LastIndexOf('.');
+            return index >= 0 ? value.Substring(index + 1) : value;
         }
 
         private static string BuildDebugLitShader(PrototypePreset preset)
@@ -1339,6 +1502,7 @@ Shader ""{preset.shaderName}""
             public string displayName;
             public string template;
             public string[] templates;
+            public string generator;
             public string shaderName;
             public string generatedShader;
             public string[] featureBlocks;

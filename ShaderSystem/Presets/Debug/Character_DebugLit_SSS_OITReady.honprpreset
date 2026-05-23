@@ -2,6 +2,7 @@ preset MaterialPreset.Character_DebugLit_SSS_OITReady
 {
     display "Character Debug Lit SSS OIT Ready";
     template MaterialTemplate.DebugLitMinimal;
+    generator DebugLitMinimal;
     shaderName "HoNpr/Generated/Character_DebugLit_SSS_OITReady";
     generatedShader "Shaders/Generated/Debug/Character_DebugLit_SSS_OITReady.shader";
 

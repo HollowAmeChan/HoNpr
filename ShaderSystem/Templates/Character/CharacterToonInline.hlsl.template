@@ -1,0 +1,348 @@
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+#include "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpObjectSemantic.hlsl"
+#include "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialSurface.hlsl"
+#include "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialAov.hlsl"
+#include "Packages/com.hollow.hourp-extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialOit.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/HoNprCommon.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedSurface.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprToonLobes.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprOutline.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl"
+
+TEXTURE2D(_HoNprBaseMap);
+SAMPLER(sampler_HoNprBaseMap);
+TEXTURE2D(_HoNprStyleRampAtlas);
+SAMPLER(sampler_HoNprStyleRampAtlas);
+#if defined(HONPR_HAS_SEMANTIC_MAP)
+TEXTURE2D(_HoNprSemanticMap);
+SAMPLER(sampler_HoNprSemanticMap);
+#endif
+TEXTURE2D(_HoNprRegionMap);
+SAMPLER(sampler_HoNprRegionMap);
+#if defined(HONPR_HAS_OUTLINE_LILTOON)
+TEXTURE2D(_HoNprOutlineTex);
+SAMPLER(sampler_HoNprOutlineTex);
+TEXTURE2D(_HoNprOutlineWidthMask);
+SAMPLER(sampler_HoNprOutlineWidthMask);
+TEXTURE2D(_HoNprOutlineVectorMap);
+SAMPLER(sampler_HoNprOutlineVectorMap);
+#endif
+
+float4 _HoNprBaseMap_ST;
+#if defined(HONPR_HAS_OUTLINE_LILTOON)
+float4 _HoNprOutlineTex_ST;
+float4 _HoNprOutlineWidthMask_ST;
+float4 _HoNprOutlineVectorMap_ST;
+#endif
+
+half4 _HoUrpBaseColor;
+half _HoNprToonDiffuseRampLilToonThreshold;
+half _HoNprToonDiffuseRampLilToonSoftness;
+half _HoNprRampRow;
+half _HoNprRampRows;
+#if defined(HONPR_HAS_TOON_SPECULAR_LILTOON)
+half _HoNprToonSpecularLilToonThreshold;
+half _HoNprToonSpecularLilToonSoftness;
+half _HoNprToonSpecularLilToonMask;
+#endif
+#if defined(HONPR_HAS_RIM_LIGHT_LILTOON)
+half4 _HoNprRimLightLilToonColor;
+#endif
+#if defined(HONPR_HAS_RIM_LIGHT_LILTOON) || defined(HONPR_HAS_RIM_SHADE_LILTOON)
+half _HoNprRimLilToonPower;
+half _HoNprRimLilToonMask;
+#endif
+#if defined(HONPR_HAS_RIM_SHADE_LILTOON)
+half4 _HoNprRimShadeLilToonColor;
+#endif
+#if defined(HONPR_HAS_BACKLIGHT_LILTOON)
+half4 _HoNprBacklightLilToonColor;
+half _HoNprBacklightLilToonPower;
+#endif
+#if defined(HONPR_HAS_BACKFACE_COLOR_LILTOON)
+half4 _HoNprBackfaceColorLilToonColor;
+#endif
+#if defined(HONPR_HAS_MATCAP_LILTOON)
+half4 _HoNprMatCapLilToonColor;
+half _HoNprMatCapLilToonMask;
+#endif
+#if defined(HONPR_HAS_SECONDARY_MATCAP_LILTOON)
+half4 _HoNprSecondaryMatCapLilToonColor;
+half _HoNprSecondaryMatCapLilToonMask;
+#endif
+#if defined(HONPR_HAS_GLITTER_LILTOON)
+half4 _HoNprGlitterLilToonColor;
+half _HoNprGlitterLilToonMask;
+half _HoNprGlitterLilToonDensity;
+half _HoNprGlitterLilToonThreshold;
+half _HoNprGlitterLilToonPower;
+#endif
+#if defined(HONPR_HAS_EMISSION_PRIMARY_LILTOON)
+half4 _HoNprEmissionPrimaryLilToonColor;
+half _HoNprEmissionPrimaryLilToonIntensity;
+#endif
+#if defined(HONPR_HAS_EMISSION_SECONDARY_LILTOON)
+half4 _HoNprEmissionSecondaryLilToonColor;
+half _HoNprEmissionSecondaryLilToonIntensity;
+#endif
+#if defined(HONPR_HAS_DISTANCE_FADE_LILTOON)
+half4 _HoNprDistanceFadeLilToonColor;
+half _HoNprDistanceFadeLilToonStart;
+half _HoNprDistanceFadeLilToonEnd;
+half _HoNprDistanceFadeLilToonStrength;
+#endif
+#if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
+half _HoNprAlphaClipThreshold;
+#endif
+
+#if defined(HONPR_HAS_OUTLINE_LILTOON)
+half4 _HoNprOutlineColor;
+half4 _HoNprOutlineLitColor;
+half _HoNprOutlineLitApplyTex;
+half _HoNprOutlineLitScale;
+half _HoNprOutlineLitOffset;
+float _HoNprOutlineWidth;
+float _HoNprOutlineFixWidth;
+float _HoNprOutlineZBias;
+float _HoNprOutlineVertexWidthMode;
+float _HoNprOutlineVectorScale;
+half _HoNprOutlineEnableLighting;
+#endif
+
+float _HoUrpGeneratedMaterialClass;
+float _HoUrpGeneratedMaterialSssProfile;
+float _HoUrpGeneratedMaterialThickness;
+float _HoUrpGeneratedMaterialCurvature;
+float4 _HoUrpGeneratedMaterialCustom0_3;
+float4 _HoUrpGeneratedSssSourceColor;
+float _HoUrpGeneratedSssWeight;
+#if defined(HONPR_HAS_OIT_ACCUMULATION)
+float _HoUrpSupportsOit;
+float _HoUrpParticipatesOit;
+#endif
+
+struct HoNprCharacterAttributes
+{
+    float4 positionOS : POSITION;
+    float3 normalOS : NORMAL;
+    float4 tangentOS : TANGENT;
+    half4 color : COLOR;
+    float2 uv : TEXCOORD0;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+};
+
+struct HoNprCharacterVaryings
+{
+    float4 positionCS : SV_POSITION;
+    float3 positionWS : TEXCOORD0;
+    half3 normalWS : TEXCOORD1;
+    float2 uv : TEXCOORD2;
+    float2 depthZW : TEXCOORD3;
+    UNITY_VERTEX_OUTPUT_STEREO
+};
+
+struct HoNprCharacterAovOutput
+{
+    half4 maskId : SV_Target0;
+    half4 normalDepth : SV_Target1;
+    half4 objectCustom0 : SV_Target2;
+    half4 objectCustom1 : SV_Target3;
+    half4 surfaceData : SV_Target4;
+    half4 materialCustom0 : SV_Target5;
+    half4 sssSource : SV_Target6;
+};
+
+#if defined(HONPR_HAS_OIT_ACCUMULATION)
+struct HoNprCharacterOitOutput
+{
+    half4 accumulation : SV_Target0;
+    half revealage : SV_Target1;
+};
+#endif
+
+HoNprCharacterVaryings HoNprCharacterVert(HoNprCharacterAttributes input)
+{
+    HoNprCharacterVaryings output;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+    VertexPositionInputs positionInputs = GetVertexPositionInputs(input.positionOS.xyz);
+    VertexNormalInputs normalInputs = GetVertexNormalInputs(input.normalOS);
+    output.positionCS = positionInputs.positionCS;
+    output.positionWS = positionInputs.positionWS;
+    output.normalWS = NormalizeNormalPerVertex(normalInputs.normalWS);
+    output.uv = input.uv * _HoNprBaseMap_ST.xy + _HoNprBaseMap_ST.zw;
+    output.depthZW = positionInputs.positionCS.zw;
+    return output;
+}
+
+HoNprSemanticMapData HoNprCharacterResolveSemanticMap(float2 uv)
+{
+#if defined(HONPR_HAS_SEMANTIC_MAP)
+    return HoNprApplySemanticMap(SAMPLE_TEXTURE2D(_HoNprSemanticMap, sampler_HoNprSemanticMap, uv));
+#else
+    return HoNprCreateSemanticMapData(half4(0.0h, 1.0h, 1.0h, 1.0h));
+#endif
+}
+
+half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE facing : FRONT_FACE_SEMANTIC) : SV_Target
+{
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv);
+    half4 regionSample = SAMPLE_TEXTURE2D(_HoNprRegionMap, sampler_HoNprRegionMap, input.uv);
+    HoNprSemanticMapData semanticMap = HoNprCharacterResolveSemanticMap(input.uv);
+    HoNprRegionMaskData regionMask = HoNprApplyRegionMask(regionSample);
+
+    HoUrpSurfaceData surface = HoUrpCreateSurfaceData(_HoUrpBaseColor.rgb, _HoUrpBaseColor.a, input.normalWS);
+    surface = HoNprApplyBaseColorTexture(surface, baseSample, _HoUrpBaseColor);
+#if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
+    clip(surface.alpha - _HoNprAlphaClipThreshold);
+#endif
+
+    half3 viewDirWS = HoNprSafeNormalize(GetWorldSpaceViewDir(input.positionWS), surface.normalWS);
+    half3 lightDirWS = HoNprSafeNormalize(half3(0.35h, 0.75h, 0.55h), half3(0.0h, 1.0h, 0.0h));
+    HoNprLightingContext lighting = HoNprCreateLightingContext(lightDirWS, half3(1.0h, 0.94h, 0.86h));
+    lighting = HoNprResolveIndirectLight(lighting, half3(0.12h, 0.13h, 0.16h), half3(0.04h, 0.04h, 0.05h));
+    lighting = HoNprResolveScreenAoReceiver(lighting, lerp(1.0h, semanticMap.utility, 0.25h), 1.0h);
+    lighting = HoNprResolveHoShadowReceiver(lighting, 1.0h);
+
+    half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
+    half band = smoothstep(_HoNprToonDiffuseRampLilToonThreshold - _HoNprToonDiffuseRampLilToonSoftness, _HoNprToonDiffuseRampLilToonThreshold + _HoNprToonDiffuseRampLilToonSoftness, ndotl * HoNprCombinedShadow(lighting));
+    HoNprStylizedSurfaceData stylized = HoNprCreateStylizedSurfaceData(_HoNprRampRow, 0.0h, 1.0h, regionMask.skin + regionMask.hair * 2.0h);
+    half2 rampUv = HoNprComputeRampUv(band, stylized, _HoNprRampRows);
+    half3 rampColor = HoNprSampleStyleRampAtlas(TEXTURE2D_ARGS(_HoNprStyleRampAtlas, sampler_HoNprStyleRampAtlas), rampUv);
+    half frontFace = IS_FRONT_VFACE(facing, 1.0h, 0.0h);
+
+    HoNprLobeOutput lobes = HoNprCreateLobeOutput();
+    HoNprAccumulateLobe(lobes, HoNprEvaluateToonDiffuseRampLilToon(surface, lighting, stylized, rampColor));
+#if defined(HONPR_HAS_TOON_SPECULAR_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateToonSpecularLilToon(surface, lighting, viewDirWS, _HoNprToonSpecularLilToonMask * semanticMap.specularMask, _HoNprToonSpecularLilToonThreshold, _HoNprToonSpecularLilToonSoftness));
+#endif
+#if defined(HONPR_HAS_RIM_SHADE_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateRimShadeLilToon(surface, viewDirWS, _HoNprRimShadeLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower));
+#endif
+#if defined(HONPR_HAS_BACKLIGHT_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateBacklightLilToon(surface, lighting.mainLightDirWS, viewDirWS, _HoNprBacklightLilToonColor.rgb, semanticMap.stylizedMask, _HoNprBacklightLilToonPower));
+#endif
+#if defined(HONPR_HAS_MATCAP_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateMatCapLilToon(surface, _HoNprMatCapLilToonColor.rgb, _HoNprMatCapLilToonMask * semanticMap.stylizedMask, band));
+#endif
+#if defined(HONPR_HAS_BACKFACE_COLOR_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateBackfaceColorLilToon(frontFace, _HoNprBackfaceColorLilToonColor));
+#endif
+#if defined(HONPR_HAS_SECONDARY_MATCAP_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateSecondaryMatCapLilToon(surface, _HoNprSecondaryMatCapLilToonColor.rgb, _HoNprSecondaryMatCapLilToonMask * semanticMap.stylizedMask, band));
+#endif
+#if defined(HONPR_HAS_GLITTER_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateGlitterLilToon(surface, lighting.mainLightDirWS, viewDirWS, input.positionWS, _HoNprGlitterLilToonColor.rgb, _HoNprGlitterLilToonMask * semanticMap.stylizedMask, _HoNprGlitterLilToonDensity, _HoNprGlitterLilToonThreshold, _HoNprGlitterLilToonPower));
+#endif
+#if defined(HONPR_HAS_RIM_LIGHT_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateRimLightLilToon(surface, viewDirWS, _HoNprRimLightLilToonColor.rgb, _HoNprRimLilToonMask * semanticMap.stylizedMask, _HoNprRimLilToonPower));
+#endif
+#if defined(HONPR_HAS_EMISSION_PRIMARY_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateEmissionPrimaryLilToon(_HoNprEmissionPrimaryLilToonColor.rgb, _HoNprEmissionPrimaryLilToonIntensity, 1.0h));
+#endif
+#if defined(HONPR_HAS_EMISSION_SECONDARY_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateEmissionSecondaryLilToon(_HoNprEmissionSecondaryLilToonColor.rgb, _HoNprEmissionSecondaryLilToonIntensity, 1.0h));
+#endif
+#if defined(HONPR_HAS_DISTANCE_FADE_LILTOON)
+    HoNprAccumulateLobe(lobes, HoNprEvaluateDistanceFadeLilToon(input.positionWS, _WorldSpaceCameraPos.xyz, _HoNprDistanceFadeLilToonColor.rgb, _HoNprDistanceFadeLilToonStart, _HoNprDistanceFadeLilToonEnd, _HoNprDistanceFadeLilToonStrength));
+#endif
+    HoNprCompositeOutput composite = HoNprCompositeFinalColor(surface, lobes);
+    return half4(composite.color, composite.alpha);
+}
+
+HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
+{
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    HoUrpObjectSemanticData objectSemantic = HoUrpResolveObjectSemanticData();
+    half3 normalWS = normalize(input.normalWS);
+    float rawDepth = input.depthZW.x / max(input.depthZW.y, 1.0e-6);
+    half linear01Depth = half(saturate(Linear01Depth(rawDepth, _ZBufferParams)));
+    HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(half(_HoUrpGeneratedMaterialClass), half(_HoUrpGeneratedMaterialSssProfile), half(_HoUrpGeneratedMaterialThickness), half(_HoUrpGeneratedMaterialCurvature), half4(_HoUrpGeneratedMaterialCustom0_3), half3(_HoUrpGeneratedSssSourceColor.rgb), half(_HoUrpGeneratedSssWeight));
+    HoUrpAovOutputData materialAov = HoUrpEncodeMaterialAov(semantic, objectSemantic.maskWeight);
+    HoNprCharacterAovOutput output;
+    output.maskId = HoUrpEncodeObjectMaskId(objectSemantic);
+    output.normalDepth = half4(normalWS * 0.5h + 0.5h, linear01Depth);
+    output.objectCustom0 = HoUrpEncodeObjectCustom0_3(objectSemantic);
+    output.objectCustom1 = HoUrpEncodeObjectCustom4_7(objectSemantic);
+    output.surfaceData = materialAov.surfaceData;
+    output.materialCustom0 = materialAov.materialCustom0_3;
+    output.sssSource = materialAov.sssSource;
+    return output;
+}
+
+float4 HoNprCharacterDepthVert(HoNprCharacterAttributes input) : SV_POSITION
+{
+    UNITY_SETUP_INSTANCE_ID(input);
+    return TransformObjectToHClip(input.positionOS.xyz);
+}
+
+half4 HoNprCharacterDepthFrag(float4 positionCS : SV_POSITION) : SV_Target
+{
+    return 0;
+}
+
+#if defined(HONPR_HAS_OIT_ACCUMULATION)
+HoNprCharacterOitOutput HoNprCharacterFragOit(HoNprCharacterVaryings input)
+{
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv) * _HoUrpBaseColor;
+    clip(baseSample.a - _HoNprAlphaClipThreshold);
+    HoUrpSurfaceData surface = HoUrpCreateSurfaceData(baseSample.rgb, baseSample.a, input.normalWS);
+    HoUrpTransparentOutputData transparentData = HoUrpCreateTransparentOutputData(surface, half(_HoUrpSupportsOit), half(_HoUrpParticipatesOit));
+    transparentData.alpha *= transparentData.supportsOit * transparentData.participatesOit;
+    HoUrpOitAccumulationData accumulation = HoUrpEncodeOitAccumulation(transparentData);
+    HoNprCharacterOitOutput output;
+    output.accumulation = half4(accumulation.weightedColor, accumulation.weightedAlpha);
+    output.revealage = accumulation.revealage;
+    return output;
+}
+#endif
+
+#if defined(HONPR_HAS_OUTLINE_LILTOON)
+struct HoNprCharacterOutlineVaryings
+{
+    float4 positionCS : SV_POSITION;
+    float2 uv : TEXCOORD0;
+    half3 normalWS : TEXCOORD1;
+    UNITY_VERTEX_OUTPUT_STEREO
+};
+
+HoNprCharacterOutlineVaryings HoNprCharacterVertOutline(HoNprCharacterAttributes input)
+{
+    HoNprCharacterOutlineVaryings output;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+    float2 uv = input.uv * _HoNprOutlineWidthMask_ST.xy + _HoNprOutlineWidthMask_ST.zw;
+    float2 vectorUv = input.uv * _HoNprOutlineVectorMap_ST.xy + _HoNprOutlineVectorMap_ST.zw;
+    half widthMask = SAMPLE_TEXTURE2D_LOD(_HoNprOutlineWidthMask, sampler_HoNprOutlineWidthMask, uv, 0).r;
+    half4 vectorSample = SAMPLE_TEXTURE2D_LOD(_HoNprOutlineVectorMap, sampler_HoNprOutlineVectorMap, vectorUv, 0);
+    HoNprOutlineLilToonSettings outlineSettings;
+    outlineSettings.width = _HoNprOutlineWidth;
+    outlineSettings.widthMask = widthMask;
+    outlineSettings.vertexWidthMode = _HoNprOutlineVertexWidthMode;
+    outlineSettings.fixWidth = _HoNprOutlineFixWidth;
+    outlineSettings.zBias = _HoNprOutlineZBias;
+    outlineSettings.vectorScale = _HoNprOutlineVectorScale;
+    output.positionCS = HoNprTransformOutlineLilToonToHClip(input.positionOS.xyz, input.normalOS, input.tangentOS, input.color, vectorSample, outlineSettings);
+    output.uv = input.uv * _HoNprOutlineTex_ST.xy + _HoNprOutlineTex_ST.zw;
+    output.normalWS = TransformObjectToWorldNormal(input.normalOS);
+    return output;
+}
+
+half4 HoNprCharacterFragOutline(HoNprCharacterOutlineVaryings input) : SV_Target
+{
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    clip(_HoNprOutlineWidth - 0.0001);
+    half4 outlineTex = SAMPLE_TEXTURE2D(_HoNprOutlineTex, sampler_HoNprOutlineTex, input.uv);
+    Light mainLight = GetMainLight();
+    half normalLenSq = dot(input.normalWS, input.normalWS);
+    half3 normalWS = normalLenSq > 1.0e-4h ? input.normalWS * rsqrt(normalLenSq) : half3(0.0h, 0.0h, 1.0h);
+    half3 outlineRgb = outlineTex.rgb * _HoNprOutlineColor.rgb;
+    outlineRgb = HoNprApplyOutlineLilToonLighting(outlineRgb, outlineTex, _HoNprOutlineLitColor, _HoNprOutlineLitApplyTex, _HoNprOutlineLitScale, _HoNprOutlineLitOffset, _HoNprOutlineEnableLighting, normalWS, mainLight.direction, mainLight.color);
+    return half4(outlineRgb, outlineTex.a * _HoNprOutlineColor.a);
+}
+#endif

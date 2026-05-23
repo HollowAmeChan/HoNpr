@@ -2,6 +2,7 @@ preset MaterialPreset.Character_Toon_Rich
 {
     display "Character Toon Rich";
     templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
+    generator CharacterToonTemplate;
     shaderName "HoNpr/Character/Toon_Rich";
     generatedShader "Shaders/Generated/Character/Character_Toon_Rich.shader";
 
