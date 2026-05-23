@@ -1,0 +1,14 @@
+preset MaterialPreset.Character_Toon_Rich
+{
+    display "Character Toon Rich";
+    templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterOutline MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
+    shaderName "HoNpr/Character/Toon_Rich";
+    generatedShader "Shaders/Generated/Character/Character_Toon_Rich.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.OutlineLilToon MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRampLilToon MaterialBlock.ToonSpecularLilToon MaterialBlock.RimShadeLilToon MaterialBlock.RimLightLilToon MaterialBlock.BacklightLilToon MaterialBlock.BackfaceColorLilToon MaterialBlock.MatCapLilToon MaterialBlock.SecondaryMatCapLilToon MaterialBlock.GlitterLilToon MaterialBlock.EmissionPrimaryLilToon MaterialBlock.EmissionSecondaryLilToon MaterialBlock.DistanceFadeLilToon MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    passes ForwardOutlineLilToon UniversalForward HoUrpAovOutput DepthOnly ShadowCaster;
+    produces Material.Class Material.Custom0-3 Aov.MaskId Aov.NormalDepth Aov.SurfaceData;
+    requires capability ReceivesOutline ParticipatesSemanticPost;
+    phase Forward;
+    status Planned;
+}
