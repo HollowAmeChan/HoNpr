@@ -1,0 +1,4 @@
+parameters MaterialBlock.RegionMask
+{
+    property _HoNprRegionMap semantic Surface.Region.Mask type Texture2D default "white";
+}

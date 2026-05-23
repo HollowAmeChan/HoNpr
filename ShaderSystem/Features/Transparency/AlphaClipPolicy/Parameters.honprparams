@@ -1,0 +1,4 @@
+parameters MaterialBlock.AlphaClipPolicy
+{
+    property _HoNprAlphaClipThreshold semantic Transparency.AlphaClip.Threshold type Float default 0;
+}

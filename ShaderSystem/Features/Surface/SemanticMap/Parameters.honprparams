@@ -1,0 +1,4 @@
+parameters MaterialBlock.SemanticMap
+{
+    property _HoNprSemanticMap semantic Surface.Semantic.Map type Texture2D default "white";
+}

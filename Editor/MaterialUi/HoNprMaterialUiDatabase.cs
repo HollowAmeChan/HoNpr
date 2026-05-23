@@ -105,7 +105,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
         private static List<HoNprMaterialUiDescriptor> LoadAll(string packageRoot, List<string> errors)
         {
             var descriptors = new List<HoNprMaterialUiDescriptor>();
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/MaterialUi", "*.honprui"))
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Features", "*.honprui"))
             {
                 HoNprMaterialUiDescriptor descriptor = LoadDescriptor(path, errors);
                 if (descriptor != null)

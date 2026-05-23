@@ -13,7 +13,7 @@ Features/<Domain>/<FeatureId>/
   Ui.honprui
 ```
 
-当前生成器会扫描 `Features/**/*.honprblock` 和旧 `FeatureBlocks/**/*.honprblock`。迁移期内，旧目录仍可保留未迁移 block；一旦某个 block 迁入 `Features/`，旧目录中不能再保留同 ID 的副本。
+当前生成器只扫描 `Features/**/*.honprblock`。旧 `FeatureBlocks/` 目录已废弃，不能再新增或保留 block 源声明。
 
 规则：
 

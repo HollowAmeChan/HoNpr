@@ -1,0 +1,8 @@
+parameters MaterialBlock.GlitterLilToon
+{
+    property _HoNprGlitterLilToonColor semantic Shading.Glitter.Color type Color default "(1, 0.92, 0.72, 1)";
+    property _HoNprGlitterLilToonMask semantic Shading.Glitter.Mask type Float default 0;
+    property _HoNprGlitterLilToonDensity semantic Shading.Glitter.Density type Float default 48;
+    property _HoNprGlitterLilToonThreshold semantic Shading.Glitter.Threshold type Float default 0.94;
+    property _HoNprGlitterLilToonPower semantic Shading.Glitter.Power type Float default 32;
+}

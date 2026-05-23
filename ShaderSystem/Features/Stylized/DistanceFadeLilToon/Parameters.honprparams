@@ -1,0 +1,7 @@
+parameters MaterialBlock.DistanceFadeLilToon
+{
+    property _HoNprDistanceFadeLilToonColor semantic Shading.DistanceFade.Color type Color default "(0, 0, 0, 1)";
+    property _HoNprDistanceFadeLilToonStart semantic Shading.DistanceFade.Start type Float default 50;
+    property _HoNprDistanceFadeLilToonEnd semantic Shading.DistanceFade.End type Float default 80;
+    property _HoNprDistanceFadeLilToonStrength semantic Shading.DistanceFade.Strength type Float default 0;
+}

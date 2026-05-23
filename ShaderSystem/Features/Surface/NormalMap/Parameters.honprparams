@@ -1,0 +1,4 @@
+parameters MaterialBlock.NormalMap
+{
+    property _HoNprNormalMap semantic Surface.Normal.Texture type Texture2D default "bump";
+}

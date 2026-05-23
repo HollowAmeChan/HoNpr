@@ -1,0 +1,4 @@
+parameters MaterialBlock.MaterialMapPacked
+{
+    property _HoNprMaterialMap semantic Surface.Material.PackedMap type Texture2D default "white";
+}

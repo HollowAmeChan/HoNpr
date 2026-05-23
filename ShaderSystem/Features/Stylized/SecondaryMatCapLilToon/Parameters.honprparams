@@ -1,0 +1,5 @@
+parameters MaterialBlock.SecondaryMatCapLilToon
+{
+    property _HoNprSecondaryMatCapLilToonColor semantic Shading.SecondaryMatCap.Color type Color default "(0.08, 0.1, 0.14, 1)";
+    property _HoNprSecondaryMatCapLilToonMask semantic Shading.SecondaryMatCap.Mask type Float default 0;
+}

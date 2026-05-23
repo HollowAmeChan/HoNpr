@@ -1,0 +1,5 @@
+parameters MaterialBlock.TransparentComposite
+{
+    property _HoUrpSupportsOit semantic Transparency.OIT.Supports type Float default 1;
+    property _HoUrpParticipatesOit semantic Transparency.OIT.Participates type Float default 1;
+}

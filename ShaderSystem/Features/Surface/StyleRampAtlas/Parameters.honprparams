@@ -1,0 +1,6 @@
+parameters MaterialBlock.StyleRampAtlas
+{
+    property _HoNprStyleRampAtlas semantic Shading.ToonRamp.Atlas type Texture2D default "white";
+    property _HoNprRampRow semantic Shading.ToonRamp.Row type Float default 0;
+    property _HoNprRampRows semantic Shading.ToonRamp.Rows type Float default 8;
+}

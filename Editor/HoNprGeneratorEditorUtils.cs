@@ -29,7 +29,6 @@ namespace Hollow.HoNpr.Editor
             "ShaderSystem/Includes",
             "ShaderSystem/Features",
             "ShaderSystem/Templates",
-            "ShaderSystem/FeatureBlocks",
             "ShaderSystem/Presets",
             "ShaderSystem/Generator",
             "ShaderSystem/LegacyInterop",
@@ -234,8 +233,7 @@ namespace Hollow.HoNpr.Editor
                     declarations.templates.Add(declaration);
             }
 
-            foreach (string path in FindFiles(packageRoot, "ShaderSystem/FeatureBlocks", "*.honprblock")
-                .Concat(FindFiles(packageRoot, "ShaderSystem/Features", "*.honprblock")))
+            foreach (string path in FindFiles(packageRoot, "ShaderSystem/Features", "*.honprblock"))
             {
                 ValidateNoRawShaderDirectives(path, errors);
                 FeatureBlockDeclaration declaration = LoadFeatureBlockDeclaration(packageRoot, path, errors);
@@ -404,12 +402,12 @@ namespace Hollow.HoNpr.Editor
 
             string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
             WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "Templates", "TEMPLATE_TABLE.md"), BuildTemplateTable(declarations));
-            WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "FeatureBlocks", "FEATURE_BLOCK_TABLE.md"), BuildFeatureBlockTable(declarations));
+            WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "Features", "FEATURE_BLOCK_TABLE.md"), BuildFeatureBlockTable(declarations));
             WriteTextFile(Path.Combine(absolutePackageRoot, "ShaderSystem", "Presets", "PRESET_TABLE.md"), BuildPresetTable(declarations));
 
             var importedPaths = new List<string>();
             ImportAssets($"{packageRoot}/ShaderSystem/Templates", "TEMPLATE_TABLE", importedPaths, false);
-            ImportAssets($"{packageRoot}/ShaderSystem/FeatureBlocks", "FEATURE_BLOCK_TABLE", importedPaths, false);
+            ImportAssets($"{packageRoot}/ShaderSystem/Features", "FEATURE_BLOCK_TABLE", importedPaths, false);
             ImportAssets($"{packageRoot}/ShaderSystem/Presets", "PRESET_TABLE", importedPaths, false);
 
             if (errors.Count > 0)

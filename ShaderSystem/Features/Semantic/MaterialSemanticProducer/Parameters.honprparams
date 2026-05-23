@@ -5,6 +5,4 @@ parameters MaterialBlock.MaterialSemanticProducer
     property _HoUrpGeneratedMaterialThickness semantic Material.Thickness type Float default 0;
     property _HoUrpGeneratedMaterialCurvature semantic Material.Curvature type Float default 0;
     property _HoUrpGeneratedMaterialCustom0_3 semantic Material.Custom0-3 type Vector default "(0, 0, 0, 0)";
-    property _HoUrpGeneratedSssSourceColor semantic Shading.SssSourceColor type Color default "(1, 0.75, 0.6, 1)";
-    property _HoUrpGeneratedSssWeight semantic Shading.SssWeight type Float default 0;
 }
