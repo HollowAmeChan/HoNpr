@@ -874,6 +874,8 @@ namespace Hollow.HoNpr.Editor
                     return BuildDebugLitShader(preset);
                 case "CharacterToonTemplate":
                     return BuildCharacterToonShader(packageRoot, declarations, preset);
+                case "EnvironmentPbrTemplate":
+                    return BuildEnvironmentPbrShader(packageRoot, declarations, preset);
                 default:
                     Debug.LogWarning($"[HoNpr.Generator] Preset 使用未知生成器：{preset.presetId} -> {preset.generator}");
                     return null;
@@ -1155,6 +1157,26 @@ namespace Hollow.HoNpr.Editor
             return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
         }
 
+        private static string BuildEnvironmentPbrShader(string packageRoot, ShaderSystemDeclarations declarations, PrototypePreset preset)
+        {
+            string blockList = preset.featureBlocks == null ? string.Empty : string.Join(", ", preset.featureBlocks);
+            string templateList = string.Join(" + ", GetPresetTemplates(preset));
+            HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
+            string environmentDefines = BuildRequiredDefineBlock(declarations, preset);
+
+            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Environment/EnvironmentPbr.shader.template");
+            if (string.IsNullOrEmpty(template))
+            {
+                Debug.LogWarning("[HoNpr.Generator] Missing EnvironmentPbr shader template.");
+                return null;
+            }
+
+            string shader = template
+                .Replace("${SHADER_NAME}", preset.shaderName)
+                .Replace("${ENVIRONMENT_PBR_DEFINES}", environmentDefines);
+            return BuildGeneratedShaderHeader(preset, templateList, blockList) + ApplyConditionalBlocks(shader, conditionTokens);
+        }
+
         private static string BuildGeneratedShaderHeader(PrototypePreset preset, string templateList, string blockList)
         {
             return
@@ -1169,6 +1191,12 @@ $@"// 由 HoNprShaderGenerator 生成。
         private static HashSet<string> BuildPresetConditionTokens(ShaderSystemDeclarations declarations, PrototypePreset preset)
         {
             var tokens = new HashSet<string>(StringComparer.Ordinal);
+
+            if (!string.IsNullOrEmpty(preset.presetId))
+            {
+                tokens.Add("PRESET_" + preset.presetId);
+                tokens.Add("PRESET_" + LastSegment(preset.presetId));
+            }
 
             foreach (string pass in preset.passes ?? Array.Empty<string>())
                 tokens.Add("PASS_" + pass);

@@ -2,6 +2,7 @@ preset MaterialPreset.Environment_PBR
 {
     display "Environment PBR";
     templates MaterialTemplate.EnvironmentForward MaterialTemplate.EnvironmentAov;
+    generator EnvironmentPbrTemplate;
     shaderName "HoNpr/Generated/Environment_PBR";
     generatedShader "Shaders/Generated/Environment/Environment_PBR.shader";
 
@@ -10,5 +11,5 @@ preset MaterialPreset.Environment_PBR
     produces Material.Class;
     requires capability SceneMaterial ParticipatesSemanticPost;
     phase Forward;
-    status Planned;
+    status Prototype;
 }

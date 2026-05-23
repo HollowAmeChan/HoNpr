@@ -1,33 +1,37 @@
 ui MaterialUi.Character_Toon_Lite for MaterialPreset.Character_Toon_Lite
 {
-    group Base "基础";
-    property _HoNprBaseMap in Base label "基础贴图" control texture default "white" copy Group tools CopyProperty PasteProperty;
-    property _HoUrpBaseColor in Base label "基础颜色" control color default "(1, 1, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    group Base "Base";
+    property _HoNprBaseMap in Base label "Base Map" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoUrpBaseColor in Base label "Base Color" control color default "(1, 1, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
 
-    group SurfaceMaps "表面贴图";
-    contractBox HoNpr.SurfaceMaps in SurfaceMaps title "HoNpr 表面贴图" severity info message "Lite 只保留基础贴图、法线和区域遮罩；不通过 UI 开关扩展结构。";
-    property _HoNprNormalMap in SurfaceMaps label "法线贴图" control texture default "bump" copy Group tools CopyProperty PasteProperty;
-    property _HoNprRegionMap in SurfaceMaps label "区域遮罩" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    group SurfaceMaps "Surface Maps";
+    contractBox HoNpr.SurfaceMaps in SurfaceMaps title "HoNpr Surface Maps" severity info message "Lite keeps only base map, normal map, and region mask; UI does not change preset structure.";
+    property _HoNprNormalMap in SurfaceMaps label "Normal Map" control texture default "bump" copy Group tools CopyProperty PasteProperty;
+    property _HoNprRegionMap in SurfaceMaps label "Region Mask" control texture default "white" copy Group tools CopyProperty PasteProperty;
 
-    group ToonLilToon "Toon-lilToon";
-    contractBox HoNpr.LilToonSource in ToonLilToon title "来源：lilToon 基础 toon" severity info message "这些参数只调节 Lite preset 已静态包含的 lilToon 来源 toon diffuse / rim / emission 组件。";
-    property _HoNprStyleRampAtlas in ToonLilToon label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
-    property _HoNprToonDiffuseRampLilToonThreshold in ToonLilToon label "Toon Diffuse Ramp-lilToon 阈值" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprToonDiffuseRampLilToonSoftness in ToonLilToon label "Toon Diffuse Ramp-lilToon 柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRampRow in ToonLilToon label "Ramp 行" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRampRows in ToonLilToon label "Ramp 总行数" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRimLightLilToonColor in ToonLilToon label "RimLight-lilToon 颜色" control color default "(0.75, 0.9, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRimLightLilToonBlendMode in ToonLilToon label "RimLight-lilToon 混合" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRimLilToonPower in ToonLilToon label "Rim-lilToon 强度曲线" control slider range 0.1 12 default 3 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprRimLilToonMask in ToonLilToon label "Rim-lilToon 权重" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprEmissionPrimaryLilToonColor in ToonLilToon label "EmissionPrimary-lilToon 颜色" control color default "(0, 0, 0, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprEmissionPrimaryLilToonIntensity in ToonLilToon label "EmissionPrimary-lilToon 强度" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprEmissionPrimaryLilToonBlendMode in ToonLilToon label "EmissionPrimary-lilToon 混合" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    group ToonDiffuse "Toon Diffuse-lilToon";
+    contractBox HoNpr.LilToonSource in ToonDiffuse title "Source: lilToon Lite toon" severity info message "Lite statically contains diffuse, rim, and primary emission blocks; UI only edits parameters.";
+    property _HoNprStyleRampAtlas in ToonDiffuse label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprToonDiffuseRampLilToonThreshold in ToonDiffuse label "Toon Diffuse Ramp-lilToon Threshold" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprToonDiffuseRampLilToonSoftness in ToonDiffuse label "Toon Diffuse Ramp-lilToon Softness" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRow in ToonDiffuse label "Ramp Row" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRampRows in ToonDiffuse label "Ramp Rows" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
 
-    group SemanticAov "HoRP AOV 语义";
-    contractBox HoRP.AOV in SemanticAov title "HoRP 契约：AOV 输出" severity info message "这些参数写入 HoUrpAovOutput，不是普通外观参数。";
-    property _HoUrpGeneratedMaterialClass in SemanticAov label "材质分类" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "材质 Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    group Rim "Rim-lilToon";
+    property _HoNprRimLightLilToonColor in Rim label "RimLight-lilToon Color" control color default "(0.75, 0.9, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLightLilToonBlendMode in Rim label "RimLight-lilToon Blend" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLilToonPower in Rim label "Rim-lilToon Power" control slider range 0.1 12 default 3 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprRimLilToonMask in Rim label "Rim-lilToon Mask" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Emission "Emission-lilToon";
+    property _HoNprEmissionPrimaryLilToonColor in Emission label "EmissionPrimary-lilToon Color" control color default "(0, 0, 0, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionPrimaryLilToonIntensity in Emission label "EmissionPrimary-lilToon Intensity" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprEmissionPrimaryLilToonBlendMode in Emission label "EmissionPrimary-lilToon Blend" control enum options "Add=0|Screen=1|Max=2|Replace=3" default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group SemanticAov "HoRP AOV";
+    contractBox HoRP.AOV in SemanticAov title "HoRP AOV Contract" severity info message "These parameters feed HoUrpAovOutput and are material semantics, not appearance toggles.";
+    property _HoUrpGeneratedMaterialClass in SemanticAov label "Material Class" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "Material Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
 
     renderState queue "Geometry" blend "Off" depth "ZWrite On, ZTest LEqual" stencil "None" cull "Back";
 }

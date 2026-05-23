@@ -1,0 +1,5 @@
+parameters MaterialBlock.ClearCoatSpecular
+{
+    property _HoNprClearCoatMask semantic Shading.Pbr.ClearCoatMask type Range default 0 range 0 1;
+    property _HoNprClearCoatRoughness semantic Shading.Pbr.ClearCoatRoughness type Range default 0.25 range 0.01 1;
+}

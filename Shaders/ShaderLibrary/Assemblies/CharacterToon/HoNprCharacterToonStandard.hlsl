@@ -1,0 +1,6 @@
+#ifndef HONPR_CHARACTER_TOON_STANDARD_INCLUDED
+#define HONPR_CHARACTER_TOON_STANDARD_INCLUDED
+
+#include "HoNprCharacterToonShared.hlsl"
+
+#endif
