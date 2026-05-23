@@ -1,0 +1,7 @@
+﻿parameters MaterialBlock.LilToonRimLight
+{
+    property _HoNprLilToonRimLightColor semantic Shading.RimLight.Color type Color default "(0.75, 0.9, 1, 1)";
+    property _HoNprLilToonRimPower semantic Shading.Rim.Power type Float default 3;
+    property _HoNprLilToonRimMask semantic Shading.Rim.Mask type Float default 0.5;
+    property _HoNprLilToonRimLightBlendMode semantic Shading.RimLight.BlendMode type Float default 0;
+}

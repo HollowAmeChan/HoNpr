@@ -5,7 +5,7 @@
 ## 迁移原则
 
 1. Shader / preset 名称使用 HoNpr 用途语义，并在来源语义仍然成立时显式保留来源身份，例如 `Character_LilToon_Standard`。
-2. Block 名称保留来源身份，例如 `MatCapLilToon`。
+2. Block 名称保留来源身份，例如 `LilToonMatCap`。
 3. 旧 property / keyword 只进入 `LegacyInterop` 映射，不成为新 ABI。
 4. 旧 hidden pass shader 不继承，改由 template / preset 表达。
 5. 会改变 pass 或资源依赖的能力必须成为独立 preset。
@@ -13,7 +13,7 @@
 
 ## 当前迁移定位
 
-`MaterialPreset.Character_LilToonSourceAlgorithmAssembly` 是迁移验证原型。
+`MaterialPreset.Character_LilToon_SourceAssembly` 是迁移验证原型。
 
 用途：
 
@@ -87,13 +87,13 @@ HoNpr 的默认参数必须符合 preset 名称：
 
 Block 命名：
 
-- 来源型 preset、shader、block 和 generated 路径必须显式带来源身份，例如 `Character_LilToon_Standard`、`MatCapLilToon`、`Shaders/Generated/LilToon/Standard.shader`。
+- 来源型 preset、shader、block 和 generated 路径必须显式带来源身份，例如 `Character_LilToon_Standard`、`LilToonMatCap`、`Shaders/Generated/LilToon/Standard.shader`。
 - 如果后续重写为 HoNpr 原生语义，可以新增不带来源后缀的 preset / shader / block，并与来源型入口并存或迁移。
 - 如果算法被重写为 HoNpr 原生语义，可以新增不带来源后缀的 block。
 
 ## 执行顺序
 
-1. 保留 `Character_LilToonSourceAlgorithmAssembly` 作为 prototype。
+1. 保留 `Character_LilToon_SourceAssembly` 作为 prototype。
 2. 维护四个第一批用户 toon preset：Lite、Standard、Rich、Transparent。
 3. 为每个用户 preset 维护对应 `.honprui` 白名单。
 4. 生成器只生成 active 或显式指定的 prototype。

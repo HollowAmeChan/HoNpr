@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilToonDistanceFade : StylizedLobe in CompositeDomain
+{
+    consumes PositionWS CameraPositionWS LilToonDistanceFadeRange LilToonDistanceFadeColor;
+    produces HoNprLobeOutput.emission HoNprLobeOutput.energyWeight;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_LILTOON_DISTANCE_FADE;
+    entry HoNprEvaluateLilToonDistanceFade;
+    variantPolicy PresetStatic;
+    debug Composite.LilToonDistanceFade;
+}

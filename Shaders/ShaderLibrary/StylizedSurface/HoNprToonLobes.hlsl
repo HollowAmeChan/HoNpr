@@ -1,10 +1,10 @@
-#ifndef HONPR_TOON_LOBES_INCLUDED
+﻿#ifndef HONPR_TOON_LOBES_INCLUDED
 #define HONPR_TOON_LOBES_INCLUDED
 
 #include "../Lighting/HoNprLightingInput.hlsl"
 #include "HoNprStylizedSurface.hlsl"
 
-HoNprLobeOutput HoNprEvaluateToonDiffuseRampLilToon(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
+HoNprLobeOutput HoNprEvaluateLilToonDiffuseRamp(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
@@ -14,7 +14,7 @@ HoNprLobeOutput HoNprEvaluateToonDiffuseRampLilToon(HoUrpSurfaceData surface, Ho
     return output;
 }
 
-HoNprLobeOutput HoNprEvaluateToonSpecularLilToon(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half mask, half threshold, half softness)
+HoNprLobeOutput HoNprEvaluateLilToonSpecular(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half mask, half threshold, half softness)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));

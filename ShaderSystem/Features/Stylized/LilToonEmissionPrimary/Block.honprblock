@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilToonEmissionPrimary : StylizedLobe in ShadingDomain
+{
+    consumes LilToonEmissionPrimaryColor LilToonEmissionPrimaryMask;
+    produces HoNprLobeOutput.emission;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_LILTOON_EMISSION_PRIMARY;
+    entry HoNprEvaluateLilToonEmissionPrimary;
+    variantPolicy PresetStatic;
+    debug Lobe.LilToonEmissionPrimary;
+}

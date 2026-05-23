@@ -1,4 +1,4 @@
-Shader "${SHADER_NAME}"
+﻿Shader "${SHADER_NAME}"
 {
     Properties
     {
@@ -10,11 +10,11 @@ Shader "${SHADER_NAME}"
 {{/if HONPR_HAS_SEMANTIC_MAP}}
         _HoNprRegionMap("Region Map", 2D) = "white" {}
         _HoNprStyleRampAtlas("Style Ramp Atlas", 2D) = "white" {}
-        _HoNprToonDiffuseRampLilToonThreshold("Toon Diffuse Ramp-lilToon Threshold", Range(0, 1)) = 0.48
-        _HoNprToonDiffuseRampLilToonSoftness("Toon Diffuse Ramp-lilToon Softness", Range(0.001, 1)) = 0.08
+        _HoNprLilToonDiffuseRampThreshold("lilToon Diffuse Ramp Threshold", Range(0, 1)) = 0.48
+        _HoNprLilToonDiffuseRampSoftness("lilToon Diffuse Ramp Softness", Range(0.001, 1)) = 0.08
         _HoNprRampRow("Ramp Row", Float) = 0
         _HoNprRampRows("Ramp Rows", Float) = 8
-{{#if HONPR_HAS_OUTLINE_LILTOON}}
+{{#if HONPR_HAS_LILTOON_OUTLINE}}
         _HoNprOutlineColor("Outline-lilToon Color", Color) = (0.6, 0.56, 0.73, 1)
         _HoNprOutlineTex("Outline-lilToon Texture", 2D) = "white" {}
         _HoNprOutlineLitColor("Outline-lilToon Lit Color", Color) = (1, 0.2, 0, 0)
@@ -29,13 +29,13 @@ Shader "${SHADER_NAME}"
         _HoNprOutlineVectorMap("Outline-lilToon Vector Map", 2D) = "bump" {}
         _HoNprOutlineVectorScale("Outline-lilToon Vector Scale", Range(-10, 10)) = 1
         _HoNprOutlineEnableLighting("Outline-lilToon Enable Lighting", Range(0, 1)) = 1
-{{/if HONPR_HAS_OUTLINE_LILTOON}}
-{{#if HONPR_HAS_TOON_SPECULAR_LILTOON}}
-        _HoNprToonSpecularLilToonThreshold("Toon Specular-lilToon Threshold", Range(0, 1)) = 0.72
-        _HoNprToonSpecularLilToonSoftness("Toon Specular-lilToon Softness", Range(0.001, 1)) = 0.08
-        _HoNprToonSpecularLilToonMask("Toon Specular-lilToon Mask", Range(0, 1)) = 0.6
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprToonSpecularLilToonBlendMode("Toon Specular-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_TOON_SPECULAR_LILTOON}}
+{{/if HONPR_HAS_LILTOON_OUTLINE}}
+{{#if HONPR_HAS_LILTOON_SPECULAR}}
+        _HoNprLilToonSpecularThreshold("lilToon Specular Threshold", Range(0, 1)) = 0.72
+        _HoNprLilToonSpecularSoftness("lilToon Specular Softness", Range(0.001, 1)) = 0.08
+        _HoNprLilToonSpecularMask("lilToon Specular Mask", Range(0, 1)) = 0.6
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonSpecularBlendMode("lilToon Specular Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_SPECULAR}}
 {{#if HONPR_HAS_HAIR_SPECULAR_PRIMARY}}
         _HoNprHairSpecularPrimaryShift("Hair Specular Primary Shift", Range(-1, 1)) = 0.08
         _HoNprHairSpecularPrimaryWidth("Hair Specular Primary Width", Range(1, 256)) = 48
@@ -48,62 +48,62 @@ Shader "${SHADER_NAME}"
         _HoNprHairSpecularSecondaryMask("Hair Specular Secondary Mask", Range(0, 1)) = 0.35
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprHairSpecularSecondaryBlendMode("Hair Specular Secondary Blend Mode", Float) = 0
 {{/if HONPR_HAS_HAIR_SPECULAR_SECONDARY}}
-{{#if HONPR_HAS_RIM_SHADE_LILTOON}}
-        _HoNprRimShadeLilToonColor("RimShade-lilToon Color", Color) = (0.15, 0.16, 0.2, 1)
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprRimShadeLilToonBlendMode("RimShade-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_RIM_SHADE_LILTOON}}
-{{#if HONPR_HAS_BACKLIGHT_LILTOON}}
-        _HoNprBacklightLilToonColor("Backlight-lilToon Color", Color) = (0.7, 0.5, 0.35, 1)
-        _HoNprBacklightLilToonPower("Backlight-lilToon Power", Range(0.1, 12)) = 2
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBacklightLilToonBlendMode("Backlight-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_BACKLIGHT_LILTOON}}
-{{#if HONPR_HAS_MATCAP_LILTOON}}
-        _HoNprMatCapLilToonColor("MatCap-lilToon Color", Color) = (0.25, 0.25, 0.3, 1)
-        _HoNprMatCapLilToonMask("MatCap-lilToon Mask", Range(0, 1)) = 0.25
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprMatCapLilToonBlendMode("MatCap-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_MATCAP_LILTOON}}
-{{#if HONPR_HAS_RIM_LIGHT_LILTOON}}
-        _HoNprRimLightLilToonColor("RimLight-lilToon Color", Color) = (0.75, 0.9, 1, 1)
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprRimLightLilToonBlendMode("RimLight-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_RIM_LIGHT_LILTOON}}
-{{#if HONPR_HAS_RIM_LIGHT_LILTOON|HONPR_HAS_RIM_SHADE_LILTOON}}
-        _HoNprRimLilToonPower("Rim-lilToon Power", Range(0.1, 12)) = 3
-        _HoNprRimLilToonMask("Rim-lilToon Mask", Range(0, 1)) = 0.5
-{{/if HONPR_HAS_RIM_LIGHT_LILTOON|HONPR_HAS_RIM_SHADE_LILTOON}}
-{{#if HONPR_HAS_BACKFACE_COLOR_LILTOON}}
-        _HoNprBackfaceColorLilToonColor("Backface Color-lilToon Color", Color) = (0, 0, 0, 0)
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprBackfaceColorLilToonBlendMode("Backface Color-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_BACKFACE_COLOR_LILTOON}}
-{{#if HONPR_HAS_SECONDARY_MATCAP_LILTOON}}
-        _HoNprSecondaryMatCapLilToonColor("Secondary MatCap-lilToon Color", Color) = (0.08, 0.1, 0.14, 1)
-        _HoNprSecondaryMatCapLilToonMask("Secondary MatCap-lilToon Mask", Range(0, 1)) = 0
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprSecondaryMatCapLilToonBlendMode("Secondary MatCap-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_SECONDARY_MATCAP_LILTOON}}
-{{#if HONPR_HAS_GLITTER_LILTOON}}
-        _HoNprGlitterLilToonColor("Glitter-lilToon Color", Color) = (1, 0.92, 0.72, 1)
-        _HoNprGlitterLilToonMask("Glitter-lilToon Mask", Range(0, 1)) = 0
-        _HoNprGlitterLilToonDensity("Glitter-lilToon Density", Range(1, 256)) = 48
-        _HoNprGlitterLilToonThreshold("Glitter-lilToon Threshold", Range(0, 1)) = 0.94
-        _HoNprGlitterLilToonPower("Glitter-lilToon Power", Range(1, 128)) = 32
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprGlitterLilToonBlendMode("Glitter-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_GLITTER_LILTOON}}
-{{#if HONPR_HAS_EMISSION_PRIMARY_LILTOON}}
-        _HoNprEmissionPrimaryLilToonColor("EmissionPrimary-lilToon Color", Color) = (0, 0, 0, 1)
-        _HoNprEmissionPrimaryLilToonIntensity("EmissionPrimary-lilToon Intensity", Range(0, 16)) = 0
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprEmissionPrimaryLilToonBlendMode("EmissionPrimary-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_EMISSION_PRIMARY_LILTOON}}
-{{#if HONPR_HAS_EMISSION_SECONDARY_LILTOON}}
-        _HoNprEmissionSecondaryLilToonColor("Secondary Emission-lilToon Color", Color) = (0, 0, 0, 1)
-        _HoNprEmissionSecondaryLilToonIntensity("Secondary Emission-lilToon Intensity", Range(0, 16)) = 0
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprEmissionSecondaryLilToonBlendMode("Secondary Emission-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_EMISSION_SECONDARY_LILTOON}}
-{{#if HONPR_HAS_DISTANCE_FADE_LILTOON}}
-        _HoNprDistanceFadeLilToonColor("Distance Fade-lilToon Color", Color) = (0, 0, 0, 1)
-        _HoNprDistanceFadeLilToonStart("Distance Fade-lilToon Start", Float) = 50
-        _HoNprDistanceFadeLilToonEnd("Distance Fade-lilToon End", Float) = 80
-        _HoNprDistanceFadeLilToonStrength("Distance Fade-lilToon Strength", Range(0, 1)) = 0
-        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprDistanceFadeLilToonBlendMode("Distance Fade-lilToon Blend Mode", Float) = 0
-{{/if HONPR_HAS_DISTANCE_FADE_LILTOON}}
+{{#if HONPR_HAS_LILTOON_RIM_SHADE}}
+        _HoNprLilToonRimShadeColor("lilToon RimShade Color", Color) = (0.15, 0.16, 0.2, 1)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonRimShadeBlendMode("lilToon RimShade Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_RIM_SHADE}}
+{{#if HONPR_HAS_LILTOON_BACKLIGHT}}
+        _HoNprLilToonBacklightColor("lilToon Backlight Color", Color) = (0.7, 0.5, 0.35, 1)
+        _HoNprLilToonBacklightPower("lilToon Backlight Power", Range(0.1, 12)) = 2
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonBacklightBlendMode("lilToon Backlight Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_BACKLIGHT}}
+{{#if HONPR_HAS_LILTOON_MATCAP}}
+        _HoNprLilToonMatCapColor("lilToon MatCap Color", Color) = (0.25, 0.25, 0.3, 1)
+        _HoNprLilToonMatCapMask("lilToon MatCap Mask", Range(0, 1)) = 0.25
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonMatCapBlendMode("lilToon MatCap Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_MATCAP}}
+{{#if HONPR_HAS_LILTOON_RIM_LIGHT}}
+        _HoNprLilToonRimLightColor("lilToon RimLight Color", Color) = (0.75, 0.9, 1, 1)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonRimLightBlendMode("lilToon RimLight Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_RIM_LIGHT}}
+{{#if HONPR_HAS_LILTOON_RIM_LIGHT|HONPR_HAS_LILTOON_RIM_SHADE}}
+        _HoNprLilToonRimPower("lilToon Rim Power", Range(0.1, 12)) = 3
+        _HoNprLilToonRimMask("lilToon Rim Mask", Range(0, 1)) = 0.5
+{{/if HONPR_HAS_LILTOON_RIM_LIGHT|HONPR_HAS_LILTOON_RIM_SHADE}}
+{{#if HONPR_HAS_LILTOON_BACKFACE_COLOR}}
+        _HoNprLilToonBackfaceColor("lilToon Backface Color", Color) = (0, 0, 0, 0)
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonBackfaceColorBlendMode("lilToon Backface Color Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_BACKFACE_COLOR}}
+{{#if HONPR_HAS_LILTOON_SECONDARY_MATCAP}}
+        _HoNprLilToonSecondaryMatCapColor("lilToon Secondary MatCap Color", Color) = (0.08, 0.1, 0.14, 1)
+        _HoNprLilToonSecondaryMatCapMask("lilToon Secondary MatCap Mask", Range(0, 1)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonSecondaryMatCapBlendMode("lilToon Secondary MatCap Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_SECONDARY_MATCAP}}
+{{#if HONPR_HAS_LILTOON_GLITTER}}
+        _HoNprLilToonGlitterColor("lilToon Glitter Color", Color) = (1, 0.92, 0.72, 1)
+        _HoNprLilToonGlitterMask("lilToon Glitter Mask", Range(0, 1)) = 0
+        _HoNprLilToonGlitterDensity("lilToon Glitter Density", Range(1, 256)) = 48
+        _HoNprLilToonGlitterThreshold("lilToon Glitter Threshold", Range(0, 1)) = 0.94
+        _HoNprLilToonGlitterPower("lilToon Glitter Power", Range(1, 128)) = 32
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonGlitterBlendMode("lilToon Glitter Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_GLITTER}}
+{{#if HONPR_HAS_LILTOON_EMISSION_PRIMARY}}
+        _HoNprLilToonEmissionPrimaryColor("lilToon Primary Emission Color", Color) = (0, 0, 0, 1)
+        _HoNprLilToonEmissionPrimaryIntensity("lilToon Primary Emission Intensity", Range(0, 16)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonEmissionPrimaryBlendMode("lilToon Primary Emission Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_EMISSION_PRIMARY}}
+{{#if HONPR_HAS_LILTOON_EMISSION_SECONDARY}}
+        _HoNprLilToonEmissionSecondaryColor("lilToon Secondary Emission Color", Color) = (0, 0, 0, 1)
+        _HoNprLilToonEmissionSecondaryIntensity("lilToon Secondary Emission Intensity", Range(0, 16)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonEmissionSecondaryBlendMode("lilToon Secondary Emission Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_EMISSION_SECONDARY}}
+{{#if HONPR_HAS_LILTOON_DISTANCE_FADE}}
+        _HoNprLilToonDistanceFadeColor("lilToon Distance Fade Color", Color) = (0, 0, 0, 1)
+        _HoNprLilToonDistanceFadeStart("lilToon Distance Fade Start", Float) = 50
+        _HoNprLilToonDistanceFadeEnd("lilToon Distance Fade End", Float) = 80
+        _HoNprLilToonDistanceFadeStrength("lilToon Distance Fade Strength", Range(0, 1)) = 0
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonDistanceFadeBlendMode("lilToon Distance Fade Blend Mode", Float) = 0
+{{/if HONPR_HAS_LILTOON_DISTANCE_FADE}}
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
 {{#if HONPR_HAS_SSS_SOURCE}}
         _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
@@ -138,10 +138,10 @@ ${CHARACTER_TOON_SHARED}
         Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" "Queue" = "Geometry" }
 {{/if !HONPR_HAS_OIT_ACCUMULATION}}
 
-{{#if PASS_ForwardOutlineLilToon}}
+{{#if PASS_ForwardLilToonOutline}}
         Pass
         {
-            Name "ForwardOutlineLilToon"
+            Name "ForwardLilToonOutline"
             Tags { "LightMode" = "SRPDefaultUnlit" }
             Cull Front
             ZWrite On
@@ -155,17 +155,17 @@ ${CHARACTER_TOON_SHARED}
             ENDHLSL
         }
 
-{{/if PASS_ForwardOutlineLilToon}}
+{{/if PASS_ForwardLilToonOutline}}
         Pass
         {
             Name "UniversalForward"
             Tags { "LightMode" = "UniversalForward" }
-{{#if HONPR_HAS_BACKFACE_COLOR_LILTOON}}
+{{#if HONPR_HAS_LILTOON_BACKFACE_COLOR}}
             Cull Off
-{{/if HONPR_HAS_BACKFACE_COLOR_LILTOON}}
-{{#if !HONPR_HAS_BACKFACE_COLOR_LILTOON}}
+{{/if HONPR_HAS_LILTOON_BACKFACE_COLOR}}
+{{#if !HONPR_HAS_LILTOON_BACKFACE_COLOR}}
             Cull Back
-{{/if !HONPR_HAS_BACKFACE_COLOR_LILTOON}}
+{{/if !HONPR_HAS_LILTOON_BACKFACE_COLOR}}
 {{#if HONPR_HAS_OIT_ACCUMULATION}}
             ZWrite Off
 {{/if HONPR_HAS_OIT_ACCUMULATION}}

@@ -1,0 +1,6 @@
+﻿parameters MaterialBlock.LilToonBacklight
+{
+    property _HoNprLilToonBacklightColor semantic Shading.Backlight.Color type Color default "(0.7, 0.5, 0.35, 1)";
+    property _HoNprLilToonBacklightPower semantic Shading.Backlight.Power type Float default 2;
+    property _HoNprLilToonBacklightBlendMode semantic Shading.Backlight.BlendMode type Float default 0;
+}

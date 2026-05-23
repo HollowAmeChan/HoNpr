@@ -1,6 +1,6 @@
-﻿{{#if PRESET_Character_LilToonSourceAlgorithmAssembly}}
-#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonLilToonSourceAlgorithmAssembly.hlsl"
-{{/if PRESET_Character_LilToonSourceAlgorithmAssembly}}
+﻿{{#if PRESET_Character_LilToon_SourceAssembly}}
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonSourceAssembly.hlsl"
+{{/if PRESET_Character_LilToon_SourceAssembly}}
 {{#if PRESET_Character_LilToon_Lite}}
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterToon/HoNprCharacterToonLite.hlsl"
 {{/if PRESET_Character_LilToon_Lite}}

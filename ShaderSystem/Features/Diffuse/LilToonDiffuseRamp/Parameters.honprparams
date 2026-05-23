@@ -1,0 +1,5 @@
+﻿parameters MaterialBlock.LilToonDiffuseRamp
+{
+    property _HoNprLilToonDiffuseRampThreshold semantic Shading.ToonDiffuse.Threshold type Float default 0.48;
+    property _HoNprLilToonDiffuseRampSoftness semantic Shading.ToonDiffuse.Softness type Float default 0.08;
+}

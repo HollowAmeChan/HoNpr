@@ -1,0 +1,7 @@
+﻿parameters MaterialBlock.LilToonSpecular
+{
+    property _HoNprLilToonSpecularThreshold semantic Shading.ToonSpecular.Threshold type Float default 0.72;
+    property _HoNprLilToonSpecularSoftness semantic Shading.ToonSpecular.Softness type Float default 0.08;
+    property _HoNprLilToonSpecularMask semantic Shading.ToonSpecular.Mask type Float default 0.6;
+    property _HoNprLilToonSpecularBlendMode semantic Shading.ToonSpecular.BlendMode type Float default 0;
+}

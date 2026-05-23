@@ -1,0 +1,25 @@
+﻿ui MaterialUi.Debug_LitSSS_OIT for MaterialPreset.Debug_LitSSS_OIT
+{
+    group Base "基础";
+    property _HoUrpBaseColor in Base label "基础颜色" control color default "(1, 1, 1, 1)" copy Group tools CopyProperty PasteProperty;
+
+    group SemanticAov "HoRP AOV 语义";
+    contractBox HoRP.AOV in SemanticAov title "HoRP 契约：AOV 输出" severity info message "这些参数写入 HoUrpAovOutput，不是普通外观参数。";
+    property _HoUrpGeneratedMaterialClass in SemanticAov label "材质分类" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialSssProfile in SemanticAov label "SSS Profile" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialThickness in SemanticAov label "厚度" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCurvature in SemanticAov label "曲率" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "材质 Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group SssSource "SSS 源";
+    contractBox HoRP.Semantic in SssSource title "HoRP 契约：SSS 源" severity warning message "SSS 源会被 AOV / SSS / Debug 消费。请确认颜色与权重不是临时调试值。";
+    property _HoUrpGeneratedSssSourceColor in SssSource label "SSS 源颜色" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedSssWeight in SssSource label "SSS 权重" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+
+    group Transparency "透明 / OIT";
+    contractBox HoRP.OIT in Transparency title "HoRP 契约：OIT" severity info message "OIT pass 是否存在由 preset 决定；这里仅表达材质参数。";
+    property _HoUrpSupportsOit in Transparency label "支持 OIT" control toggle default 1 copy Group tools CopyProperty PasteProperty;
+    property _HoUrpParticipatesOit in Transparency label "参与 OIT" control toggle default 1 copy Group tools CopyProperty PasteProperty;
+
+    renderState queue "Transparent" renderType "Transparent" passes "UniversalForward; HoUrpAovOutput; HoUrpOitAccumulation" blend "Forward SrcAlpha OneMinusSrcAlpha; OIT One One, Zero OneMinusSrcAlpha" depth "ZWrite Off, ZTest LEqual" stencil "None" cull "Back" colorMask "Forward RGBA; OIT accumulation RGBA";
+}

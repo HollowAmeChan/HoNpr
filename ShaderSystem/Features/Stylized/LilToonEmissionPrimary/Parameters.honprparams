@@ -1,0 +1,6 @@
+﻿parameters MaterialBlock.LilToonEmissionPrimary
+{
+    property _HoNprLilToonEmissionPrimaryColor semantic Shading.EmissionPrimary.Color type Color default "(0, 0, 0, 1)";
+    property _HoNprLilToonEmissionPrimaryIntensity semantic Shading.EmissionPrimary.Intensity type Float default 0;
+    property _HoNprLilToonEmissionPrimaryBlendMode semantic Shading.EmissionPrimary.BlendMode type Float default 0;
+}

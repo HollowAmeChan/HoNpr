@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilToonRimLight : StylizedLobe in ShadingDomain
+{
+    consumes Normal ViewDirection LilToonRimLightColor LilToonRimMask;
+    produces HoNprLobeOutput.emission;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_LILTOON_RIM_LIGHT;
+    entry HoNprEvaluateLilToonRimLight;
+    variantPolicy PresetStatic;
+    debug Lobe.LilToonRimLight;
+}

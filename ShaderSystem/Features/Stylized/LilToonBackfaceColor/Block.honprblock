@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilToonBackfaceColor : StylizedLobe in ShadingDomain
+{
+    consumes FrontFace LilToonBackfaceColor;
+    produces HoNprLobeOutput.diffuse;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_LILTOON_BACKFACE_COLOR;
+    entry HoNprEvaluateLilToonBackfaceColor;
+    variantPolicy PresetStatic;
+    debug Lobe.LilToonBackfaceColor;
+}

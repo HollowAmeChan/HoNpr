@@ -1,0 +1,10 @@
+﻿block MaterialBlock.LilToonOutline : StylizedLobe in GeometryDomain
+{
+    consumes PositionOS NormalOS TangentOS VertexColor OutlineTex OutlineWidth OutlineWidthMask OutlineVectorMap OutlineFixWidth OutlineZBias OutlineLighting;
+    produces OutlinePositionCS OutlineColor;
+    requires include HoNpr.Outline;
+    requires define HONPR_HAS_LILTOON_OUTLINE;
+    entry HoNprTransformLilToonOutlineToHClip;
+    variantPolicy PresetStatic;
+    debug Geometry.Outline;
+}

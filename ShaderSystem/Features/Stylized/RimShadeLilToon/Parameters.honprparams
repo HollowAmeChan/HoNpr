@@ -1,5 +1,0 @@
-parameters MaterialBlock.RimShadeLilToon
-{
-    property _HoNprRimShadeLilToonColor semantic Shading.RimShade.Color type Color default "(0.15, 0.16, 0.2, 1)";
-    property _HoNprRimShadeLilToonBlendMode semantic Shading.RimShade.BlendMode type Float default 0;
-}

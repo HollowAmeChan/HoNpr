@@ -1,0 +1,15 @@
+﻿preset MaterialPreset.Debug_LitSSS_OIT
+{
+    display "Character Debug Lit SSS OIT Ready";
+    template MaterialTemplate.DebugLitMinimal;
+    generator DebugLitMinimal;
+    shaderName "HoNpr/Debug/LitSSS_OIT";
+    generatedShader "Shaders/Generated/Debug/LitSSS_OIT.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SssSourceProducer MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.OitAccumulationOutput;
+    passes UniversalForward HoUrpAovOutput HoUrpOitAccumulation;
+    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Material.Custom0-3 Shading.SssSourceColor Shading.SssWeight OitAccumulationInput OitRevealageInput;
+    requires capability SupportsOit ParticipatesOit;
+    phase OitOnly;
+    status Prototype;
+}

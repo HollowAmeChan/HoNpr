@@ -1,0 +1,6 @@
+﻿parameters MaterialBlock.LilToonEmissionSecondary
+{
+    property _HoNprLilToonEmissionSecondaryColor semantic Shading.EmissionSecondary.Color type Color default "(0, 0, 0, 1)";
+    property _HoNprLilToonEmissionSecondaryIntensity semantic Shading.EmissionSecondary.Intensity type Float default 0;
+    property _HoNprLilToonEmissionSecondaryBlendMode semantic Shading.EmissionSecondary.BlendMode type Float default 0;
+}

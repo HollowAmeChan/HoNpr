@@ -297,6 +297,12 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                     case "queue":
                         descriptor.renderState.queue = value;
                         break;
+                    case "renderType":
+                        descriptor.renderState.renderType = value;
+                        break;
+                    case "passes":
+                        descriptor.renderState.passes = value;
+                        break;
                     case "blend":
                         descriptor.renderState.blend = value;
                         break;
@@ -308,6 +314,9 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                         break;
                     case "cull":
                         descriptor.renderState.cull = value;
+                        break;
+                    case "colorMask":
+                        descriptor.renderState.colorMask = value;
                         break;
                 }
             }
@@ -772,9 +781,12 @@ namespace Hollow.HoNpr.Editor.MaterialUi
     internal sealed class HoNprMaterialUiRenderState
     {
         public string queue;
+        public string renderType;
+        public string passes;
         public string blend;
         public string depth;
         public string stencil;
         public string cull;
+        public string colorMask;
     }
 }

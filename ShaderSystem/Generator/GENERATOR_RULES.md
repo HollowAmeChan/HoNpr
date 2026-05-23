@@ -29,7 +29,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 6. 重建并校验 `MATERIAL_UI_TABLE.md`，刷新材质 UI 描述缓存。
 7. 调用 `AssetDatabase.SaveAssets()` 和 `AssetDatabase.Refresh()`。
 
-第一阶段生成器先输出 `Character_DebugLit_SSS_OITReady` 和迁移原型 `Character_LilToonSourceAlgorithmAssembly`。
+第一阶段生成器先输出 `Debug_LitSSS_OIT` 和迁移原型 `Character_LilToon_SourceAssembly`。
 
 第一批面向用户的 toon 生成目标是：
 
@@ -74,14 +74,14 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 
 ```text
 template MaterialTemplate.CharacterForward { ... }
-block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... }
+block MaterialBlock.LilToonDiffuseRamp : DiffuseLobe in ShadingDomain { ... }
 preset MaterialPreset.Character_LilToon_Standard { ... }
 ```
 
 新 feature 应优先放在文件夹边界里：
 
 ```text
-ShaderSystem/Features/Stylized/RimLightLilToon/
+ShaderSystem/Features/Stylized/LilToonRimLight/
   Block.honprblock
   Parameters.honprparams
 ```

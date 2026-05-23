@@ -55,13 +55,13 @@ Features/<Domain>/<FeatureId>/
 
 | Feature | 说明 | 不负责 |
 | --- | --- | --- |
-| `Debug/DebugLitMinimal` | 调试用 feature family，用于在生产 preset 前验证 HoRP 材质契约。当前连接 `MaterialPreset.Character_DebugLit_SSS_OITReady`、`MaterialTemplate.DebugLitMinimal`、`DebugLitMinimal` 生成器和 `Shaders/Generated/Debug/Character/Lit_SSS_OITReady.shader`。 | 用户默认材质入口；反向定义 HoRP AOV / OIT 契约。 |
-| `Diffuse/ToonDiffuseRampLilToon` | lilToon 来源的 toon diffuse ramp feature，把 surface、lighting 和 style ramp 输入收敛为 diffuse lobe。 | specular、rim、matcap 等其他 stylized lobe；pass 或 shader 类型选择；ramp atlas 资源生命周期。 |
-| `Geometry/OutlineLilToon` | lilToon 来源的几何描边 feature，拥有 outline pass 所需的宽度、纹理、vector map、z bias 和 lighting 参数。 | 是否生成 outline pass；forward pass 中的外观 lobe。 |
+| `Debug/DebugLitMinimal` | 调试用 feature family，用于在生产 preset 前验证 HoRP 材质契约。当前连接 `MaterialPreset.Debug_LitSSS_OIT`、`MaterialTemplate.DebugLitMinimal`、`DebugLitMinimal` 生成器和 `Shaders/Generated/Debug/LitSSS_OIT.shader`。 | 用户默认材质入口；反向定义 HoRP AOV / OIT 契约。 |
+| `Diffuse/LilToonDiffuseRamp` | lilToon 来源的 toon diffuse ramp feature，把 surface、lighting 和 style ramp 输入收敛为 diffuse lobe。 | specular、rim、matcap 等其他 stylized lobe；pass 或 shader 类型选择；ramp atlas 资源生命周期。 |
+| `Geometry/LilToonOutline` | lilToon 来源的几何描边 feature，拥有 outline pass 所需的宽度、纹理、vector map、z bias 和 lighting 参数。 | 是否生成 outline pass；forward pass 中的外观 lobe。 |
 | `Semantic/MaterialSemanticProducer` | 材质语义 producer，把材质分类、SSS profile、厚度、曲率和 custom 数据声明为 HoRP material semantic。 | object semantic；AOV RT 绑定；pass 请求解析。 |
 | `Surface/BaseColorTexture` | 基础色贴图 feature，拥有 base map、base tint，以及写入 `HoUrpSurfaceData.baseColor` / `alpha` 的入口。 | toon ramp 采样；region / semantic mask；pass 是否存在。 |
-| `Stylized/MatCapLilToon` | lilToon 来源的 primary matcap feature，拥有 primary matcap color / mask 参数，并写入 specular lobe。 | secondary matcap；matcap texture atlas 管理；pass 是否存在。 |
-| `Stylized/RimLightLilToon` | lilToon 来源的 rim light feature，只声明发光侧 rim lobe。 | rim shade 暗部 lobe；pass 是否存在；outline rim 或后处理描边。 |
+| `Stylized/LilToonMatCap` | lilToon 来源的 primary matcap feature，拥有 primary matcap color / mask 参数，并写入 specular lobe。 | secondary matcap；matcap texture atlas 管理；pass 是否存在。 |
+| `Stylized/LilToonRimLight` | lilToon 来源的 rim light feature，只声明发光侧 rim lobe。 | rim shade 暗部 lobe；pass 是否存在；outline rim 或后处理描边。 |
 
 ## Templates
 
@@ -75,7 +75,7 @@ Features/<Domain>/<FeatureId>/
 
 `ShaderSystem/Presets/` 定义生成器使用的静态材质组合：
 
-- `Character/`：toon、skin fSSS、hair 以及相关角色材质。`Character_LilToonSourceAlgorithmAssembly` 是迁移期原型，参考 lilToon 成品 shader 的 pass 壳和 `lil_pass_forward_normal.hlsl` 的组装顺序，但只使用 HoNpr/HoRP block、pass 和属性命名。长期用户入口不要继续扩张这个大 shader；第一批角色 shader 类型拆为 `Character_LilToon_Lite`、`Character_LilToon_Standard`、`Character_LilToon_Rich`、`Character_LilToon_Transparent` 和 `Character_LilToon_Skin_fSSS`。
+- `Character/`：toon、skin fSSS、hair 以及相关角色材质。`Character_LilToon_SourceAssembly` 是迁移期原型，参考 lilToon 成品 shader 的 pass 壳和 `lil_pass_forward_normal.hlsl` 的组装顺序，但只使用 HoNpr/HoRP block、pass 和属性命名。长期用户入口不要继续扩张这个大 shader；第一批角色 shader 类型拆为 `Character_LilToon_Lite`、`Character_LilToon_Standard`、`Character_LilToon_Rich`、`Character_LilToon_Transparent` 和 `Character_LilToon_Skin_fSSS`。
 - `Debug/`：在生成生产 preset 前验证上游 HoRP 材质契约。
 - `Environment/`：lilPBR 来源的场景材质 PBR 子集，当前入口为 `Environment_LilPBR`，避免和未来 HoNpr 原生 PBR 命名空间混用。
 - `Transparent/`：显式透明和 OIT-ready 的材质组合。

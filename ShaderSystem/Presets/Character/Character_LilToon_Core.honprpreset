@@ -5,7 +5,7 @@
     shaderName "HoNpr/Character_LilToon_Core";
     generatedShader "Shaders/Generated/LilToon/Core.shader";
 
-    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRampLilToon MaterialBlock.ToonSpecularLilToon MaterialBlock.RimShadeLilToon MaterialBlock.RimLightLilToon MaterialBlock.BacklightLilToon MaterialBlock.MatCapLilToon MaterialBlock.EmissionPrimaryLilToon MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.LilToonDiffuseRamp MaterialBlock.LilToonSpecular MaterialBlock.LilToonRimShade MaterialBlock.LilToonRimLight MaterialBlock.LilToonBacklight MaterialBlock.LilToonMatCap MaterialBlock.LilToonEmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
     passes UniversalForward HoUrpAovOutput DepthOnly ShadowCaster;
     produces Material.Class Material.Custom0-3 Aov.MaskId Aov.NormalDepth Aov.SurfaceData;
     requires capability ReceivesOutline ParticipatesSemanticPost;

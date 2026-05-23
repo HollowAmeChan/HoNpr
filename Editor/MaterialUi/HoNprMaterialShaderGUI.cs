@@ -98,13 +98,14 @@ namespace Hollow.HoNpr.Editor.MaterialUi
 
             BeginTintedContent(headerColor);
             DrawRenderStateField("Queue", descriptor.renderState.queue, false);
+            DrawRenderStateField("Material Queue", material.renderQueue == -1 ? "Preset Default" : $"Override {material.renderQueue}", false);
+            DrawRenderStateField("RenderType", descriptor.renderState.renderType, false);
+            DrawRenderStateField("Passes", descriptor.renderState.passes, true);
             DrawRenderStateField("Blend", descriptor.renderState.blend, true);
             DrawRenderStateField("Depth", descriptor.renderState.depth, true);
             DrawRenderStateField("Stencil", descriptor.renderState.stencil, true);
             DrawRenderStateField("Cull", descriptor.renderState.cull, false);
-
-            if (material.renderQueue != -1)
-                EditorGUILayout.HelpBox($"当前材质实例存在 render queue override：{material.renderQueue}。这是材质实例覆盖，不是 preset render state 声明；HoNpr 建议让 queue 由 preset/template 固定。", MessageType.Warning);
+            DrawRenderStateField("ColorMask", descriptor.renderState.colorMask, false);
             EndTintedContent();
 
             EditorGUILayout.EndVertical();
@@ -919,8 +920,8 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             if (TryGetSourcePresetId(shader, out string sourcePresetId))
                 return sourcePresetId;
 
-            if (shaderName.EndsWith("Character_DebugLit_SSS_OITReady", StringComparison.Ordinal))
-                return "MaterialPreset.Character_DebugLit_SSS_OITReady";
+            if (shaderName.EndsWith("Debug_LitSSS_OIT", StringComparison.Ordinal))
+                return "MaterialPreset.Debug_LitSSS_OIT";
 
             const string hoNprPrefix = "HoNpr/";
             if (shaderName.StartsWith(hoNprPrefix, StringComparison.Ordinal))
