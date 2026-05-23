@@ -1,0 +1,10 @@
+block MaterialBlock.MatCapLilToon : StylizedLobe in ShadingDomain
+{
+    consumes MatCapLilToonColor Normal ViewDirection MatCapLilToonMask;
+    produces HoNprLobeOutput.specular;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_MATCAP_LILTOON;
+    entry HoNprEvaluateMatCapLilToon;
+    variantPolicy PresetStatic;
+    debug Lobe.MatCapLilToon;
+}

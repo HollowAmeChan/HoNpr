@@ -92,7 +92,7 @@ HoNpr/
 
 | 字段 | 说明 |
 | --- | --- |
-| `Id` | 例如 `MaterialBlock.ToonDiffuseRamp` |
+| `Id` | 例如 `MaterialBlock.ToonDiffuseRampLilToon` |
 | `Domain` | `MaterialDomain` / `ShadingDomain` / `CompositeDomain` 等 |
 | `Stage` | `SurfaceInput` / `LightingInput` / `Lobe` / `SemanticProducer` / `Composite` |
 | `Consumes` | 消费的 ABI 字段、语义、纹理 |
@@ -222,15 +222,16 @@ FeatureBlocks/
 | `NormalMap` | `SurfaceInput/` | 生产 normal |
 | `MaterialMapPacked` | `SurfaceInput/` | metallic / roughness / AO |
 | `StyleRampAtlas` | `SurfaceInput/` | ramp 采样输入 |
-| `ToonDiffuseRamp` | `DiffuseLobe/` | toon 漫反射 |
+| `ToonDiffuseRampLilToon` | `DiffuseLobe/` | toon 漫反射，来源 lilToon |
 | `PbrDiffuse` | `DiffuseLobe/` | PBR 漫反射 |
 | `PbrSpecularGGX` | `SpecularLobe/` | 标准 PBR 高光 |
-| `ToonSpecular` | `SpecularLobe/` | toon 高光 |
+| `ToonSpecularLilToon` | `SpecularLobe/` | toon 高光，来源 lilToon |
 | `HairSpecularPrimary` | `SpecularLobe/` | 发丝主高光 |
 | `HairSpecularSecondary` | `SpecularLobe/` | 发丝副高光 |
-| `MatCap` | `StylizedLobe/` | 风格化材质光 |
-| `RimLight` | `StylizedLobe/` | 加亮边缘 |
-| `RimShade` | `StylizedLobe/` | 乘暗边缘 |
+| `MatCapLilToon` | `StylizedLobe/` | 风格化材质光，来源 lilToon |
+| `RimLightLilToon` | `StylizedLobe/` | 加亮边缘，来源 lilToon |
+| `RimShadeLilToon` | `StylizedLobe/` | 乘暗边缘，来源 lilToon |
+| `BackfaceColorLilToon` | `StylizedLobe/` | 背面着色，来源 lilToon |
 | `ForwardThinSss` | `Subsurface/` | forward 假 SSS |
 | `SssSourceProducer` | `Subsurface/` | 生产 `Shading.SssSourceColor` / `Shading.SssWeight` |
 | `MaterialSemanticProducer` | `SemanticAov/` | 生产 `Material.*` |
@@ -389,7 +390,7 @@ Group: Style
 Properties:
   _HoNprRampAtlas: <asset-guid>
   _HoNprRampIndex: 2
-  _HoNprMatCapStrength: 0.65
+  _HoNprMatCapLilToonMask: 0.65
 ```
 
 payload 规则：
@@ -558,7 +559,7 @@ Generator menu priority: 1120-1140
 // 由 HoNprShaderGenerator 生成。
 // SourcePreset: MaterialPreset.Character_Toon_Core
 // Template: MaterialTemplate.CharacterForward
-// Blocks: BaseColorTexture, NormalMap, ToonDiffuseRamp, AovOutputStandard
+// Blocks: BaseColorTexture, NormalMap, ToonDiffuseRampLilToon, AovOutputStandard
 // 不要手动修改生成体。请改 template / block / preset。
 ```
 
@@ -873,3 +874,23 @@ Tests/
 - 是否仍然对齐 `HoUrp-Extensions` 的正式契约？
 
 一句话底线：`HoNpr` 的目录不是“shader 文件分类”，而是材质系统的显式声明面。任何生成、模板、迁移、调试入口都必须有表格和链接，让人类和 AI 能在不猜代码的情况下理解它的生产、消费和生命周期。
+---
+
+## 10. 组分来源命名底线
+
+HoNpr 的 Feature Block 不只要说明“做什么”，还必须说明“从哪里来”。凡是从旧实现迁移、复刻或以旧实现作为行为验收基线的组分，都必须把来源写进组分身份。
+
+必须执行：
+
+- Feature Block ID 带来源后缀，例如 `OutlineLilToon`、`SecondaryMatCapLilToon`、`GlitterLilToon`。
+- Entry 函数、DebugView、生成 shader 属性名、属性显示名、UI 标签和表格行也要能看出来源。
+- 来源后缀只表示算法来源和迁移责任，不表示继承旧 ABI。
+- 旧来源组分不能伪装成 HoNpr 原生通用组分；如果未来重写成 HoNpr 原生行为，应新建或重命名为无来源后缀的正式 block，并保留迁移记录。
+
+禁止执行：
+
+- 把 lilToon 的行为搬入 `MatCap`、`Glitter`、`EmissionSecondary` 这类无来源后缀的模糊 block。
+- 只在注释里写来源，实际 ID / UI / 表格看不出来源。
+- 用 `LilToon` 后缀作为兼容承诺，继续引入 `_lil*`、旧 inspector、旧 include 或旧 pass 名。
+
+一句话：**组分名必须携带来源责任；来源可追踪，ABI 不继承。**

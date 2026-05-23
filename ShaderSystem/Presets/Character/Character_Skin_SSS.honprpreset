@@ -5,7 +5,7 @@ preset MaterialPreset.Character_Skin_SSS
     shaderName "HoNpr/Generated/Character_Skin_SSS";
     generatedShader "Shaders/Generated/Character/Character_Skin_SSS.shader";
 
-    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRamp MaterialBlock.ForwardThinSss MaterialBlock.SssSourceProducer MaterialBlock.RimLight MaterialBlock.Backlight MaterialBlock.EmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.ToonDiffuseRampLilToon MaterialBlock.ForwardThinSss MaterialBlock.SssSourceProducer MaterialBlock.RimLightLilToon MaterialBlock.BacklightLilToon MaterialBlock.EmissionPrimaryLilToon MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
     passes UniversalForward HoUrpAovOutput DepthOnly ShadowCaster;
     produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Shading.SssSourceColor Shading.SssWeight Aov.SssSource;
     requires capability ReceivesSss ParticipatesSemanticPost;

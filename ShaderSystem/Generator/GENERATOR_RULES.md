@@ -61,7 +61,7 @@ HoToon 菜单目前从 priority `1100` 开始；Generator 入口使用 `1120-114
 
 ```text
 template MaterialTemplate.CharacterForward { ... }
-block MaterialBlock.ToonDiffuseRamp : DiffuseLobe in ShadingDomain { ... }
+block MaterialBlock.ToonDiffuseRampLilToon : DiffuseLobe in ShadingDomain { ... }
 preset MaterialPreset.Character_Toon_Core { ... }
 ```
 

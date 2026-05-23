@@ -1,0 +1,10 @@
+block MaterialBlock.RimShadeLilToon : StylizedLobe in ShadingDomain
+{
+    consumes Normal ViewDirection RimShadeLilToonColor RimLilToonMask;
+    produces HoNprLobeOutput.diffuse;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_RIM_SHADE_LILTOON;
+    entry HoNprEvaluateRimShadeLilToon;
+    variantPolicy PresetStatic;
+    debug Lobe.RimShadeLilToon;
+}

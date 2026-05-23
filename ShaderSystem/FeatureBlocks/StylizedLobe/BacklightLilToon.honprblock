@@ -1,0 +1,10 @@
+block MaterialBlock.BacklightLilToon : StylizedLobe in ShadingDomain
+{
+    consumes LightDirection ViewDirection BacklightLilToonColor BacklightLilToonMask;
+    produces HoNprLobeOutput.emission;
+    requires include HoNpr.StylizedLobes;
+    requires define HONPR_HAS_BACKLIGHT_LILTOON;
+    entry HoNprEvaluateBacklightLilToon;
+    variantPolicy PresetStatic;
+    debug Lobe.BacklightLilToon;
+}

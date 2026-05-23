@@ -4,7 +4,7 @@
 #include "../Lighting/HoNprLightingInput.hlsl"
 #include "HoNprStylizedSurface.hlsl"
 
-HoNprLobeOutput HoNprEvaluateToonDiffuseRamp(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
+HoNprLobeOutput HoNprEvaluateToonDiffuseRampLilToon(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
@@ -14,7 +14,7 @@ HoNprLobeOutput HoNprEvaluateToonDiffuseRamp(HoUrpSurfaceData surface, HoNprLigh
     return output;
 }
 
-HoNprLobeOutput HoNprEvaluateToonSpecular(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half mask, half threshold, half softness)
+HoNprLobeOutput HoNprEvaluateToonSpecularLilToon(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half mask, half threshold, half softness)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
