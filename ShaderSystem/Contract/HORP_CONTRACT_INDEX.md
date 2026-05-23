@@ -14,6 +14,14 @@
 | 材质 OIT ABI | [`HoUrpMaterialOit.hlsl`](../../../HoUrp-Extensions/Runtime/Shaders/ShaderLibrary/HoUrpMaterialOit.hlsl) | OIT 累积契约。 |
 | Object semantic ABI | [`HoUrpObjectSemantic.hlsl`](../../../HoUrp-Extensions/Runtime/Shaders/ShaderLibrary/HoUrpObjectSemantic.hlsl) | 对象语义读取契约。 |
 
+## 第十四步联合推进备注
+
+- HoURP SSS runtime 来源：`HoUrp-Extensions/Runtime/Features/SubsurfaceScatteringRendererFeature.cs`。它消费 `Aov.SssSource`；HoNpr 的 `ForwardThinSss` 不等同于该 runtime。
+- HoURP ShadowCast sampling 来源：`HoUrp-Extensions/Runtime/Shaders/ShaderLibrary/HoUrpShadowCastSampling.hlsl`。HoNpr `HoShadowReceiver` 的长期实现必须走该入口或 wrapper，不能用常量 `1.0h`。
+- `Character_LilToon_Skin_fSSS` 是 forward/fake SSS 验证入口，不能作为 screen-space SSS runtime 的验收终点。
+- 真 SSS 需要 HoNpr 明确声明 `ScreenSpaceSssSourceProducer` 或同等 block，并通过 `Aov.SssSource` 交给 HoURP SSS runtime。
+- `HoShadowReceiver` 必须把 attenuation 写入 `HoNprLightingContext.hoShadow`，不能写入 URP main light shadow。
+
 ## 本地边界
 
 HoNpr 可以增加 wrapper include，用于缩短 include 路径或记录版本假设。wrapper 不能重命名语义、重新解释资源，也不能为 HoRP 契约创建私有替代品。

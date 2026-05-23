@@ -48,6 +48,12 @@ Editor 菜单：
 - `Assets > HoNpr > HoToon > [贴图] 选择贴图文件夹`
 - `Assets > HoNpr > 生成器 > [材质] 强制刷新 Shader 与材质 UI`
 
+## HoURP 第十四步联合推进备注
+
+`Character_LilToon_Skin_fSSS` 表示 forward/fake SSS 方向的皮肤材质验证入口，不等同于 HoURP screen-space SSS runtime 已经完成验收。HoURP 第十四步联合推进中需要补独立的真 SSS source block / preset，并确认其 `Aov.SssSource` 被 `SubsurfaceScatteringRendererFeature` 消费。
+
+联合推进说明见 `Documentation~/06_HoURP联合推进第十四步.md`。
+
 ## 安装
 
 在 Unity 项目的 `Packages/manifest.json` 中通过本地路径添加：

@@ -82,6 +82,12 @@ Features/<Domain>/<FeatureId>/
 
 当前仓库已经为 Debug、Environment_LilPBR、Lite、Standard、Rich、Transparent、Skin_fSSS、Hair 和 SourceAssembly 生成 `.shader` 审查产物。`status Planned` 的 preset 可以已经生成，但仍表示还没按当前阶段的表面标准放行。默认入口应以 `Active` 状态为准；`Active` 只代表结构、参数、UI 和语义看起来正确，不代表每个光照组分已经完成最终视觉验证。
 
+## HoURP 第十四步联合推进备注
+
+`Skin_fSSS` 是 forward/fake SSS 验证入口；它可以生产 SSS source 语义，但不能作为 HoURP screen-space SSS runtime 的验收终点。第十四步需要补 `ScreenSpaceSssSourceProducer` 或同等 block，以及独立的真 SSS skin preset，用于验证 `Aov.SssSource` 被 HoURP `SubsurfaceScatteringRendererFeature` 消费。
+
+`HoShadowReceiver` 当前需要从占位输入推进到真实 HoURP ShadowCast sampling。HoCast 必须保持在 `HoNprLightingContext.hoShadow`，不能写入 URP main light shadow。
+
 ## Material UI
 
 `*.honprui` 只描述参数如何显示、哪些小工具可以绘制、哪些 HoRP 契约提示需要醒目展示。它不参与 shader 结构、pass、include、define、keyword 或 variant 决策。
