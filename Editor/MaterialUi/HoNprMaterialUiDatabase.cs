@@ -318,7 +318,15 @@ namespace Hollow.HoNpr.Editor.MaterialUi
             Shader shader = null;
             string shaderPath = FindGeneratedShaderPath(descriptor, packageRoot);
             if (!string.IsNullOrEmpty(shaderPath))
+            {
                 shader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
+                if (shader == null)
+                {
+                    HashSet<string> sourceProperties = LoadShaderPropertyNamesFromSource(shaderPath);
+                    if (sourceProperties != null)
+                        return sourceProperties;
+                }
+            }
 
             if (shader == null)
             {
@@ -347,6 +355,45 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                 names.Add(shader.GetPropertyName(i));
 
             return names;
+        }
+
+        private static HashSet<string> LoadShaderPropertyNamesFromSource(string shaderPath)
+        {
+            string text = ReadAssetText(shaderPath);
+            if (string.IsNullOrEmpty(text))
+                return null;
+
+            Match properties = Regex.Match(text, @"\bProperties\s*\{");
+            if (!properties.Success)
+                return null;
+
+            int bodyStart = properties.Index + properties.Length;
+            int depth = 1;
+            int bodyEnd = -1;
+            for (int i = bodyStart; i < text.Length; i++)
+            {
+                if (text[i] == '{')
+                    depth++;
+                else if (text[i] == '}')
+                {
+                    depth--;
+                    if (depth == 0)
+                    {
+                        bodyEnd = i;
+                        break;
+                    }
+                }
+            }
+
+            if (bodyEnd < bodyStart)
+                return null;
+
+            string body = StripLineComments(text.Substring(bodyStart, bodyEnd - bodyStart));
+            var names = new HashSet<string>();
+            foreach (Match match in Regex.Matches(body, @"(?m)^\s*(?:\[[^\]]+\]\s*)*(_[A-Za-z0-9_]+)\s*\("))
+                names.Add(match.Groups[1].Value);
+
+            return names.Count > 0 ? names : null;
         }
 
         private static string FindGeneratedShaderPath(HoNprMaterialUiDescriptor descriptor, string packageRoot)

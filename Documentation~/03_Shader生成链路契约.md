@@ -408,4 +408,6 @@ Cull
 - pass 只能请求 semantic，不能依赖某个材质 feature 的实现细节。
 - generated shader 不能通过全局纹理副作用创建未声明的跨 pass 数据链路。
 
+Material UI 的 render state 展示必须跟生成结构一致。多 pass 状态写在 `*.honprui` 的单条 `renderState` statement 中，用 `; ` 分隔 pass / 阶段，用 ` / ` 分隔并列 pass 集合，用 `, ` 分隔同一阶段内的 state 子项。Inspector 会按这些分隔符优化成多行显示，因此不要把多 pass 状态压成不可解析的自然语言，也不要把 render state 暴露为可编辑 property。
+
 如果某个设计需要“所有材质全局注册所有 semantic”或“所有 AOV 永久绑定固定 RT”，应视为状态空间失控风险，先退回 capability query 和 frame-local resolve。

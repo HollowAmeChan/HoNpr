@@ -66,12 +66,9 @@ Shader "HoNpr/Character/Toon_Standard"
 
 
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
-        _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
-        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
-        _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
+
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
-        _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)
-        _HoUrpGeneratedSssWeight("SSS Weight", Range(0, 1)) = 0
+
 
 
     }
@@ -212,12 +209,16 @@ half _HoNprOutlineEnableLighting;
 #endif
 
 float _HoUrpGeneratedMaterialClass;
+#if defined(HONPR_HAS_SSS_SOURCE)
 float _HoUrpGeneratedMaterialSssProfile;
 float _HoUrpGeneratedMaterialThickness;
 float _HoUrpGeneratedMaterialCurvature;
+#endif
 float4 _HoUrpGeneratedMaterialCustom0_3;
+#if defined(HONPR_HAS_SSS_SOURCE)
 float4 _HoUrpGeneratedSssSourceColor;
 float _HoUrpGeneratedSssWeight;
+#endif
 #if defined(HONPR_HAS_OIT_ACCUMULATION)
 float _HoUrpSupportsOit;
 float _HoUrpParticipatesOit;
@@ -360,7 +361,26 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     half3 normalWS = normalize(input.normalWS);
     float rawDepth = input.depthZW.x / max(input.depthZW.y, 1.0e-6);
     half linear01Depth = half(saturate(Linear01Depth(rawDepth, _ZBufferParams)));
-    HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(half(_HoUrpGeneratedMaterialClass), half(_HoUrpGeneratedMaterialSssProfile), half(_HoUrpGeneratedMaterialThickness), half(_HoUrpGeneratedMaterialCurvature), half4(_HoUrpGeneratedMaterialCustom0_3), half3(_HoUrpGeneratedSssSourceColor.rgb), half(_HoUrpGeneratedSssWeight));
+    half materialSssProfile = 0.0h;
+    half materialThickness = 0.0h;
+    half materialCurvature = 0.0h;
+    half3 sssSourceColor = half3(0.0h, 0.0h, 0.0h);
+    half sssWeight = 0.0h;
+#if defined(HONPR_HAS_SSS_SOURCE)
+    materialSssProfile = half(_HoUrpGeneratedMaterialSssProfile);
+    materialThickness = half(_HoUrpGeneratedMaterialThickness);
+    materialCurvature = half(_HoUrpGeneratedMaterialCurvature);
+    sssSourceColor = half3(_HoUrpGeneratedSssSourceColor.rgb);
+    sssWeight = half(_HoUrpGeneratedSssWeight);
+#endif
+    HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(
+        half(_HoUrpGeneratedMaterialClass),
+        materialSssProfile,
+        materialThickness,
+        materialCurvature,
+        half4(_HoUrpGeneratedMaterialCustom0_3),
+        sssSourceColor,
+        sssWeight);
     HoUrpAovOutputData materialAov = HoUrpEncodeMaterialAov(semantic, objectSemantic.maskWeight);
     HoNprCharacterAovOutput output;
     output.maskId = HoUrpEncodeObjectMaskId(objectSemantic);
@@ -389,7 +409,9 @@ HoNprCharacterOitOutput HoNprCharacterFragOit(HoNprCharacterVaryings input)
 {
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     half4 baseSample = SAMPLE_TEXTURE2D(_HoNprBaseMap, sampler_HoNprBaseMap, input.uv) * _HoUrpBaseColor;
+#if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
     clip(baseSample.a - _HoNprAlphaClipThreshold);
+#endif
     HoUrpSurfaceData surface = HoUrpCreateSurfaceData(baseSample.rgb, baseSample.a, input.normalWS);
     HoUrpTransparentOutputData transparentData = HoUrpCreateTransparentOutputData(surface, half(_HoUrpSupportsOit), half(_HoUrpParticipatesOit));
     transparentData.alpha *= transparentData.supportsOit * transparentData.participatesOit;

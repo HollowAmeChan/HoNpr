@@ -818,6 +818,7 @@ namespace Hollow.HoNpr.Editor
         private static int RefreshGeneratedShaderAssets(string packageRoot, bool logSkippedFolders)
         {
             var importedPaths = new List<string>();
+            ImportFiles(packageRoot, "Shaders/Generated", "*.shader", importedPaths, logSkippedFolders);
             ImportAssets($"{packageRoot}/Shaders/Generated", "t:Shader", importedPaths, logSkippedFolders);
             ImportAssets($"{packageRoot}/Shaders/Generated", "t:TextAsset", importedPaths, logSkippedFolders);
             return importedPaths.Count;
@@ -1133,17 +1134,17 @@ namespace Hollow.HoNpr.Editor
             HashSet<string> conditionTokens = BuildPresetConditionTokens(declarations, preset);
             string characterToonDefines = BuildRequiredDefineBlock(declarations, preset);
 
-            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToon.shader.template");
+            string template = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonLilToonSource.shader.template");
             if (string.IsNullOrEmpty(template))
             {
-                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToon shader 模板。");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonLilToonSource shader 模板。");
                 return null;
             }
 
-            string sharedTemplate = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonInline.hlsl.template");
+            string sharedTemplate = ReadAssetText($"{packageRoot}/ShaderSystem/Templates/Character/CharacterToonLilToonSourceInline.hlsl.template");
             if (string.IsNullOrEmpty(sharedTemplate))
             {
-                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonInline HLSL 模板。");
+                Debug.LogWarning("[HoNpr.Generator] 找不到 CharacterToonLilToonSourceInline HLSL 模板。");
                 return null;
             }
 
@@ -1627,7 +1628,34 @@ Shader ""{preset.shaderName}""
                     continue;
 
                 AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
-                importedPaths.Add(path);
+                if (!importedPaths.Contains(path))
+                    importedPaths.Add(path);
+            }
+        }
+
+        private static void ImportFiles(string packageRoot, string relativeFolder, string searchPattern, List<string> importedPaths, bool logSkippedFolders)
+        {
+            string root = $"{packageRoot}/{relativeFolder}";
+            string absoluteRoot = AssetPathToAbsolutePath(root);
+            if (!Directory.Exists(absoluteRoot))
+            {
+                if (logSkippedFolders)
+                    Debug.LogWarning($"[HoNpr.Generator] 鎵句笉鍒扮洰褰曪細{root}");
+                return;
+            }
+
+            string absolutePackageRoot = PackageAssetPathToAbsolutePath(packageRoot);
+
+            foreach (string absolutePath in Directory.EnumerateFiles(absoluteRoot, searchPattern, SearchOption.AllDirectories))
+            {
+                string relativePath = Path.GetRelativePath(absolutePackageRoot, absolutePath)
+                    .Replace(Path.DirectorySeparatorChar, '/')
+                    .Replace(Path.AltDirectorySeparatorChar, '/');
+                string assetPath = $"{packageRoot}/{relativePath}";
+
+                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+                if (!importedPaths.Contains(assetPath))
+                    importedPaths.Add(assetPath);
             }
         }
     }

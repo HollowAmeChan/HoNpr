@@ -134,7 +134,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
 
         private static string[] SplitRenderStateValue(string value)
         {
-            string[] rawParts = value.Split(new[] { " / ", ", " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] rawParts = value.Split(new[] { "; ", " / ", ", " }, StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < rawParts.Length; i++)
                 rawParts[i] = rawParts[i].Trim();
 

@@ -82,12 +82,16 @@ Shader "${SHADER_NAME}"
         _HoNprDistanceFadeLilToonStrength("Distance Fade-lilToon Strength", Range(0, 1)) = 0
 {{/if HONPR_HAS_DISTANCE_FADE_LILTOON}}
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
+{{#if HONPR_HAS_SSS_SOURCE}}
         _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
         _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
         _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
+{{/if HONPR_HAS_SSS_SOURCE}}
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
+{{#if HONPR_HAS_SSS_SOURCE}}
         _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)
         _HoUrpGeneratedSssWeight("SSS Weight", Range(0, 1)) = 0
+{{/if HONPR_HAS_SSS_SOURCE}}
 {{#if HONPR_HAS_ALPHA_CLIP_POLICY}}
         _HoNprAlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0
 {{/if HONPR_HAS_ALPHA_CLIP_POLICY}}
