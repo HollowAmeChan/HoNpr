@@ -186,7 +186,7 @@ struct HoNprCharacterAovOutput
     half4 objectCustom1 : SV_Target3;
     half4 surfaceData : SV_Target4;
     half4 materialCustom0 : SV_Target5;
-    half4 sssSource : SV_Target6;
+    half4 diffuse : SV_Target6;
 };
 
 #if defined(HONPR_HAS_OIT_ACCUMULATION)
@@ -348,7 +348,7 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     output.objectCustom1 = HoUrpEncodeObjectCustom4_7(objectSemantic);
     output.surfaceData = materialAov.surfaceData;
     output.materialCustom0 = materialAov.materialCustom0_3;
-    output.sssSource = materialAov.sssSource;
+    output.diffuse = materialAov.diffuse;
     return output;
 }
 

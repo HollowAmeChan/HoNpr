@@ -8,7 +8,7 @@
 
     blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SssSourceProducer MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.OitAccumulationOutput;
     passes UniversalForward HoUrpAovOutput HoUrpOitAccumulation;
-    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Material.Custom0-3 Shading.SssSourceColor Shading.SssWeight OitAccumulationInput OitRevealageInput;
+    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Material.Custom0-3 Shading.SssSourceColor Shading.SssWeight Aov.Diffuse OitAccumulationInput OitRevealageInput;
     requires capability SupportsOit ParticipatesOit;
     phase OitOnly;
     status Prototype;

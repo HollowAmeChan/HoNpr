@@ -8,7 +8,7 @@ preset MaterialPreset.Character_LilToon_Skin_fSSS
 
     blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.LilToonDiffuseRamp MaterialBlock.ForwardThinSss MaterialBlock.SssSourceProducer MaterialBlock.LilToonRimLight MaterialBlock.LilToonBacklight MaterialBlock.LilToonEmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
     passes UniversalForward HoUrpAovOutput DepthOnly ShadowCaster;
-    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Shading.SssSourceColor Shading.SssWeight Aov.SssSource;
+    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Shading.SssSourceColor Shading.SssWeight Aov.Diffuse;
     requires capability ReceivesFsss ParticipatesSemanticPost;
     phase Forward;
     status Active;

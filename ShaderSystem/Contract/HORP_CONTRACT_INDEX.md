@@ -16,10 +16,10 @@
 
 ## 第十四步联合推进备注
 
-- HoURP SSS runtime 来源：`HoUrp-Extensions/Runtime/Features/SubsurfaceScatteringRendererFeature.cs`。它消费 `Aov.SssSource`；HoNpr 的 `ForwardThinSss` 不等同于该 runtime。
+- HoURP SSS runtime 来源：`HoUrp-Extensions/Runtime/Features/SubsurfaceScatteringRendererFeature.cs`。它应消费 HoAOV 基础语义缓存中的厚度、曲率、profile、diffuse/base color 等通用输入语义；SSS weight/控制量由 SSS 自己的 RDG/MRT 维护；HoNpr 的 `ForwardThinSss` 不等同于该 runtime。
 - HoURP ShadowCast sampling 来源：`HoUrp-Extensions/Runtime/Shaders/ShaderLibrary/HoUrpShadowCastSampling.hlsl`。HoNpr `HoShadowReceiver` 的长期实现必须走该入口或 wrapper，不能用常量 `1.0h`。
 - `Character_LilToon_Skin_fSSS` 是 forward/fake SSS 验证入口，不能作为 screen-space SSS runtime 的验收终点。
-- 真 SSS 需要 HoNpr 明确声明 `ScreenSpaceSssSourceProducer` 或同等 block，并通过 `Aov.SssSource` 交给 HoURP SSS runtime。
+- 真 SSS 需要 HoNpr 明确声明 `ScreenSpaceSssSourceProducer` 或同等 block，贡献可进入 HoAOV 的 SSS 基础输入语义，再交给 HoURP SSS runtime 消费。
 - `HoShadowReceiver` 必须把 attenuation 写入 `HoNprLightingContext.hoShadow`，不能写入 URP main light shadow。
 
 ## 本地边界

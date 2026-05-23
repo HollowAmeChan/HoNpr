@@ -54,7 +54,7 @@ HoNpr generated shader 已经使用：
 - `MaterialBlock.ScreenSpaceSssSourceProducer`
 - `MaterialPreset.Character_LilToon_Skin_SSS`
 
-真 SSS 验收必须确认 `Aov.SssSource` 被 HoURP `SubsurfaceScatteringRendererFeature` 消费。
+真 SSS 验收必须确认独立的 `ScreenSpaceSssSourceProducer` 贡献 HoAOV 基础语义输入，并由 HoURP `SubsurfaceScatteringRendererFeature` 消费这些通用输入生成 `Sss.Source` / `Sss.Diffusion`。HoAOV 不再负责写命名为 `Aov.Diffuse` 的 SSS 私有输入。
 
 ### 3.2 HoShadowReceiver 不能保持常量占位
 
@@ -78,7 +78,7 @@ HoCast 必须保留在 `HoNprLightingContext.hoShadow`，不能写入 `mainLight
 1. 补 `ScreenSpaceSssSourceProducer` block。
 2. 补真 SSS skin preset。
 3. 重新生成 feature table、preset table、UI table 和 generated shader。
-4. 验证真 SSS preset 通过 AOV SSS source 被 HoURP SSS runtime 消费。
+4. 验证真 SSS preset 通过 HoAOV 基础语义输入被 HoURP SSS runtime 消费。
 5. 接入 HoShadowReceiver 真 sampling。
 6. 重新生成 shader。
 7. 扫描 generated shader 与 assembly，确认没有旧 ABI 与占位 receiver。

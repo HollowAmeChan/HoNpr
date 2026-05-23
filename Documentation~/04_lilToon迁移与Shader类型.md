@@ -70,7 +70,7 @@
 | `MaterialPreset.Character_LilToon_Standard` | `HoNpr/Character_LilToon_Standard` | 默认角色 toon | Lite + ToonSpecular、RimShade、Backlight、MatCap、Outline、Semantic/AOV | Glitter、SecondaryMatCap、SecondaryEmission、DistanceFade、OIT |
 | `MaterialPreset.Character_LilToon_Rich` | `HoNpr/Character_LilToon_Rich` | 完整 stylized 角色外观 | Standard + SecondaryMatCap、Glitter、SecondaryEmission、DistanceFade、BackfaceColor | Refraction、Fur、Gem |
 | `MaterialPreset.Character_LilToon_Transparent` | `HoNpr/Character_LilToon_Transparent` | 半透明 toon | Standard 核心 + AlphaClip、TransparentComposite、OIT 输出 | Refraction blur、Fur、Gem |
-| `MaterialPreset.Character_LilToon_Skin_fSSS` | `HoNpr/Character_LilToon_Skin_fSSS` | 皮肤或 forward fake SSS 角色材质 | AOV SSS source、forward fake fSSS、semantic/AOV | Glitter、Fur、Gem |
+| `MaterialPreset.Character_LilToon_Skin_fSSS` | `HoNpr/Character_LilToon_Skin_fSSS` | 皮肤或 forward fake SSS 角色材质 | forward fake fSSS、semantic/AOV；真 screen-space SSS 需独立 `ScreenSpaceSssSourceProducer` 贡献 HoAOV 基础语义输入 | Glitter、Fur、Gem |
 | `MaterialPreset.Hair_LilToon` | `HoNpr/Hair_LilToon` | 头发 toon | HairSpecularPrimary、HairSpecularSecondary、toon diffuse、rim、AOV | Gem、Refraction |
 | `MaterialPreset.Environment_LilPBR` | `HoNpr/Environment_LilPBR` | lilPBR 来源的场景 PBR 子集 | lilPBR diffuse、GGX、anisotropic、clear coat、AOV | 角色 stylized lobe |
 
