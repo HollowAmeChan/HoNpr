@@ -257,15 +257,17 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
 #endif
 
     half3 viewDirWS = HoNprSafeNormalize(GetWorldSpaceViewDir(input.positionWS), surface.normalWS);
-    half3 lightDirWS = HoNprSafeNormalize(half3(0.35h, 0.75h, 0.55h), half3(0.0h, 1.0h, 0.0h));
-    HoNprLightingContext lighting = HoNprCreateLightingContext(lightDirWS, half3(1.0h, 0.94h, 0.86h));
-    lighting = HoNprResolveIndirectLight(lighting, half3(0.12h, 0.13h, 0.16h), half3(0.04h, 0.04h, 0.05h));
+    Light mainLight = GetMainLight();
+    HoNprLightingContext lighting = HoNprCreateLightingContext(mainLight.direction, mainLight.color);
+    lighting = HoNprResolveUrpMainLight(lighting, mainLight.direction, mainLight.color, mainLight.distanceAttenuation, mainLight.shadowAttenuation);
+    lighting = HoNprResolveIndirectLight(lighting, SampleSH(surface.normalWS), half3(0.04h, 0.04h, 0.05h));
     lighting = HoNprResolveScreenAoReceiver(lighting, lerp(1.0h, semanticMap.utility, 0.25h), 1.0h);
     half hoShadow = HoNprSampleHoUrpShadowReceiver(input.positionWS, surface.normalWS);
     lighting = HoNprResolveHoShadowReceiver(lighting, hoShadow);
 
     half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
-    half band = smoothstep(_HoNprLilToonDiffuseRampThreshold - _HoNprLilToonDiffuseRampSoftness, _HoNprLilToonDiffuseRampThreshold + _HoNprLilToonDiffuseRampSoftness, ndotl * HoNprCombinedShadow(lighting));
+    half rampWidth = max(0.001h, abs(_HoNprLilToonDiffuseRampSoftness));
+    half band = smoothstep(saturate(_HoNprLilToonDiffuseRampThreshold - rampWidth), saturate(_HoNprLilToonDiffuseRampThreshold + rampWidth), ndotl * HoNprDirectVisibility(lighting));
     HoNprStylizedSurfaceData stylized = HoNprCreateStylizedSurfaceData(_HoNprRampRow, 0.0h, 1.0h, regionMask.skin + regionMask.hair * 2.0h);
     half2 rampUv = HoNprComputeRampUv(band, stylized, _HoNprRampRows);
     half3 rampColor = HoNprSampleStyleRampAtlas(TEXTURE2D_ARGS(_HoNprStyleRampAtlas, sampler_HoNprStyleRampAtlas), rampUv);
@@ -325,7 +327,7 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     HoUrpObjectSemanticData objectSemantic = HoUrpResolveObjectSemanticData();
     HoUrpSurfaceData surface = HoNprCharacterResolveSurface(input);
-    half3 normalWS = normalize(surface.normalWS);
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
     float rawDepth = input.depthZW.x / max(input.depthZW.y, 1.0e-6);
     half linear01Depth = half(saturate(Linear01Depth(rawDepth, _ZBufferParams)));
     half materialSssProfile = 0.0h;

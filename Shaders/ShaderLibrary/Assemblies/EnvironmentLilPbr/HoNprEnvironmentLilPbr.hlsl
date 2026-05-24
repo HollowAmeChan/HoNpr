@@ -165,7 +165,8 @@ HoNprEnvironmentAovOutput HoNprEnvironmentFragAov(HoNprEnvironmentVaryings input
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
     HoUrpObjectSemanticData objectSemantic = HoUrpResolveObjectSemanticData();
-    half3 normalWS = normalize(input.normalWS);
+    HoUrpSurfaceData surface = HoNprEnvironmentResolveSurface(input);
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
     float rawDepth = input.depthZW.x / max(input.depthZW.y, 1.0e-6);
     half linear01Depth = half(saturate(Linear01Depth(rawDepth, _ZBufferParams)));
 

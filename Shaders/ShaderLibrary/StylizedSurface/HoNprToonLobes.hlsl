@@ -20,7 +20,8 @@ HoNprLobeOutput HoNprEvaluateLilToonSpecular(HoUrpSurfaceData surface, HoNprLigh
     half3 halfDir = HoNprSafeNormalize(lighting.mainLightDirWS + viewWS, normalWS);
     half ndotl = saturate(dot(normalWS, lighting.mainLightDirWS));
     half specTerm = saturate(dot(normalWS, halfDir));
-    half band = smoothstep(saturate(threshold - softness), saturate(threshold + max(0.001h, softness)), specTerm);
+    half width = max(0.001h, abs(softness));
+    half band = smoothstep(saturate(threshold - width), saturate(threshold + width), specTerm);
     output.specular = lighting.mainLightColor * band * ndotl * saturate(mask) * HoNprDirectVisibility(lighting);
     return output;
 }

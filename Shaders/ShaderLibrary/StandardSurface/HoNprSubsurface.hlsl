@@ -34,7 +34,7 @@ HoNprLobeOutput HoNprEvaluateForwardThinSss(
 
     half amount = saturate(skinMask) * saturate(thickness) * saturate(weight) * shape * visibility * ao;
     half3 warmTint = max(tint, half3(0.0h, 0.0h, 0.0h));
-    output.transmission = surface.baseColor * warmTint * amount * 0.65h;
+    output.transmission = surface.baseColor * warmTint * lighting.mainLightColor * amount * 0.65h;
     output.semanticWeight = amount;
     return output;
 }

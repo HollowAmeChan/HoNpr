@@ -40,9 +40,11 @@ HoNprLobeOutput HoNprEvaluateLilToonRimShade(HoUrpSurfaceData surface, half3 vie
 HoNprLobeOutput HoNprEvaluateLilToonBacklight(HoUrpSurfaceData surface, half3 lightDirWS, half3 viewDirWS, half3 backlightColor, half mask, half power)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
-    half3 viewDir = HoNprSafeNormalize(viewDirWS, surface.normalWS);
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
+    half3 viewDir = HoNprSafeNormalize(viewDirWS, normalWS);
     half3 lightDir = HoNprSafeNormalize(lightDirWS, -viewDir);
-    half backlight = pow(saturate(dot(-lightDir, viewDir)), max(0.01h, power));
+    half wrap = saturate(dot(-normalWS, lightDir));
+    half backlight = pow(saturate(dot(-lightDir, viewDir)), max(0.01h, power)) * wrap;
     output.emission = backlightColor * backlight * saturate(mask);
     return output;
 }
@@ -78,8 +80,9 @@ HoNprLobeOutput HoNprEvaluateLilToonGlitter(HoUrpSurfaceData surface, half3 ligh
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
-    half3 halfDir = HoNprSafeNormalize(HoNprSafeNormalize(lightDirWS, normalWS) + HoNprSafeNormalize(viewDirWS, normalWS), normalWS);
-    half facing = pow(saturate(dot(normalWS, halfDir)), max(0.01h, power));
+    half3 lightDir = HoNprSafeNormalize(lightDirWS, normalWS);
+    half3 halfDir = HoNprSafeNormalize(lightDir + HoNprSafeNormalize(viewDirWS, normalWS), normalWS);
+    half facing = pow(saturate(dot(normalWS, halfDir)), max(0.01h, power)) * saturate(dot(normalWS, lightDir));
     float sparkleCell = HoNprGlitterHash(floor(positionWS * max(1.0h, density)) + float3(normalWS));
     half sparkle = smoothstep(saturate(threshold), 1.0h, half(sparkleCell));
     output.specular = glitterColor * sparkle * facing * saturate(mask);
