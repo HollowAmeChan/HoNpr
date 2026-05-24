@@ -11,6 +11,7 @@
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprStylizedLobes.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprSubsurface.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StylizedSurface/HoNprOutline.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Lighting/HoNprHoUrpShadowReceiver.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl"
 
 TEXTURE2D(_HoNprBaseMap);
@@ -125,6 +126,11 @@ half _HoNprLilToonDistanceFadeBlendMode;
 #if defined(HONPR_HAS_ALPHA_CLIP_POLICY)
 half _HoNprAlphaClipThreshold;
 #endif
+#if defined(HONPR_HAS_FORWARD_THIN_SSS)
+half _HoNprForwardThinSssThickness;
+half _HoNprForwardThinSssWeight;
+half4 _HoNprForwardThinSssColor;
+#endif
 
 #if defined(HONPR_HAS_LILTOON_OUTLINE)
 half4 _HoNprOutlineColor;
@@ -141,15 +147,12 @@ half _HoNprOutlineEnableLighting;
 #endif
 
 float _HoUrpGeneratedMaterialClass;
-#if defined(HONPR_HAS_SSS_SOURCE)
 float _HoUrpGeneratedMaterialSssProfile;
 float _HoUrpGeneratedMaterialThickness;
 float _HoUrpGeneratedMaterialCurvature;
-#endif
 float4 _HoUrpGeneratedMaterialCustom0_3;
-#if defined(HONPR_HAS_SSS_SOURCE)
+#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
 float4 _HoUrpGeneratedSssSourceColor;
-float _HoUrpGeneratedSssWeight;
 #endif
 #if defined(HONPR_HAS_OIT_ACCUMULATION)
 float _HoUrpSupportsOit;
@@ -254,7 +257,8 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
     HoNprLightingContext lighting = HoNprCreateLightingContext(lightDirWS, half3(1.0h, 0.94h, 0.86h));
     lighting = HoNprResolveIndirectLight(lighting, half3(0.12h, 0.13h, 0.16h), half3(0.04h, 0.04h, 0.05h));
     lighting = HoNprResolveScreenAoReceiver(lighting, lerp(1.0h, semanticMap.utility, 0.25h), 1.0h);
-    lighting = HoNprResolveHoShadowReceiver(lighting, 1.0h);
+    half hoShadow = HoNprSampleHoUrpShadowReceiver(input.positionWS, surface.normalWS);
+    lighting = HoNprResolveHoShadowReceiver(lighting, hoShadow);
 
     half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
     half band = smoothstep(_HoNprLilToonDiffuseRampThreshold - _HoNprLilToonDiffuseRampSoftness, _HoNprLilToonDiffuseRampThreshold + _HoNprLilToonDiffuseRampSoftness, ndotl * HoNprCombinedShadow(lighting));
@@ -275,7 +279,7 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateHairSpecularSecondary(surface, lighting, viewDirWS, input.tangentWS, _HoNprHairSpecularSecondaryShift, _HoNprHairSpecularSecondaryWidth, _HoNprHairSpecularSecondaryMask * regionMask.hair), _HoNprHairSpecularSecondaryBlendMode);
 #endif
 #if defined(HONPR_HAS_FORWARD_THIN_SSS)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateForwardThinSss(surface, lighting, viewDirWS, _HoUrpGeneratedMaterialThickness, _HoUrpGeneratedSssWeight * semanticMap.sssWeight, _HoUrpGeneratedSssSourceColor.rgb));
+    HoNprAccumulateLobe(lobes, HoNprEvaluateForwardThinSss(surface, lighting, viewDirWS, _HoNprForwardThinSssThickness, _HoNprForwardThinSssWeight, _HoNprForwardThinSssColor.rgb));
 #endif
 #if defined(HONPR_HAS_LILTOON_RIM_SHADE)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateLilToonRimShade(surface, viewDirWS, _HoNprLilToonRimShadeColor.rgb, _HoNprLilToonRimMask * semanticMap.stylizedMask, _HoNprLilToonRimPower), _HoNprLilToonRimShadeBlendMode);
@@ -323,14 +327,11 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     half materialThickness = 0.0h;
     half materialCurvature = 0.0h;
     half3 sssSourceColor = half3(0.0h, 0.0h, 0.0h);
-    half sssWeight = 0.0h;
-#if defined(HONPR_HAS_SSS_SOURCE)
-    HoNprSemanticMapData semanticMap = HoNprCharacterResolveSemanticMap(input.uv);
     materialSssProfile = half(_HoUrpGeneratedMaterialSssProfile);
     materialThickness = half(_HoUrpGeneratedMaterialThickness);
     materialCurvature = half(_HoUrpGeneratedMaterialCurvature);
+#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
     sssSourceColor = half3(_HoUrpGeneratedSssSourceColor.rgb);
-    sssWeight = half(_HoUrpGeneratedSssWeight) * semanticMap.sssWeight;
 #endif
     HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(
         half(_HoUrpGeneratedMaterialClass),
@@ -338,8 +339,7 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
         materialThickness,
         materialCurvature,
         half4(_HoUrpGeneratedMaterialCustom0_3),
-        sssSourceColor,
-        sssWeight);
+        sssSourceColor);
     HoUrpAovOutputData materialAov = HoUrpEncodeMaterialAov(semantic, objectSemantic.maskWeight);
     HoNprCharacterAovOutput output;
     output.maskId = HoUrpEncodeObjectMaskId(objectSemantic);

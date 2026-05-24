@@ -1,7 +1,7 @@
 ﻿// 由 HoNprShaderGenerator 生成。
 // SourcePreset: MaterialPreset.Character_LilToon_SourceAssembly
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterOutline + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow + MaterialTemplate.CharacterOit
-// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.LilToonOutline, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.LilToonSpecular, MaterialBlock.LilToonRimShade, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonBacklight, MaterialBlock.LilToonBackfaceColor, MaterialBlock.LilToonMatCap, MaterialBlock.LilToonSecondaryMatCap, MaterialBlock.LilToonGlitter, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.LilToonEmissionSecondary, MaterialBlock.LilToonDistanceFade, MaterialBlock.MaterialSemanticProducer, MaterialBlock.SssSourceProducer, MaterialBlock.AovOutputStandard, MaterialBlock.AlphaClipPolicy, MaterialBlock.TransparentComposite, MaterialBlock.OitAccumulationOutput
+// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.LilToonOutline, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.LilToonSpecular, MaterialBlock.LilToonRimShade, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonBacklight, MaterialBlock.LilToonBackfaceColor, MaterialBlock.LilToonMatCap, MaterialBlock.LilToonSecondaryMatCap, MaterialBlock.LilToonGlitter, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.LilToonEmissionSecondary, MaterialBlock.LilToonDistanceFade, MaterialBlock.MaterialSemanticProducer, MaterialBlock.ScreenSpaceSssSourceProducer, MaterialBlock.AovOutputStandard, MaterialBlock.AlphaClipPolicy, MaterialBlock.TransparentComposite, MaterialBlock.OitAccumulationOutput
 // 不要手动修改生成体。请改 template / block / preset。
 Shader "HoNpr/LilToon/SourceAssembly"
 {
@@ -99,6 +99,7 @@ Shader "HoNpr/LilToon/SourceAssembly"
         _HoNprLilToonDistanceFadeStrength("lilToon Distance Fade Strength", Range(0, 1)) = 0
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonDistanceFadeBlendMode("lilToon Distance Fade Blend Mode", Float) = 0
 
+
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
 
         _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
@@ -108,7 +109,6 @@ Shader "HoNpr/LilToon/SourceAssembly"
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
         _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)
-        _HoUrpGeneratedSssWeight("SSS Weight", Range(0, 1)) = 0
 
 
         _HoNprAlphaClipThreshold("Alpha Clip Threshold", Range(0, 1)) = 0
@@ -122,6 +122,7 @@ Shader "HoNpr/LilToon/SourceAssembly"
     HLSLINCLUDE
 
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonSourceAssembly.hlsl"
+
 
 
 

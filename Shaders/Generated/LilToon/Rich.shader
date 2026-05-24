@@ -99,7 +99,12 @@ Shader "HoNpr/Character_LilToon_Rich"
         _HoNprLilToonDistanceFadeStrength("lilToon Distance Fade Strength", Range(0, 1)) = 0
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonDistanceFadeBlendMode("lilToon Distance Fade Blend Mode", Float) = 0
 
+
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
+
+        _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
+        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
+        _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
 
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
@@ -108,6 +113,7 @@ Shader "HoNpr/Character_LilToon_Rich"
     }
 
     HLSLINCLUDE
+
 
 
 

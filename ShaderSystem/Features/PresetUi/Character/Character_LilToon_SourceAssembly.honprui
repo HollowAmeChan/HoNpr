@@ -85,7 +85,6 @@
     property _HoUrpGeneratedMaterialCurvature in SemanticAov label "曲率" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoUrpGeneratedMaterialCustom0_3 in SemanticAov label "材质 Custom 0-3" control vector default "(0, 0, 0, 0)" copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoUrpGeneratedSssSourceColor in SemanticAov label "SSS 源颜色" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedSssWeight in SemanticAov label "SSS 权重" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
 
     group Transparency "透明 / OIT";
     contractBox HoRP.OIT in Transparency title "HoRP 契约：OIT" severity info message "OIT pass 存在由 preset 固定；这里仅表达材质是否参与。";

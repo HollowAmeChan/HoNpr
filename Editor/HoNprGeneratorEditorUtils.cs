@@ -1291,7 +1291,6 @@ Shader ""{preset.shaderName}""
         _HoUrpGeneratedMaterialCurvature(""Curvature"", Range(-1, 1)) = 0
         _HoUrpGeneratedMaterialCustom0_3(""Material Custom 0-3"", Vector) = (0, 0, 0, 0)
         _HoUrpGeneratedSssSourceColor(""SSS Source Color"", Color) = (1, 0.75, 0.6, 1)
-        _HoUrpGeneratedSssWeight(""SSS Weight"", Range(0, 1)) = 0.5
         _HoUrpSupportsOit(""Supports OIT"", Float) = 1
         _HoUrpParticipatesOit(""Participates OIT"", Float) = 1
     }}
@@ -1411,7 +1410,6 @@ Shader ""{preset.shaderName}""
             float _HoUrpGeneratedMaterialCurvature;
             float4 _HoUrpGeneratedMaterialCustom0_3;
             float4 _HoUrpGeneratedSssSourceColor;
-            float _HoUrpGeneratedSssWeight;
 
             Varyings Vert(Attributes input)
             {{
@@ -1443,8 +1441,7 @@ Shader ""{preset.shaderName}""
                     half(_HoUrpGeneratedMaterialThickness),
                     half(_HoUrpGeneratedMaterialCurvature),
                     half4(_HoUrpGeneratedMaterialCustom0_3),
-                    half3(_HoUrpGeneratedSssSourceColor.rgb),
-                    half(_HoUrpGeneratedSssWeight));
+                    half3(_HoUrpGeneratedSssSourceColor.rgb));
                 HoUrpAovOutputData materialAov = HoUrpEncodeMaterialAov(semantic, maskWeight);
 
                 AovOutput output;

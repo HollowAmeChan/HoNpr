@@ -1,0 +1,11 @@
+block MaterialBlock.ScreenSpaceSssSourceProducer : SemanticProducer in ShadingDomain
+{
+    consumes HoUrpSurfaceData SemanticMap;
+    produces Shading.SssSourceColor Aov.Diffuse;
+    requires include HoNpr.SemanticSurface;
+    requires define HONPR_HAS_SCREEN_SPACE_SSS_SOURCE;
+    entry HoNprCreateMaterialSemanticProducer;
+    variantPolicy PresetStatic;
+    debug Semantic.ScreenSpaceSSS;
+}
+

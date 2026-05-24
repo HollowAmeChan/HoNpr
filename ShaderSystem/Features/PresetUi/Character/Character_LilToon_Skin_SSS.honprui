@@ -1,4 +1,4 @@
-﻿ui MaterialUi.Character_LilToon_Skin_fSSS for MaterialPreset.Character_LilToon_Skin_fSSS
+ui MaterialUi.Character_LilToon_Skin_SSS for MaterialPreset.Character_LilToon_Skin_SSS
 {
     group Base "基础";
     property _HoNprBaseMap in Base label "基础贴图" control texture default "white" copy Group tools CopyProperty PasteProperty;
@@ -16,14 +16,12 @@
     property _HoNprRampRow in ToonDiffuse label "Ramp Row" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprRampRows in ToonDiffuse label "Ramp Rows" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
 
-    group Subsurface "皮肤 fSSS";
-    contractBox HoNpr.SkinFsss in Subsurface title "Skin fSSS" severity info message "Forward fake thin fSSS adds local transmission only; it does not feed HoAOV or HoURP screen-space SSS.";
-    property _HoUrpGeneratedMaterialSssProfile in Subsurface label "fSSS Profile" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedMaterialThickness in Subsurface label "Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedMaterialCurvature in Subsurface label "Curvature" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprForwardThinSssColor in Subsurface label "fSSS Color" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprForwardThinSssThickness in Subsurface label "fSSS Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoNprForwardThinSssWeight in Subsurface label "fSSS Weight" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
+    group ScreenSpaceSss "屏幕空间 SSS 输入";
+    contractBox HoNpr.ScreenSpaceSss in ScreenSpaceSss title "Screen-space SSS Source" severity info message "该 preset 只向 HoAOV 写入 diffuse/source color 与基础材质语义；SSS 权重和扩散结果由 HoURP SSS runtime 自己维护。";
+    property _HoUrpGeneratedSssSourceColor in ScreenSpaceSss label "SSS Source Color" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialSssProfile in ScreenSpaceSss label "SSS Profile" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialThickness in ScreenSpaceSss label "Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoUrpGeneratedMaterialCurvature in ScreenSpaceSss label "Curvature" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
 
     group Rim "lilToon 边缘光";
     property _HoNprLilToonRimLightColor in Rim label "lilToon RimLight Color" control color default "(0.75, 0.9, 1, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;

@@ -4,6 +4,9 @@
 {{#if PRESET_Character_LilToon_Lite}}
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonLite.hlsl"
 {{/if PRESET_Character_LilToon_Lite}}
+{{#if PRESET_Character_LilToon_Skin_SSS}}
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonSkinSSS.hlsl"
+{{/if PRESET_Character_LilToon_Skin_SSS}}
 {{#if PRESET_Character_LilToon_Skin_fSSS}}
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonSkinFSSS.hlsl"
 {{/if PRESET_Character_LilToon_Skin_fSSS}}

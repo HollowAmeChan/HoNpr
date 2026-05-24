@@ -47,14 +47,13 @@ HoNpr generated shader 已经使用：
 `MaterialPreset.Character_LilToon_Skin_fSSS` 当前用于 forward/fake SSS 验证。它可以包含：
 
 - `MaterialBlock.ForwardThinSss`
-- `MaterialBlock.SssSourceProducer`
 
 但它不能作为真 HoURP screen-space SSS runtime 的验收终点。第十四步需要新增清晰身份：
 
 - `MaterialBlock.ScreenSpaceSssSourceProducer`
 - `MaterialPreset.Character_LilToon_Skin_SSS`
 
-真 SSS 验收必须确认独立的 `ScreenSpaceSssSourceProducer` 贡献 HoAOV 基础语义输入，并由 HoURP `SubsurfaceScatteringRendererFeature` 消费这些通用输入生成 `Sss.Source` / `Sss.Diffusion`。HoAOV 不再负责写命名为 `Aov.Diffuse` 的 SSS 私有输入。
+真 SSS 验收必须确认独立的 `ScreenSpaceSssSourceProducer` 贡献 HoAOV 基础语义输入，并由 HoURP `SubsurfaceScatteringRendererFeature` 消费这些通用输入生成 `Sss.Source` / `Sss.Diffusion`。`Aov.Diffuse` 是 HoAOV 基础 diffuse/source color 输入，不是 SSS 私有 runtime 资源；SSS weight / participation / control 由 SSS 自己的 RDG/MRT 或 `Sss.Source.a` 维护。
 
 ### 3.2 HoShadowReceiver 不能保持常量占位
 

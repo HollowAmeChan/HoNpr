@@ -25,6 +25,7 @@
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/HoNprCommon.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprStandardSurface.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/StandardSurface/HoNprLilPbrLobes.hlsl"
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Lighting/HoNprHoUrpShadowReceiver.hlsl"
 #include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Composite/HoNprComposite.hlsl"
 
 TEXTURE2D(_HoNprBaseMap);
@@ -128,7 +129,8 @@ HoNprLightingContext HoNprEnvironmentResolveLighting(HoNprEnvironmentVaryings in
     lighting = HoNprResolveUrpMainLight(lighting, mainLight.direction, mainLight.color, mainLight.distanceAttenuation, mainLight.shadowAttenuation);
     lighting = HoNprResolveIndirectLight(lighting, SampleSH(surface.normalWS), half3(0.04h, 0.04h, 0.04h));
     lighting = HoNprResolveScreenAoReceiver(lighting, 1.0h, 1.0h);
-    lighting = HoNprResolveHoShadowReceiver(lighting, 1.0h);
+    half hoShadow = HoNprSampleHoUrpShadowReceiver(input.positionWS, surface.normalWS);
+    lighting = HoNprResolveHoShadowReceiver(lighting, hoShadow);
     return lighting;
 }
 
@@ -173,8 +175,7 @@ HoNprEnvironmentAovOutput HoNprEnvironmentFragAov(HoNprEnvironmentVaryings input
         half(_HoUrpGeneratedMaterialThickness),
         half(_HoUrpGeneratedMaterialCurvature),
         half4(_HoUrpGeneratedMaterialCustom0_3),
-        half3(0.0h, 0.0h, 0.0h),
-        0.0h);
+        half3(0.0h, 0.0h, 0.0h));
     HoUrpAovOutputData materialAov = HoUrpEncodeMaterialAov(semantic, objectSemantic.maskWeight);
 
     HoNprEnvironmentAovOutput output;

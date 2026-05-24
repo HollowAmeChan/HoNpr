@@ -1,15 +1,17 @@
 ﻿// 由 HoNprShaderGenerator 生成。
-// SourcePreset: MaterialPreset.Character_LilToon_Lite
+// SourcePreset: MaterialPreset.Character_LilToon_Skin_SSS
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow
-// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
+// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.ScreenSpaceSssSourceProducer, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonBacklight, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
 // 不要手动修改生成体。请改 template / block / preset。
-Shader "HoNpr/Character_LilToon_Lite"
+Shader "HoNpr/Character_LilToon_Skin_SSS"
 {
     Properties
     {
         _HoNprBaseMap("Base Map", 2D) = "white" {}
         _HoUrpBaseColor("Base Color", Color) = (1, 1, 1, 1)
         _HoNprNormalMap("Normal Map", 2D) = "bump" {}
+
+        _HoNprSemanticMap("Semantic Map", 2D) = "white" {}
 
         _HoNprRegionMap("Region Map", 2D) = "white" {}
         _HoNprStyleRampAtlas("Style Ramp Atlas", 2D) = "white" {}
@@ -22,6 +24,10 @@ Shader "HoNpr/Character_LilToon_Lite"
 
 
 
+
+        _HoNprLilToonBacklightColor("lilToon Backlight Color", Color) = (0.7, 0.5, 0.35, 1)
+        _HoNprLilToonBacklightPower("lilToon Backlight Power", Range(0.1, 12)) = 2
+        [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonBacklightBlendMode("lilToon Backlight Blend Mode", Float) = 0
 
 
 
@@ -51,6 +57,8 @@ Shader "HoNpr/Character_LilToon_Lite"
 
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
+        _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)
+
 
 
     }
@@ -58,8 +66,8 @@ Shader "HoNpr/Character_LilToon_Lite"
     HLSLINCLUDE
 
 
-#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonLite.hlsl"
 
+#include "Packages/com.hollow.honpr/Shaders/ShaderLibrary/Assemblies/CharacterLilToon/HoNprCharacterLilToonSkinSSS.hlsl"
 
 
 

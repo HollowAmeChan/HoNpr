@@ -57,7 +57,12 @@ Shader "HoNpr/Character_LilToon_Transparent"
 
 
 
+
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
+
+        _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
+        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
+        _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
 
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
@@ -71,6 +76,7 @@ Shader "HoNpr/Character_LilToon_Transparent"
     }
 
     HLSLINCLUDE
+
 
 
 

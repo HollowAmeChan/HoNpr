@@ -1,6 +1,6 @@
 block MaterialBlock.ForwardThinSss : Subsurface in ShadingDomain
 {
-    consumes HoUrpSurfaceData HoLightingContext SemanticMap;
+    consumes HoUrpSurfaceData HoLightingContext;
     produces HoNprLobeOutput.transmission;
     requires include HoNpr.Subsurface;
     requires define HONPR_HAS_FORWARD_THIN_SSS;

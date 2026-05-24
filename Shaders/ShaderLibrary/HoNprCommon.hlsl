@@ -23,7 +23,6 @@ struct HoNprCompositeOutput
 
 struct HoNprSemanticMapData
 {
-    half sssWeight;
     half specularMask;
     half stylizedMask;
     half utility;
@@ -53,7 +52,6 @@ HoNprLobeOutput HoNprCreateLobeOutput()
 HoNprSemanticMapData HoNprCreateSemanticMapData(half4 sample)
 {
     HoNprSemanticMapData data;
-    data.sssWeight = saturate(sample.r);
     data.specularMask = saturate(sample.g);
     data.stylizedMask = saturate(sample.b);
     data.utility = saturate(sample.a);

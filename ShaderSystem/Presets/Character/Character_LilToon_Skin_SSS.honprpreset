@@ -1,0 +1,16 @@
+preset MaterialPreset.Character_LilToon_Skin_SSS
+{
+    display "Character Skin Screen SSS";
+    templates MaterialTemplate.CharacterForward MaterialTemplate.CharacterAov MaterialTemplate.CharacterDepth MaterialTemplate.CharacterShadow;
+    generator CharacterLilToonTemplate;
+    shaderName "HoNpr/Character_LilToon_Skin_SSS";
+    generatedShader "Shaders/Generated/LilToon/Skin_SSS.shader";
+
+    blocks MaterialBlock.BaseColorTexture MaterialBlock.NormalMap MaterialBlock.SemanticMap MaterialBlock.RegionMask MaterialBlock.StyleRampAtlas MaterialBlock.UrpMainLightInput MaterialBlock.UrpAdditionalLightInput MaterialBlock.IndirectLightInput MaterialBlock.ScreenAoReceiver MaterialBlock.HoShadowReceiver MaterialBlock.LilToonDiffuseRamp MaterialBlock.ScreenSpaceSssSourceProducer MaterialBlock.LilToonRimLight MaterialBlock.LilToonBacklight MaterialBlock.LilToonEmissionPrimary MaterialBlock.MaterialSemanticProducer MaterialBlock.AovOutputStandard MaterialBlock.FinalColorComposite;
+    passes UniversalForward HoUrpAovOutput DepthOnly ShadowCaster;
+    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Shading.SssSourceColor Aov.Diffuse;
+    requires capability ParticipatesSemanticPost;
+    phase Forward;
+    status Active;
+}
+

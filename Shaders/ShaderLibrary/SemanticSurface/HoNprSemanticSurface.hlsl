@@ -9,8 +9,7 @@ HoUrpMaterialSemanticData HoNprCreateMaterialSemanticProducer(
     half thickness,
     half curvature,
     half4 materialCustom0_3,
-    half3 sssSourceColor,
-    half sssWeight)
+    half3 sssSourceColor)
 {
     return HoUrpCreateMaterialSemanticData(
         materialClass,
@@ -18,8 +17,7 @@ HoUrpMaterialSemanticData HoNprCreateMaterialSemanticProducer(
         thickness,
         curvature,
         materialCustom0_3,
-        sssSourceColor,
-        sssWeight);
+        sssSourceColor);
 }
 
 HoUrpAovOutputData HoNprEncodeStandardAov(HoUrpMaterialSemanticData semantic, half maskWeight)

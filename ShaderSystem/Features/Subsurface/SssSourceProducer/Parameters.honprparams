@@ -1,5 +1,0 @@
-parameters MaterialBlock.SssSourceProducer
-{
-    property _HoUrpGeneratedSssSourceColor semantic Shading.SssSourceColor type Color default "(1, 0.75, 0.6, 1)";
-    property _HoUrpGeneratedSssWeight semantic Shading.SssWeight type Float default 0;
-}

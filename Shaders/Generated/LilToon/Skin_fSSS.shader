@@ -1,7 +1,7 @@
 ﻿// 由 HoNprShaderGenerator 生成。
 // SourcePreset: MaterialPreset.Character_LilToon_Skin_fSSS
 // Template: MaterialTemplate.CharacterForward + MaterialTemplate.CharacterAov + MaterialTemplate.CharacterDepth + MaterialTemplate.CharacterShadow
-// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.ForwardThinSss, MaterialBlock.SssSourceProducer, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonBacklight, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
+// Blocks: MaterialBlock.BaseColorTexture, MaterialBlock.NormalMap, MaterialBlock.SemanticMap, MaterialBlock.RegionMask, MaterialBlock.StyleRampAtlas, MaterialBlock.UrpMainLightInput, MaterialBlock.UrpAdditionalLightInput, MaterialBlock.IndirectLightInput, MaterialBlock.ScreenAoReceiver, MaterialBlock.HoShadowReceiver, MaterialBlock.LilToonDiffuseRamp, MaterialBlock.ForwardThinSss, MaterialBlock.LilToonRimLight, MaterialBlock.LilToonBacklight, MaterialBlock.LilToonEmissionPrimary, MaterialBlock.MaterialSemanticProducer, MaterialBlock.AovOutputStandard, MaterialBlock.FinalColorComposite
 // 不要手动修改生成体。请改 template / block / preset。
 Shader "HoNpr/Character_LilToon_Skin_fSSS"
 {
@@ -48,6 +48,11 @@ Shader "HoNpr/Character_LilToon_Skin_fSSS"
 
 
 
+
+        _HoNprForwardThinSssThickness("Forward Thin SSS Thickness", Range(0, 1)) = 0.45
+        _HoNprForwardThinSssWeight("Forward Thin SSS Weight", Range(0, 1)) = 0.5
+        _HoNprForwardThinSssColor("Forward Thin SSS Color", Color) = (1, 0.75, 0.6, 1)
+
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
 
         _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
@@ -56,14 +61,12 @@ Shader "HoNpr/Character_LilToon_Skin_fSSS"
 
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 
-        _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)
-        _HoUrpGeneratedSssWeight("SSS Weight", Range(0, 1)) = 0
-
 
 
     }
 
     HLSLINCLUDE
+
 
 
 
