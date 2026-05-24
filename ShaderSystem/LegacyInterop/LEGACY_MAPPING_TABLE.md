@@ -25,6 +25,10 @@
 | `HoShadowCastAttenuation(positionWS)` | 旧材质 forward 阴影接收 | `HoShadowReceiver` | Rename | 只保留“接收 HoShadow term”的概念；采样资源由 HoRP lighting/shadow 契约约束。 |
 | `_ShadowColor*` / `_ShadowBorder*` | lilToon shadow UI | `StyleRampAtlas` + `LilToonDiffuseRamp` | Compress | 旧 UI 大量 slider 不进入第一版 HoNpr ABI。 |
 | `_SSSThicknessMap` / `_SubsurfaceMap` | lilToon/lilPBR SSS 输入 | `SemanticMap` + `SssSourceProducer` | Rename | forward fake SSS 和 screen-space SSS source 分离。 |
+| `_SUBSURFACE` / `_UseSSS` | lilPBR 皮肤材质 | `HoNpr/Character_LilPBR_Skin_SSS` + `HoUrpAovOutput` | Split | 参考 `真SSS皮肤-lilpbr.mat`；手写 shader 保留 forward fake SSS，同时向 HoURP AOV 写入 true SSS source 与 thickness。 |
+| `_HoSSSProfileId` | lilPBR / HoURP SSS profile | `_HoUrpGeneratedMaterialSssProfile` | Rename | 参考材质值为 `5`，新参数写入 HoRP material semantic。 |
+| `_HoSSSThicknessScale` / `_SubsurfaceThickness` | lilPBR SSS 厚度 | `_HoUrpGeneratedMaterialThickness` | Compress | 参考材质 `_SubsurfaceThickness = 0.248` 用作新 preset 默认值；大于 1 的旧 scale 不直接进入归一化厚度 ABI。 |
+| `_SSSColor` / `_SubsurfaceColor` | lilPBR SSS source color | `_HoUrpGeneratedSssSourceColor` | Rename | lilPBR 主路径使用 `_SubsurfaceColor * albedo` 作为 AOV SSS source；`_SSSColor` 只保留旧材质兼容槽，不直接染色 forward。 |
 | `_UseAnisotropy` / `_Anisotropy*` | lilToon/lilPBR anisotropy | `HairSpecularPrimary`, `HairSpecularSecondary`, `LilPbrSpecularAnisotropic` | Split | 头发 toon 与 PBR anisotropy 不共用旧开关。 |
 | `_MatCapBlendMode` 等 matcap 混合枚举 | lilToon MatCap UI | `LilToonMatCap` preset policy | Cut | 第一版不继承多 blend mode 暴露。 |
 | `_lilOITEnabled` | 旧材质 OIT 参与开关 | `SupportsOit`, `ParticipatesOit`, `TransparentComposite`, `OitAccumulationOutput` | Rename | pass 存在由 preset 决定；材质只表达参与参数。 |

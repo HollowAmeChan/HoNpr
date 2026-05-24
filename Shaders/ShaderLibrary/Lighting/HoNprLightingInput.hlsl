@@ -87,4 +87,14 @@ half HoNprCombinedShadow(HoNprLightingContext context)
     return saturate(context.mainLightDistanceAttenuation * context.mainLightShadow * context.hoShadow * context.screenAoDirect);
 }
 
+half HoNprDirectVisibility(HoNprLightingContext context)
+{
+    return HoNprCombinedShadow(context);
+}
+
+half HoNprIndirectVisibility(HoNprLightingContext context, half surfaceOcclusion)
+{
+    return saturate(surfaceOcclusion * context.screenAoIndirect);
+}
+
 #endif

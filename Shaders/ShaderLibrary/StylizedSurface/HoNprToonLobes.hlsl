@@ -7,10 +7,8 @@
 HoNprLobeOutput HoNprEvaluateLilToonDiffuseRamp(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
-    half ndotl = saturate(dot(HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h)), lighting.mainLightDirWS));
-    half rampCoord = HoNprComputeRampCoord(ndotl * HoNprCombinedShadow(lighting), stylized);
-    output.diffuse = surface.baseColor * lerp(half3(0.0h, 0.0h, 0.0h), rampColor, rampCoord);
-    output.diffuse += surface.baseColor * lighting.indirectDiffuse * surface.occlusion;
+    output.diffuse = surface.baseColor * max(0.0h, rampColor) * lighting.mainLightColor;
+    output.diffuse += surface.baseColor * lighting.indirectDiffuse * HoNprIndirectVisibility(lighting, surface.occlusion);
     return output;
 }
 
@@ -18,21 +16,26 @@ HoNprLobeOutput HoNprEvaluateLilToonSpecular(HoUrpSurfaceData surface, HoNprLigh
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
     half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
-    half3 halfDir = HoNprSafeNormalize(lighting.mainLightDirWS + HoNprSafeNormalize(viewDirWS, normalWS), normalWS);
+    half3 viewWS = HoNprSafeNormalize(viewDirWS, normalWS);
+    half3 halfDir = HoNprSafeNormalize(lighting.mainLightDirWS + viewWS, normalWS);
+    half ndotl = saturate(dot(normalWS, lighting.mainLightDirWS));
     half specTerm = saturate(dot(normalWS, halfDir));
-    half band = smoothstep(threshold, saturate(threshold + max(0.001h, softness)), specTerm);
-    output.specular = lighting.mainLightColor * band * saturate(mask) * HoNprCombinedShadow(lighting);
+    half band = smoothstep(saturate(threshold - softness), saturate(threshold + max(0.001h, softness)), specTerm);
+    output.specular = lighting.mainLightColor * band * ndotl * saturate(mask) * HoNprDirectVisibility(lighting);
     return output;
 }
 
 HoNprLobeOutput HoNprEvaluateHairSpecular(HoUrpSurfaceData surface, HoNprLightingContext lighting, half3 viewDirWS, half3 tangentWS, half shift, half width, half mask)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
-    half3 tangent = HoNprSafeNormalize(tangentWS, half3(1.0h, 0.0h, 0.0h));
-    half3 halfDir = HoNprSafeNormalize(lighting.mainLightDirWS + HoNprSafeNormalize(viewDirWS, surface.normalWS), surface.normalWS);
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
+    half3 tangent = HoNprSafeNormalize(tangentWS - normalWS * dot(normalWS, tangentWS), half3(1.0h, 0.0h, 0.0h));
+    half3 viewWS = HoNprSafeNormalize(viewDirWS, normalWS);
+    half3 halfDir = HoNprSafeNormalize(lighting.mainLightDirWS + viewWS, normalWS);
+    half ndotl = saturate(dot(normalWS, lighting.mainLightDirWS));
     half strand = saturate(1.0h - abs(dot(tangent, halfDir) + shift));
     half highlight = pow(strand, max(1.0h, width));
-    output.specular = lighting.mainLightColor * highlight * saturate(mask) * HoNprCombinedShadow(lighting);
+    output.specular = lighting.mainLightColor * highlight * ndotl * saturate(mask) * HoNprDirectVisibility(lighting);
     return output;
 }
 
