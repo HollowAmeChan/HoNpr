@@ -1,8 +1,5 @@
 parameters MaterialBlock.MaterialSemanticProducer
 {
     property _HoUrpGeneratedMaterialClass semantic Material.Class type Float default 1;
-    property _HoUrpGeneratedMaterialSssProfile semantic Material.SssProfile type Float default 0;
-    property _HoUrpGeneratedMaterialThickness semantic Material.Thickness type Float default 0;
-    property _HoUrpGeneratedMaterialCurvature semantic Material.Curvature type Float default 0;
     property _HoUrpGeneratedMaterialCustom0_3 semantic Material.Custom0-3 type Vector default "(0, 0, 0, 0)";
 }

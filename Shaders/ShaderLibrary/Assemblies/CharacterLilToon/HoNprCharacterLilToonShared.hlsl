@@ -147,13 +147,13 @@ half _HoNprOutlineEnableLighting;
 #endif
 
 float _HoUrpGeneratedMaterialClass;
+#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
 float _HoUrpGeneratedMaterialSssProfile;
 float _HoUrpGeneratedMaterialThickness;
 float _HoUrpGeneratedMaterialCurvature;
-float4 _HoUrpGeneratedMaterialCustom0_3;
-#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
 float4 _HoUrpGeneratedSssSourceColor;
 #endif
+float4 _HoUrpGeneratedMaterialCustom0_3;
 #if defined(HONPR_HAS_OIT_ACCUMULATION)
 float _HoUrpSupportsOit;
 float _HoUrpParticipatesOit;
@@ -327,10 +327,10 @@ HoNprCharacterAovOutput HoNprCharacterFragAov(HoNprCharacterVaryings input)
     half materialThickness = 0.0h;
     half materialCurvature = 0.0h;
     half3 sssSourceColor = half3(0.0h, 0.0h, 0.0h);
+#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
     materialSssProfile = half(_HoUrpGeneratedMaterialSssProfile);
     materialThickness = half(_HoUrpGeneratedMaterialThickness);
     materialCurvature = half(_HoUrpGeneratedMaterialCurvature);
-#if defined(HONPR_HAS_SCREEN_SPACE_SSS_SOURCE)
     sssSourceColor = half3(_HoUrpGeneratedSssSourceColor.rgb);
 #endif
     HoUrpMaterialSemanticData semantic = HoUrpCreateMaterialSemanticData(

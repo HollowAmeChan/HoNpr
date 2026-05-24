@@ -110,11 +110,11 @@ Shader "${SHADER_NAME}"
         _HoNprForwardThinSssColor("Forward Thin SSS Color", Color) = (1, 0.75, 0.6, 1)
 {{/if HONPR_HAS_FORWARD_THIN_SSS}}
         _HoUrpGeneratedMaterialClass("Material Class", Float) = 1
-{{#if HONPR_HAS_MATERIAL_SEMANTICS}}
-        _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 0
-        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0
+{{#if HONPR_HAS_SCREEN_SPACE_SSS_SOURCE}}
+        _HoUrpGeneratedMaterialSssProfile("SSS Profile", Float) = 1
+        _HoUrpGeneratedMaterialThickness("Thickness", Range(0, 1)) = 0.45
         _HoUrpGeneratedMaterialCurvature("Curvature", Range(-1, 1)) = 0
-{{/if HONPR_HAS_MATERIAL_SEMANTICS}}
+{{/if HONPR_HAS_SCREEN_SPACE_SSS_SOURCE}}
         _HoUrpGeneratedMaterialCustom0_3("Material Custom 0-3", Vector) = (0, 0, 0, 0)
 {{#if HONPR_HAS_SCREEN_SPACE_SSS_SOURCE}}
         _HoUrpGeneratedSssSourceColor("SSS Source Color", Color) = (1, 0.75, 0.6, 1)

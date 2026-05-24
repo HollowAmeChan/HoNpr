@@ -1,7 +1,7 @@
 block MaterialBlock.MaterialSemanticProducer : SemanticProducer in MaterialDomain
 {
-    consumes MaterialClass SssProfile Thickness Curvature MaterialCustom0_3;
-    produces Material.Class Material.SssProfile Material.Thickness Material.Curvature Material.Custom0-3;
+    consumes MaterialClass MaterialCustom0_3;
+    produces Material.Class Material.Custom0-3;
     requires include HoNpr.SemanticSurface;
     requires define HONPR_HAS_MATERIAL_SEMANTICS;
     entry HoNprCreateMaterialSemanticProducer;

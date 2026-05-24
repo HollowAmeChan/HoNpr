@@ -1,5 +1,7 @@
 parameters MaterialBlock.ScreenSpaceSssSourceProducer
 {
+    property _HoUrpGeneratedMaterialSssProfile semantic Material.SssProfile type Float default 1;
+    property _HoUrpGeneratedMaterialThickness semantic Material.Thickness type Float default 0.45;
+    property _HoUrpGeneratedMaterialCurvature semantic Material.Curvature type Float default 0;
     property _HoUrpGeneratedSssSourceColor semantic Shading.SssSourceColor type Color default "(1, 0.75, 0.6, 1)";
 }
-

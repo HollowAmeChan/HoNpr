@@ -18,9 +18,6 @@
 
     group Subsurface "皮肤 fSSS";
     contractBox HoNpr.SkinFsss in Subsurface title "Skin fSSS" severity info message "Forward fake thin fSSS adds local transmission only; it does not feed HoAOV or HoURP screen-space SSS.";
-    property _HoUrpGeneratedMaterialSssProfile in Subsurface label "fSSS Profile" control slider range 0 16 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedMaterialThickness in Subsurface label "Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
-    property _HoUrpGeneratedMaterialCurvature in Subsurface label "Curvature" control slider range -1 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprForwardThinSssColor in Subsurface label "fSSS Color" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprForwardThinSssThickness in Subsurface label "fSSS Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprForwardThinSssWeight in Subsurface label "fSSS Weight" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;
