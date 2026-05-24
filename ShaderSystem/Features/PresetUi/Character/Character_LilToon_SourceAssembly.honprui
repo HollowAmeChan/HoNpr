@@ -14,7 +14,7 @@
     group LilToonAssembly "lilToon 源组合";
     contractBox HoNpr.LilToonSource in LilToonAssembly title "源自 lilToon 的算法顺序" severity info message "该 preset 复刻 lilToon 的组装顺序：Base/Shadow/SSS/Rim/Backlight/MatCap/Emission/OIT，但不继承旧 ABI。";
     contractBox HoNpr.MigrationPrototype in LilToonAssembly title "迁移测试台，不是成品 shader" severity warning message "该 preset 同时挂载 outline、forward、AOV、depth、shadow、OIT 和多组 lilToon 来源 lobe，只用于回归和迁移对照；实际材质请改用 Character_LilToon_Lite / Standard / Rich / Transparent。";
-    property _HoNprStyleRampAtlas in LilToonAssembly label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprStyleRampAtlas in LilToonAssembly label "Ramp Atlas" control texture default "asset:Textures/Ramps/BasicLilToonRamp.png" copy Group tools CopyProperty PasteProperty;
     property _HoNprLilToonDiffuseRampThreshold in LilToonAssembly label "lilToon Diffuse Ramp 阈值" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprLilToonDiffuseRampSoftness in LilToonAssembly label "lilToon Diffuse Ramp 柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprRampRow in LilToonAssembly label "Ramp 行" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;

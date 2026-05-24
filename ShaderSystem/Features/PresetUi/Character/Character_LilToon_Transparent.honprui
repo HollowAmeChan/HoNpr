@@ -12,7 +12,7 @@
 
     group LilToonShading "lilToon 明暗";
     contractBox HoNpr.LilToonSource in LilToonShading title "来源：lilToon 透明 toon" severity info message "透明路径由 Character_LilToon_Transparent preset 固定；UI 不提供 _TransparentMode 式结构开关。";
-    property _HoNprStyleRampAtlas in LilToonShading label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprStyleRampAtlas in LilToonShading label "Ramp Atlas" control texture default "asset:Textures/Ramps/BasicLilToonRamp.png" copy Group tools CopyProperty PasteProperty;
     property _HoNprLilToonDiffuseRampThreshold in LilToonShading label "lilToon Diffuse Ramp 阈值" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprLilToonDiffuseRampSoftness in LilToonShading label "lilToon Diffuse Ramp 柔度" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprRampRow in LilToonShading label "Ramp 行" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;

@@ -1192,8 +1192,7 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                     target.floatValue = Clamp(descriptor, ParseFloat(value, target.floatValue));
                     break;
                 case UnityEngine.Rendering.ShaderPropertyType.Texture:
-                    string path = AssetDatabase.GUIDToAssetPath(value);
-                    Texture texture = string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<Texture>(path);
+                    Texture texture = ResolveTextureDefault(value);
                     if (texture != null || value == "null")
                         target.textureValue = texture;
                     break;
@@ -1221,12 +1220,49 @@ namespace Hollow.HoNpr.Editor.MaterialUi
                     material.SetFloat(descriptor.name, Clamp(descriptor, ParseFloat(value, material.GetFloat(descriptor.name))));
                     break;
                 case UnityEngine.Rendering.ShaderPropertyType.Texture:
-                    string path = AssetDatabase.GUIDToAssetPath(value);
-                    Texture texture = string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<Texture>(path);
+                    Texture texture = ResolveTextureDefault(value);
                     if (texture != null || value == "null")
                         material.SetTexture(descriptor.name, texture);
                     break;
             }
+        }
+
+        private static Texture ResolveTextureDefault(string value)
+        {
+            if (string.IsNullOrEmpty(value) || value == "null")
+                return null;
+
+            string path = AssetDatabase.GUIDToAssetPath(value);
+            if (!string.IsNullOrEmpty(path))
+                return AssetDatabase.LoadAssetAtPath<Texture>(path);
+
+            const string packageRelativePrefix = "asset:";
+            if (value.StartsWith(packageRelativePrefix, StringComparison.Ordinal))
+            {
+                string packageRelativePath = value.Substring(packageRelativePrefix.Length).TrimStart('/', '\\');
+                string packageRoot = FindPackageRoot();
+                if (!string.IsNullOrEmpty(packageRoot))
+                    return AssetDatabase.LoadAssetAtPath<Texture>($"{packageRoot}/{packageRelativePath.Replace('\\', '/')}");
+            }
+
+            if (value.StartsWith("Assets/", StringComparison.Ordinal) || value.StartsWith("Packages/", StringComparison.Ordinal))
+                return AssetDatabase.LoadAssetAtPath<Texture>(value);
+
+            return null;
+        }
+
+        private static string FindPackageRoot()
+        {
+            string[] guids = AssetDatabase.FindAssets("HoNprMaterialShaderGUI t:MonoScript", new[] { "Packages", "Assets" });
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                const string marker = "/Editor/MaterialUi/HoNprMaterialShaderGUI.cs";
+                if (path.EndsWith(marker, StringComparison.Ordinal))
+                    return path.Substring(0, path.Length - marker.Length);
+            }
+
+            return null;
         }
 
         private static float Clamp(HoNprMaterialUiProperty descriptor, float value)

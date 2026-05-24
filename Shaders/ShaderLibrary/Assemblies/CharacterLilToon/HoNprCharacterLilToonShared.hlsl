@@ -170,6 +170,8 @@ struct HoNprCharacterAttributes
     float4 tangentOS : TANGENT;
     half4 color : COLOR;
     float2 uv : TEXCOORD0;
+    float2 staticLightmapUV : TEXCOORD1;
+    float2 dynamicLightmapUV : TEXCOORD2;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -182,6 +184,14 @@ struct HoNprCharacterVaryings
     half3 bitangentWS : TEXCOORD3;
     float2 uv : TEXCOORD4;
     float2 depthZW : TEXCOORD5;
+    float4 shadowCoord : TEXCOORD6;
+    DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 7);
+#ifdef DYNAMICLIGHTMAP_ON
+    float2 dynamicLightmapUV : TEXCOORD8;
+#endif
+#ifdef USE_APV_PROBE_OCCLUSION
+    float4 probeOcclusion : TEXCOORD9;
+#endif
     UNITY_VERTEX_OUTPUT_STEREO
 };
 
@@ -218,7 +228,29 @@ HoNprCharacterVaryings HoNprCharacterVert(HoNprCharacterAttributes input)
     output.bitangentWS = NormalizeNormalPerVertex(normalInputs.bitangentWS);
     output.uv = input.uv * _HoNprBaseMap_ST.xy + _HoNprBaseMap_ST.zw;
     output.depthZW = positionInputs.positionCS.zw;
+    output.shadowCoord = GetShadowCoord(positionInputs);
+    OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+#ifdef DYNAMICLIGHTMAP_ON
+    output.dynamicLightmapUV = input.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+#endif
+    OUTPUT_SH4(positionInputs.positionWS, output.normalWS.xyz, GetWorldSpaceNormalizeViewDir(positionInputs.positionWS), output.vertexSH, output.probeOcclusion);
     return output;
+}
+
+half3 HoNprCharacterSampleBakedGI(HoNprCharacterVaryings input, half3 normalWS, half3 viewDirWS, out half4 shadowMask)
+{
+    shadowMask = half4(1.0h, 1.0h, 1.0h, 1.0h);
+#if defined(_SCREEN_SPACE_IRRADIANCE)
+    return SAMPLE_GI(_ScreenSpaceIrradiance, input.positionCS.xy);
+#elif defined(DYNAMICLIGHTMAP_ON)
+    shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+    return SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV, input.vertexSH, normalWS);
+#elif !defined(LIGHTMAP_ON) && (defined(PROBE_VOLUMES_L1) || defined(PROBE_VOLUMES_L2))
+    return SAMPLE_GI(input.vertexSH, GetAbsolutePositionWS(input.positionWS), normalWS, viewDirWS, input.positionCS.xy, input.probeOcclusion, shadowMask);
+#else
+    shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+    return SAMPLE_GI(input.staticLightmapUV, input.vertexSH, normalWS);
+#endif
 }
 
 HoNprSemanticMapData HoNprCharacterResolveSemanticMap(float2 uv)
@@ -257,10 +289,20 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
 #endif
 
     half3 viewDirWS = HoNprSafeNormalize(GetWorldSpaceViewDir(input.positionWS), surface.normalWS);
-    Light mainLight = GetMainLight();
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
+    half4 shadowMask;
+    half3 indirectDiffuse = HoNprCharacterSampleBakedGI(input, normalWS, viewDirWS, shadowMask);
+    Light mainLight = GetMainLight(input.shadowCoord, input.positionWS, shadowMask);
     HoNprLightingContext lighting = HoNprCreateLightingContext(mainLight.direction, mainLight.color);
     lighting = HoNprResolveUrpMainLight(lighting, mainLight.direction, mainLight.color, mainLight.distanceAttenuation, mainLight.shadowAttenuation);
-    lighting = HoNprResolveIndirectLight(lighting, SampleSH(surface.normalWS), half3(0.04h, 0.04h, 0.05h));
+    half3 reflectVector = reflect(-viewDirWS, normalWS);
+    half3 indirectSpecular = GlossyEnvironmentReflection(
+        reflectVector,
+        input.positionWS,
+        0.5h,
+        surface.occlusion,
+        GetNormalizedScreenSpaceUV(input.positionCS));
+    lighting = HoNprResolveIndirectLight(lighting, indirectDiffuse, indirectSpecular);
     lighting = HoNprResolveScreenAoReceiver(lighting, lerp(1.0h, semanticMap.utility, 0.25h), 1.0h);
     half hoShadow = HoNprSampleHoUrpShadowReceiver(input.positionWS, surface.normalWS);
     lighting = HoNprResolveHoShadowReceiver(lighting, hoShadow);

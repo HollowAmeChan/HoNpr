@@ -178,6 +178,24 @@ Shader "HoNpr/LilToon/SourceAssembly"
             #pragma target 4.5
             #pragma vertex HoNprCharacterVert
             #pragma fragment HoNprCharacterFragForward
+            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_ATLAS
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_IRRADIANCE
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile_fragment _ LIGHTMAP_BICUBIC_SAMPLING
+            #pragma multi_compile_fragment _ REFLECTION_PROBE_ROTATION
+            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+            #pragma multi_compile _ USE_LEGACY_LIGHTMAPS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ProbeVolumeVariants.hlsl"
             ENDHLSL
         }
 

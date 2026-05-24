@@ -9,7 +9,7 @@
     property _HoNprRegionMap in SurfaceMaps label "区域遮罩" control texture default "white" copy Group tools CopyProperty PasteProperty;
 
     group ToonDiffuse "lilToon 明暗";
-    property _HoNprStyleRampAtlas in ToonDiffuse label "Ramp Atlas" control texture default "white" copy Group tools CopyProperty PasteProperty;
+    property _HoNprStyleRampAtlas in ToonDiffuse label "Ramp Atlas" control texture default "asset:Textures/Ramps/BasicLilToonRamp.png" copy Group tools CopyProperty PasteProperty;
     property _HoNprLilToonDiffuseRampThreshold in ToonDiffuse label "lilToon Diffuse Ramp Threshold" control slider range 0 1 default 0.48 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprLilToonDiffuseRampSoftness in ToonDiffuse label "lilToon Diffuse Ramp Softness" control slider range 0.001 1 default 0.08 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprRampRow in ToonDiffuse label "Ramp Row" control slider range 0 16 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;

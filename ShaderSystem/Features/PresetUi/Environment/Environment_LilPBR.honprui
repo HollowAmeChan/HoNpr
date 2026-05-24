@@ -7,7 +7,7 @@
     group SurfaceMaps "表面贴图";
     property _HoNprNormalMap in SurfaceMaps label "法线贴图" control texture default "bump" copy Group tools CopyProperty PasteProperty;
     property _HoNprMaterialMap in SurfaceMaps label "材质贴图" control texture default "white" copy Group tools CopyProperty PasteProperty;
-    property _HoNprMaterialMetallicScale in SurfaceMaps label "Metallic Scale" control slider range 0 1 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
+    property _HoNprMaterialMetallicScale in SurfaceMaps label "Metallic Scale" control slider range 0 1 default 0 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprMaterialRoughnessScale in SurfaceMaps label "Roughness Scale" control slider range 0.01 2 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprMaterialOcclusionStrength in SurfaceMaps label "Occlusion Strength" control slider range 0 1 default 1 copy Group tools CopyProperty PasteProperty ResetGroup;
 

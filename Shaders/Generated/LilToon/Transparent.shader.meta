@@ -2,7 +2,8 @@ fileFormatVersion: 2
 guid: 7b5b8e26971814f4186326e31fd4b4a5
 ShaderImporter:
   externalObjects: {}
-  defaultTextures: []
+  defaultTextures:
+  - _HoNprStyleRampAtlas: {fileID: 2800000, guid: 3a710d0d401e4efdbcd471f8b3181c9f, type: 3}
   nonModifiableTextures: []
   userData: 
   assetBundleName: 

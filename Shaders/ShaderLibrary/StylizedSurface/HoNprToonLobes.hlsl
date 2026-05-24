@@ -7,7 +7,10 @@
 HoNprLobeOutput HoNprEvaluateLilToonDiffuseRamp(HoUrpSurfaceData surface, HoNprLightingContext lighting, HoNprStylizedSurfaceData stylized, half3 rampColor)
 {
     HoNprLobeOutput output = HoNprCreateLobeOutput();
-    output.diffuse = surface.baseColor * max(0.0h, rampColor) * lighting.mainLightColor;
+    half3 normalWS = HoNprSafeNormalize(surface.normalWS, half3(0.0h, 0.0h, 1.0h));
+    half ndotl = saturate(dot(normalWS, lighting.mainLightDirWS));
+    half directLambert = ndotl * HoNprDirectVisibility(lighting);
+    output.diffuse = surface.baseColor * max(0.0h, rampColor) * lighting.mainLightColor * directLambert;
     output.diffuse += surface.baseColor * lighting.indirectDiffuse * HoNprIndirectVisibility(lighting, surface.occlusion);
     return output;
 }
@@ -23,6 +26,7 @@ HoNprLobeOutput HoNprEvaluateLilToonSpecular(HoUrpSurfaceData surface, HoNprLigh
     half width = max(0.001h, abs(softness));
     half band = smoothstep(saturate(threshold - width), saturate(threshold + width), specTerm);
     output.specular = lighting.mainLightColor * band * ndotl * saturate(mask) * HoNprDirectVisibility(lighting);
+    output.specular += lighting.indirectSpecular * band * saturate(mask) * HoNprIndirectVisibility(lighting, surface.occlusion);
     return output;
 }
 
@@ -37,6 +41,7 @@ HoNprLobeOutput HoNprEvaluateHairSpecular(HoUrpSurfaceData surface, HoNprLightin
     half strand = saturate(1.0h - abs(dot(tangent, halfDir) + shift));
     half highlight = pow(strand, max(1.0h, width));
     output.specular = lighting.mainLightColor * highlight * ndotl * saturate(mask) * HoNprDirectVisibility(lighting);
+    output.specular += lighting.indirectSpecular * highlight * saturate(mask) * HoNprIndirectVisibility(lighting, surface.occlusion);
     return output;
 }
 
