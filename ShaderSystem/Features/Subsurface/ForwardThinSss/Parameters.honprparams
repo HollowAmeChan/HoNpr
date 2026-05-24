@@ -1,5 +1,6 @@
 parameters MaterialBlock.ForwardThinSss
 {
+    property _HoNprForwardThinSssMask semantic HoNpr.ForwardThinSss.Mask type Texture2D default "white";
     property _HoNprForwardThinSssThickness semantic HoNpr.ForwardThinSss.Thickness type Float default 0.45;
     property _HoNprForwardThinSssWeight semantic HoNpr.ForwardThinSss.Weight type Float default 0.5;
     property _HoNprForwardThinSssColor semantic HoNpr.ForwardThinSss.Color type Color default "(1, 0.75, 0.6, 1)";

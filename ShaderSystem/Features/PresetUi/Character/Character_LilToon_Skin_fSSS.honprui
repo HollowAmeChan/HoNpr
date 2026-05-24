@@ -17,7 +17,8 @@
     property _HoNprRampRows in ToonDiffuse label "Ramp Rows" control slider range 1 32 default 8 copy Group tools CopyProperty PasteProperty ResetGroup;
 
     group Subsurface "皮肤 fSSS";
-    contractBox HoNpr.SkinFsss in Subsurface title "Skin fSSS" severity info message "Forward fake thin fSSS adds local transmission only; it does not feed HoAOV or HoURP screen-space SSS.";
+    contractBox HoNpr.SkinFsss in Subsurface title "Skin fSSS" severity info message "Forward fake thin fSSS adds local transmission only; its mask is _HoNprForwardThinSssMask.R, independent from Surface.RegionMask.";
+    property _HoNprForwardThinSssMask in Subsurface label "fSSS Mask" control texture default "white" copy Group tools CopyProperty PasteProperty;
     property _HoNprForwardThinSssColor in Subsurface label "fSSS Color" control color default "(1, 0.75, 0.6, 1)" copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprForwardThinSssThickness in Subsurface label "fSSS Thickness" control slider range 0 1 default 0.45 copy Group tools CopyProperty PasteProperty ResetGroup;
     property _HoNprForwardThinSssWeight in Subsurface label "fSSS Weight" control slider range 0 1 default 0.5 copy Group tools CopyProperty PasteProperty ResetGroup;

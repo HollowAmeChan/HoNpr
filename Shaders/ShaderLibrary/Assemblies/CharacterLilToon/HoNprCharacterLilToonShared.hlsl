@@ -28,6 +28,10 @@ SAMPLER(sampler_HoNprSemanticMap);
 #endif
 TEXTURE2D(_HoNprRegionMap);
 SAMPLER(sampler_HoNprRegionMap);
+#if defined(HONPR_HAS_FORWARD_THIN_SSS)
+TEXTURE2D(_HoNprForwardThinSssMask);
+SAMPLER(sampler_HoNprForwardThinSssMask);
+#endif
 #if defined(HONPR_HAS_LILTOON_OUTLINE)
 TEXTURE2D(_HoNprOutlineTex);
 SAMPLER(sampler_HoNprOutlineTex);
@@ -279,7 +283,8 @@ half4 HoNprCharacterFragForward(HoNprCharacterVaryings input, FRONT_FACE_TYPE fa
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateHairSpecularSecondary(surface, lighting, viewDirWS, input.tangentWS, _HoNprHairSpecularSecondaryShift, _HoNprHairSpecularSecondaryWidth, _HoNprHairSpecularSecondaryMask * regionMask.hair), _HoNprHairSpecularSecondaryBlendMode);
 #endif
 #if defined(HONPR_HAS_FORWARD_THIN_SSS)
-    HoNprAccumulateLobe(lobes, HoNprEvaluateForwardThinSss(surface, lighting, viewDirWS, _HoNprForwardThinSssThickness, _HoNprForwardThinSssWeight, _HoNprForwardThinSssColor.rgb));
+    half fsssMask = SAMPLE_TEXTURE2D(_HoNprForwardThinSssMask, sampler_HoNprForwardThinSssMask, input.uv).r;
+    HoNprAccumulateLobe(lobes, HoNprEvaluateForwardThinSss(surface, lighting, viewDirWS, fsssMask, _HoNprForwardThinSssThickness, _HoNprForwardThinSssWeight, _HoNprForwardThinSssColor.rgb));
 #endif
 #if defined(HONPR_HAS_LILTOON_RIM_SHADE)
     HoNprAccumulateLobeWithMode(lobes, HoNprEvaluateLilToonRimShade(surface, viewDirWS, _HoNprLilToonRimShadeColor.rgb, _HoNprLilToonRimMask * semanticMap.stylizedMask, _HoNprLilToonRimPower), _HoNprLilToonRimShadeBlendMode);

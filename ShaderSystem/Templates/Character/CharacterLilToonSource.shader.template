@@ -105,6 +105,7 @@ Shader "${SHADER_NAME}"
         [Enum(Add,0,Screen,1,Max,2,Replace,3)] _HoNprLilToonDistanceFadeBlendMode("lilToon Distance Fade Blend Mode", Float) = 0
 {{/if HONPR_HAS_LILTOON_DISTANCE_FADE}}
 {{#if HONPR_HAS_FORWARD_THIN_SSS}}
+        _HoNprForwardThinSssMask("Forward Thin SSS Mask", 2D) = "white" {}
         _HoNprForwardThinSssThickness("Forward Thin SSS Thickness", Range(0, 1)) = 0.45
         _HoNprForwardThinSssWeight("Forward Thin SSS Weight", Range(0, 1)) = 0.5
         _HoNprForwardThinSssColor("Forward Thin SSS Color", Color) = (1, 0.75, 0.6, 1)

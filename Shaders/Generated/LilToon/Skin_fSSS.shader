@@ -49,6 +49,7 @@ Shader "HoNpr/Character_LilToon_Skin_fSSS"
 
 
 
+        _HoNprForwardThinSssMask("Forward Thin SSS Mask", 2D) = "white" {}
         _HoNprForwardThinSssThickness("Forward Thin SSS Thickness", Range(0, 1)) = 0.45
         _HoNprForwardThinSssWeight("Forward Thin SSS Weight", Range(0, 1)) = 0.5
         _HoNprForwardThinSssColor("Forward Thin SSS Color", Color) = (1, 0.75, 0.6, 1)
