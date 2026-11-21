@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "version": "dev",
+  "release_tag": "dev",
+  "release_name": "HoNpr development build",
+  "repository": "HollowAmeChan/HoNpr",
+  "channel": "dev",
+  "package_name": "com.hollow.honpr",
+  "package_version": "0.1.0"
+}
